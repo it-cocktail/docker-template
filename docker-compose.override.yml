@@ -1,0 +1,15 @@
+version: '2'
+services:
+  db:
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+
+  phpmyadmin:
+    environment:
+      PMA_PASSWORD: 123456
+    ports:
+      - "8081:80"
+
+  php:
+    ports:
+      - "8001:80"

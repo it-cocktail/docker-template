@@ -1,0 +1,39 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.5
+    volumes:
+      - "./docker-data/volumes/mysql:/var/lib/mysql"
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - db
+    restart: always
+    links:
+      - db:db
+    environment:
+      PMA_HOST: db
+      PHP_UPLOAD_MAX_FILESIZE: "500M"
+
+  postfix:
+    build: docker-data/container/postfix
+    volumes:
+      - "./docker-data/volumes/postfix/log:/var/log"
+    environment:
+      MYHOSTNAME: localhost
+      MYNETWORKS: 0.0.0.0/0
+
+  php:
+    depends_on:
+      - db
+      - phpmyadmin
+      - postfix
+    build: docker-data/container/php
+    links:
+      - db:db
+      - postfix:mail
+    volumes:
+      - "./htdocs:/var/www/html"
+    restart: always
