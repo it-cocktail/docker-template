@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
 # Install opcache
 RUN docker-php-ext-install opcache
 
-# Install APCu RUN pecl install apcu
+# Install APCu
+RUN pecl install apcu-4.0.11
 RUN echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini
 
 RUN a2enmod rewrite
