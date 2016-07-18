@@ -17,26 +17,18 @@ services:
       PMA_HOST: db
       PHP_UPLOAD_MAX_FILESIZE: "500M"
 
-#  postfix:
-#    build: docker-data/container/postfix
-#    volumes:
-#      - "./docker-data/volumes/postfix/log:/var/log"
-#    environment:
-#      MYHOSTNAME: localhost
-#      MYNETWORKS: 0.0.0.0/0
-
-  smtp:
-    image: namshi/smtp
+  mail:
+    image: mailhog/mailhog
 
   php:
     depends_on:
       - db
       - phpmyadmin
-      - smtp
+      - mail
     build: docker-data/container/php
     links:
       - db:db
-      - smtp:mail
+      - mail:mail
     volumes:
       - "./htdocs:/var/www/html"
     restart: always

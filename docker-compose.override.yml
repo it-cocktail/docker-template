@@ -10,6 +10,10 @@ services:
     ports:
       - "8081:80"
 
+  mail:
+    ports:
+      - "8025:8025"
+
   php:
     ports:
       - "8001:80"
