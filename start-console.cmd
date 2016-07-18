@@ -1,3 +1,3 @@
 :; docker-compose exec php bash; exit $?
 @ECHO OFF
-docker-compose exec php bash
+docker exec -it %cd%_php_1 bash
