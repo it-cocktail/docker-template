@@ -20,7 +20,10 @@ RUN echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini
 
 RUN a2enmod rewrite
 
+# Install SSMTP
+RUN apt-get install -y ssmtp
 COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
+RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
 # Set the time zone to the local time zone
 RUN echo "Europe/Berlin" > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
