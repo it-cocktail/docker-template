@@ -1,3 +1,4 @@
 :; docker-compose exec php php $@; exit $?
 @ECHO OFF
-docker exec -it %cd%_php_1 php %*
+for %%* in (.) do set CurrDirName=%%~nx*
+docker exec -it %CurrDirName%_php_1 php %*

@@ -1,3 +1,4 @@
 :; docker-compose exec db mysql $@; exit $?
 @ECHO OFF
-docker exec -it %cd%_db_1 mysql %*
+for %%* in (.) do set CurrDirName=%%~nx*
+docker exec -it %CurrDirName%_db_1 mysql %*
