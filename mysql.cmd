@@ -1,5 +1,12 @@
-:; docker-compose exec db mysql $@; exit $?
+:<<"::CMDLITERAL"
 @ECHO OFF
+GOTO :CMDSCRIPT
+::CMDLITERAL
+
+docker-compose exec db mysql $@
+exit
+
+:CMDSCRIPT
 for %%* in (.) do set CurrDirName=%%~nx*
 call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
