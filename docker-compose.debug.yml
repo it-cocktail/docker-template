@@ -4,4 +4,5 @@ services:
     build:
       dockerfile: Dockerfile-debug
       args:
-        XDEBUG_REMOTE_HOST: 192.168.1.108
+        # set your local ip address
+        XDEBUG_REMOTE_HOST: localhost
