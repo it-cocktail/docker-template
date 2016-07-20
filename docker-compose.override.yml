@@ -15,5 +15,7 @@ services:
       - "8025:8025"
 
   php:
+    build:
+      context: docker-data/container/php70
     ports:
       - "8001:80"

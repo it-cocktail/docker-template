@@ -25,7 +25,8 @@ services:
       - db
       - phpmyadmin
       - mail
-    build: docker-data/container/php
+    build:
+      context: docker-data/container/php70
     links:
       - db:db
       - mail:mail
