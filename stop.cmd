@@ -9,3 +9,4 @@ exit
 :CMDSCRIPT
 docker-compose down
 EXIT /B
+
