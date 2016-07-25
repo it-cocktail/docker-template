@@ -7,15 +7,15 @@ services:
     restart: always
 
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: nazarpc/phpmyadmin
     depends_on:
       - db
     restart: always
     links:
       - db:db
     environment:
-      PMA_HOST: db
-      PHP_UPLOAD_MAX_FILESIZE: "500M"
+      MYSQL_HOST: db
+      UPLOAD_SIZE: "500M"
 
   mail:
     image: mailhog/mailhog

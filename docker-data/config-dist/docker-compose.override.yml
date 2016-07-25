@@ -6,7 +6,7 @@ services:
 
   phpmyadmin:
     environment:
-      PMA_PASSWORD: 123456
+      MYSQL_ROOT_PASSWORD: 123456
     ports:
       - "8081:80"
 
