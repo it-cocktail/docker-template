@@ -19,6 +19,7 @@ services:
 
   mail:
     image: mailhog/mailhog
+    restart: always
 
   php:
     depends_on:
