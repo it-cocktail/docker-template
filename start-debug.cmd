@@ -30,6 +30,6 @@ IF NOT EXIST "%cd%\docker-compose.debug.yml" (
         powershell -Command "(gc '%cd%\docker-data\config-dist\docker-compose.debug.yml') -replace 'localhost', '%%i' | Set-Content '%cd%\docker-compose.debug.yml'"
     )
 )
-REM docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d --build
 EXIT /B
 
