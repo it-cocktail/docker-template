@@ -17,6 +17,7 @@ RUN docker-php-ext-install opcache
 # Install APCu
 RUN pecl install apcu-4.0.11
 RUN echo "extension=apcu.so" > /usr/local/etc/php/conf.d/apcu.ini
+RUN echo "apc.enable_cli = On" >> /usr/local/etc/php/conf.d/apcu.ini
 
 RUN a2enmod rewrite
 
@@ -54,6 +55,23 @@ RUN apt-get install -y git unzip
 COPY vhost.conf /etc/apache2/sites-available
 RUN a2ensite vhost
 
+# add SSH Key
+RUN mkdir /root/.ssh
+RUN chmod 700 /root/.ssh
+COPY ssh/id_rsa /root/.ssh/id_rsa
+COPY ssh/id_rsa.pub /root/.ssh/id_rsa.pub
+RUN chmod 600 /root/.ssh/id_rsa
+RUN chmod 644 /root/.ssh/id_rsa.pub
+
+# autostart keychain on login
+RUN apt-get install -y keychain
+RUN echo '\neval `keychain --eval id_rsa`\n' >> /root/.bashrc
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
 VOLUME ["/var/www/html"]
 
 WORKDIR /var/www/html
+
+ENTRYPOINT ["/entrypoint.sh"]
