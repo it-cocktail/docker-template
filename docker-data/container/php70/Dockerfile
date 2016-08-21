@@ -52,6 +52,10 @@ RUN php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filenam
 
 RUN apt-get install -y git unzip
 
+# compass
+RUN apt-get install -y ruby ruby-dev
+RUN gem install compass
+
 COPY vhost.conf /etc/apache2/sites-available
 RUN a2ensite vhost
 
@@ -67,11 +71,6 @@ RUN chmod 644 /root/.ssh/id_rsa.pub
 RUN apt-get install -y keychain
 RUN echo '\neval `keychain --eval id_rsa`\n' >> /root/.bashrc
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod u+x /entrypoint.sh
-
 VOLUME ["/var/www/html"]
 
 WORKDIR /var/www/html
-
-ENTRYPOINT ["/entrypoint.sh"]
