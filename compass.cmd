@@ -3,7 +3,7 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-docker-compose exec php bash -l -c "compass $@"
+docker-compose exec php bash -c "compass $@"
 exit
 
 :CMDSCRIPT
@@ -12,7 +12,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker exec -it %CurrDirName%_php_1 bash -l -c "compass %*"
+docker exec -it %CurrDirName%_php_1 bash -c "compass %*"
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase
