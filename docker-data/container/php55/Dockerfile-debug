@@ -1,4 +1,4 @@
-FROM php:5.5-apache
+FROM php:5.5.38-apache
 ARG XDEBUG_REMOTE_HOST=localhost
 
 RUN apt-get update && apt-get install -y \
