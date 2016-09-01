@@ -52,10 +52,6 @@ RUN php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filenam
 
 RUN apt-get install -y git unzip
 
-# compass
-RUN apt-get install -y ruby ruby-dev
-RUN gem install compass
-
 COPY vhost.conf /etc/apache2/sites-available
 RUN a2ensite vhost
 
