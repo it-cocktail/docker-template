@@ -4,16 +4,14 @@ GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-docker run --rm -t -v "$DIR/htdocs:/var/www/html" fduarte42/docker-compass "$@"
+docker run --rm -t -v "$DIR/htdocs:/var/www/html" fduarte42/docker-compass $@
 exit
 
 :CMDSCRIPT
-for %%* in (.) do set CurrDirName=%%~nx*
-call:toLower CurrDirName
-set CurrDirName=%CurrDirName: =%
-set CurrDirName=%CurrDirName:-=%
+SET CurrDirName=%~dp0
+SET CurrDirName=%CurrDirName:~0,-1%
 
-docker run --rm -t -v "%CurrDirName%\htdocs:/var/www/html" fduarte42/docker-compass "%*"
+docker run --rm -t -v "%CurrDirName%\htdocs:/var/www/html" fduarte42/docker-compass %*
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase
