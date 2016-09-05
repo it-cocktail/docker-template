@@ -24,7 +24,6 @@ RUN a2enmod rewrite
 
 # Install SSMTP
 RUN apt-get install -y ssmtp
-COPY ssmtp.conf /etc/ssmtp/ssmtp.conf
 RUN echo 'sendmail_path = "/usr/sbin/ssmtp -t"' > /usr/local/etc/php/conf.d/mail.ini
 
 # Set the time zone to the local time zone
@@ -53,19 +52,9 @@ RUN php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filenam
 
 RUN apt-get install -y git unzip
 
-COPY vhost.conf /etc/apache2/sites-available
-RUN a2ensite vhost
-
-# add SSH Key
-RUN mkdir /root/.ssh
-RUN chmod 700 /root/.ssh
-COPY ssh/id_rsa /root/.ssh/id_rsa
-COPY ssh/id_rsa.pub /root/.ssh/id_rsa.pub
-RUN chmod 600 /root/.ssh/id_rsa
-RUN chmod 644 /root/.ssh/id_rsa.pub
-
 # autostart keychain on login
 RUN apt-get install -y keychain
+RUN echo '\nchmod 600 /root/.ssh/id_rsa\nchmod 644 /root/.ssh/id_rsa.pub' >> /root/.bashrc
 RUN echo '\neval `keychain --eval id_rsa`\n' >> /root/.bashrc
 
 # XDEBUG
