@@ -3,6 +3,6 @@ services:
   php:
     build:
       dockerfile: Dockerfile-debug
-      args:
-        # set your local ip address
-        XDEBUG_REMOTE_HOST: localhost
+    environment:
+      # set your local ip address
+      XDEBUG_REMOTE_HOST: localhost
