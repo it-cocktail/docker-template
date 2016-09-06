@@ -15,6 +15,6 @@ services:
       - "8025:8025"
 
   php:
-    image: fduarte42/docker-php:5.5
+    image: fduarte42/docker-php:7.0
     ports:
       - "8001:80"
