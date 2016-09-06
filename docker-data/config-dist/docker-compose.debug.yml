@@ -1,7 +1,7 @@
 version: '2'
 services:
   php:
-    image: fduarte42/docker-php:7.0-debug
+    image: fduarte42/docker-php:5.5-debug
     environment:
       # set your local ip address
       XDEBUG_REMOTE_HOST: localhost
