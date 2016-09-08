@@ -15,7 +15,8 @@ if [ ! -f "$(pwd)/docker-compose.debug.yml" ]; then
     cp "$(pwd)/docker-data/config-dist/docker-compose.debug.yml" "$(pwd)/docker-compose.debug.yml" >/dev/null
     sed -i '' "s/localhost/$LOCALIP/" "$(pwd)/docker-compose.debug.yml"
 fi
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
 exit
 
 :CMDSCRIPT
@@ -30,6 +31,7 @@ IF NOT EXIST "%cd%\docker-compose.debug.yml" (
         powershell -Command "(gc '%cd%\docker-data\config-dist\docker-compose.debug.yml') -replace 'localhost', '%%i' | Set-Content '%cd%\docker-compose.debug.yml'"
     )
 )
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d --build
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
 EXIT /B
 

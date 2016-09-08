@@ -4,6 +4,8 @@ GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+docker pull fduarte42/docker-compass
 docker run --rm -t -v "$DIR/htdocs:/var/www/html" fduarte42/docker-compass $@
 exit
 
@@ -11,6 +13,7 @@ exit
 SET CurrDirName=%~dp0
 SET CurrDirName=%CurrDirName:~0,-1%
 
+docker pull fduarte42/docker-compass
 docker run --rm -t -v "%CurrDirName%\htdocs:/var/www/html" fduarte42/docker-compass %*
 EXIT /B
 

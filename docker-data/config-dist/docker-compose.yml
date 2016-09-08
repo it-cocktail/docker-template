@@ -33,6 +33,6 @@ services:
     volumes:
       - "./docker-data/volumes/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
       - "./docker-data/volumes/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
-      - "./docker-data/volumes/php/ssh:/root/.ssh"
+      - "./docker-data/volumes/php/ssh:/ssh"
       - "./htdocs:/var/www/html"
     restart: always
