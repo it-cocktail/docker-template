@@ -15,8 +15,19 @@ if [ ! -f "$(pwd)/docker-compose.debug.yml" ]; then
     cp "$(pwd)/docker-data/config-dist/docker-compose.debug.yml" "$(pwd)/docker-compose.debug.yml" >/dev/null
     sed -i '' "s/localhost/$LOCALIP/" "$(pwd)/docker-compose.debug.yml"
 fi
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull
+
+printf "updating container images if needed ...\n"
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull 1>/dev/null 2>&1
+
+printf "\nstarting services ...\n"
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
+
+printf "\nApache is listening on: "
+docker-compose port php 80
+printf "PhpMyAdmin is listening on: "
+docker-compose port phpmyadmin 80
+printf "MailHog is listening on: "
+docker-compose port mail 8025
 exit
 
 :CMDSCRIPT
@@ -31,7 +42,21 @@ IF NOT EXIST "%cd%\docker-compose.debug.yml" (
         powershell -Command "(gc '%cd%\docker-data\config-dist\docker-compose.debug.yml') -replace 'localhost', '%%i' | Set-Content '%cd%\docker-compose.debug.yml'"
     )
 )
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull
+
+echo.
+echo updating container images if needed ...
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull > nul 2>&1
+
+echo.
+echo starting services ...
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
+
+echo.
+echo Apache is listening on:
+docker-compose port php 80
+echo PhpMyAdmin is listening on:
+docker-compose port phpmyadmin 80
+echo MailHog is listening on:
+docker-compose port mail 8025
 EXIT /B
 
