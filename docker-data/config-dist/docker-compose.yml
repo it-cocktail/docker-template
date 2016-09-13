@@ -16,6 +16,7 @@ services:
     environment:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
+    restart: always
 
   mail:
     image: mailhog/mailhog

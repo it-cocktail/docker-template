@@ -1,6 +1,9 @@
 .idea
 /docker-data/volumes/mysql/*
+/docker-data/volumes-live/mysql/*
+/docker-data/volumes-live/postfix/*
 /docker-compose.yml
 /docker-compose.override.yml
 /docker-compose.debug.yml
+/docker-compose.live.yml
 /htdocs/.sass-cache/

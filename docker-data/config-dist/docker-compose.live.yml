@@ -1,0 +1,51 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.5
+    volumes:
+      - "./docker-data/volumes-live/mysql:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+    restart: always
+
+  phpmyadmin:
+    image: nazarpc/phpmyadmin
+    depends_on:
+      - db
+    restart: always
+    links:
+      - db:db
+    environment:
+      MYSQL_HOST: db
+      UPLOAD_SIZE: "500M"
+      MYSQL_ROOT_PASSWORD: 123456
+    ports:
+      - "8081:80"
+    restart: always
+
+  mail:
+    image: fduarte42/docker-postfix
+    volumes:
+      - "./docker-data/volumes-live/postfix/log:/var/log"
+    environment:
+      MYHOSTNAME: domain.tld
+      MYNETWORKS: 0.0.0.0/0
+    restart: always
+
+  php:
+    depends_on:
+      - db
+      - phpmyadmin
+      - mail
+    image: fduarte42/docker-php:7.0
+    links:
+      - db:db
+      - mail:mail
+    volumes:
+      - "./docker-data/volumes-live/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
+      - "./docker-data/volumes-live/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
+      - "./docker-data/volumes-live/php/ssh:/ssh"
+      - "./htdocs:/var/www/html"
+    ports:
+      - "8080:80"
+    restart: always
