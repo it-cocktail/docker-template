@@ -2,8 +2,8 @@
 @ECHO OFF
 GOTO :CMDSCRIPT
 ::CMDLITERAL
-
-docker-compose exec php bash -l -c "php $@"
+PARAMETER="$@"
+docker-compose exec php bash -l -c "php $PARAMETER"
 exit
 
 :CMDSCRIPT

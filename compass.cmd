@@ -6,7 +6,7 @@ GOTO :CMDSCRIPT
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 docker pull fduarte42/docker-compass
-docker run --rm -t -v "$DIR/htdocs:/var/www/html" fduarte42/docker-compass $@
+docker run --rm -t -v "$DIR/htdocs:/var/www/html" fduarte42/docker-compass "$@"
 exit
 
 :CMDSCRIPT

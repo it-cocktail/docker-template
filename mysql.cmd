@@ -2,8 +2,7 @@
 @ECHO OFF
 GOTO :CMDSCRIPT
 ::CMDLITERAL
-
-docker-compose exec db mysql $@
+docker-compose exec db mysql "$@"
 exit
 
 :CMDSCRIPT
