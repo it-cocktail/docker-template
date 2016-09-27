@@ -12,7 +12,6 @@ services:
     image: nazarpc/phpmyadmin
     depends_on:
       - db
-    restart: always
     links:
       - db:db
     environment:

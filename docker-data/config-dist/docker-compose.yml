@@ -4,23 +4,19 @@ services:
     image: mysql:5.5
     volumes:
       - "./docker-data/volumes/mysql:/var/lib/mysql"
-    restart: always
 
   phpmyadmin:
     image: nazarpc/phpmyadmin
     depends_on:
       - db
-    restart: always
     links:
       - db:db
     environment:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
-    restart: always
 
   mail:
     image: mailhog/mailhog
-    restart: always
 
   php:
     depends_on:
@@ -36,4 +32,3 @@ services:
       - "./docker-data/volumes/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "./docker-data/volumes/php/ssh:/ssh"
       - "./htdocs:/var/www/html"
-    restart: always
