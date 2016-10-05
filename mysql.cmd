@@ -2,7 +2,7 @@
 @ECHO OFF
 GOTO :CMDSCRIPT
 ::CMDLITERAL
-docker-compose exec db mysql "$@"
+docker-compose -f docker-compose.yml -f docker-compose.override.yml exec db mysql "$@"
 exit
 
 :CMDSCRIPT
@@ -11,7 +11,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker exec -it %CurrDirName%_db_1 mysql %*
+docker -f docker-compose.yml -f docker-compose.override.yml exec -it %CurrDirName%_db_1 mysql %*
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase

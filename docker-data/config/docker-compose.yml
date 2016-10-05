@@ -4,9 +4,11 @@ services:
     image: mysql:5.5
     volumes:
       - "./docker-data/volumes/mysql:/var/lib/mysql"
+    networks:
+      - "backend-tier"
 
   phpmyadmin:
-    image: nazarpc/phpmyadmin
+    image: phpmyadmin/phpmyadmin
     depends_on:
       - db
     links:
@@ -14,9 +16,18 @@ services:
     environment:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
+      VIRTUAL_PORT: 80
+    networks:
+      - "frontend-tier"
+      - "backend-tier"
 
   mail:
     image: mailhog/mailhog
+    environment:
+      VIRTUAL_PORT: 8025
+    networks:
+      - "frontend-tier"
+      - "backend-tier"
 
   php:
     depends_on:
@@ -32,3 +43,16 @@ services:
       - "./docker-data/volumes/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "./docker-data/volumes/php/ssh:/ssh"
       - "./htdocs:/var/www/html"
+    environment:
+      VIRTUAL_PORT: 80
+    networks:
+      - "frontend-tier"
+      - "backend-tier"
+
+networks:
+  frontend-tier:
+    external:
+      name: proxy
+  backend-tier:
+    driver: bridge
+

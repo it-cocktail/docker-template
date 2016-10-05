@@ -3,13 +3,15 @@ services:
   db:
     image: mysql:5.5
     volumes:
-      - "./docker-data/volumes-live/mysql:/var/lib/mysql"
+      - "../volumes-live/mysql:/var/lib/mysql"
     environment:
       MYSQL_ROOT_PASSWORD: 123456
     restart: always
+    networks:
+      - "backend-tier"
 
   phpmyadmin:
-    image: nazarpc/phpmyadmin
+    image: phpmyadmin/phpmyadmin
     depends_on:
       - db
     links:
@@ -18,8 +20,11 @@ services:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
       MYSQL_ROOT_PASSWORD: 123456
-    ports:
-      - "8081:80"
+      VIRTUAL_HOST: phpmyadmin.domain.tld
+      VIRTUAL_PORT: 80
+    networks:
+      - "frontend-tier"
+      - "backend-tier"
     restart: always
 
   mail:
@@ -29,6 +34,9 @@ services:
     environment:
       MYHOSTNAME: domain.tld
       MYNETWORKS: 0.0.0.0/0
+    networks:
+      - "frontend-tier"
+      - "backend-tier"
     restart: always
 
   php:
@@ -47,4 +55,17 @@ services:
       - "./htdocs:/var/www/html"
     ports:
       - "8080:80"
+    environment:
+      VIRTUAL_HOST: domain.tld, www.domain.tld
+      VIRTUAL_PORT: 80
+    networks:
+      - "frontend-tier"
+      - "backend-tier"
     restart: always
+
+networks:
+  frontend-tier:
+    external:
+      name: proxy
+  backend-tier:
+    driver: bridge

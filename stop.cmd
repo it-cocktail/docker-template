@@ -3,10 +3,10 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-docker-compose down
+docker-compose -f docker-compose.yml -f docker-compose.override.yml down
 exit
 
 :CMDSCRIPT
-docker-compose down
+docker-compose -f docker-compose.yml -f docker-compose.override.yml down
 EXIT /B
 

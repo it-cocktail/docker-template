@@ -1,0 +1,17 @@
+version: '2'
+services:
+  nginx:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    ports:
+      - "80:80"
+    networks:
+      - "frontend-tier"
+
+networks:
+  frontend-tier:
+    external:
+      name: proxy
+

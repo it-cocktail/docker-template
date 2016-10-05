@@ -4,9 +4,7 @@ SETLOCAL
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-if [ ! -f "$(pwd)/docker-compose.yml" ]; then
-    cp "$(pwd)/docker-data/config-dist/docker-compose.yml" "$(pwd)/docker-compose.yml" >/dev/null
-fi
+cp "$(pwd)/docker-data/config-dist/docker-compose.yml" "$(pwd)/docker-compose.yml" >/dev/null
 if [ ! -f "$(pwd)/docker-compose.override.yml" ]; then
     cp "$(pwd)/docker-data/config-dist/docker-compose.override.yml" "$(pwd)/docker-compose.override.yml" >/dev/null
 fi
@@ -19,21 +17,16 @@ fi
 printf "updating container images if needed ...\n"
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull 1>/dev/null 2>&1
 
+printf "updating proxy if needed ...\n"
+docker network create proxy 1>/dev/null 2>&1
+docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
+
 printf "\nstarting services ...\n"
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
-
-printf "\nApache is listening on: "
-docker-compose port php 80
-printf "PhpMyAdmin is listening on: "
-docker-compose port phpmyadmin 80
-printf "MailHog is listening on: "
-docker-compose port mail 8025
 exit
 
 :CMDSCRIPT
-IF NOT EXIST "%cd%\docker-compose.yml" (
-    COPY "%cd%\docker-data\config-dist\docker-compose.yml" "%cd%\docker-compose.yml" >NUL
-)
+COPY "%cd%\docker-data\config-dist\docker-compose.yml" "%cd%\docker-compose.yml" >NUL
 IF NOT EXIST "%cd%\docker-compose.override.yml" (
     COPY "%cd%\docker-data\config-dist\docker-compose.override.yml" "%cd%\docker-compose.override.yml" >NUL
 )
@@ -48,15 +41,12 @@ echo updating container images if needed ...
 docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull > nul 2>&1
 
 echo.
-echo starting services ...
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
+echo updating container images if needed ...
+docker network create proxy > nul 2>&1
+docker-compose -f docker-data/config/docker-compose.proxy.yml up -d > nul 2>&1
 
 echo.
-echo Apache is listening on:
-docker-compose port php 80
-echo PhpMyAdmin is listening on:
-docker-compose port phpmyadmin 80
-echo MailHog is listening on:
-docker-compose port mail 8025
+echo starting services ...
+docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
 EXIT /B
 

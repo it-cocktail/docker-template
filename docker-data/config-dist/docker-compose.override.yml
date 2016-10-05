@@ -7,14 +7,14 @@ services:
   phpmyadmin:
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-    ports:
-      - "8081:80"
+    environment:
+      VIRTUAL_HOST: phpmyadmin.template.local.orangehive.de
 
   mail:
-    ports:
-      - "8025:8025"
+    environment:
+      VIRTUAL_HOST: mailhog.template.local.orangehive.de
 
   php:
     image: fduarte42/docker-php:7.0
-    ports:
-      - "8001:80"
+    environment:
+      VIRTUAL_HOST: www.template.local.orangehive.de

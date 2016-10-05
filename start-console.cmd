@@ -3,7 +3,7 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-docker-compose exec php bash
+docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bash -l -c "sudo -u www-data bash"
 exit
 
 :CMDSCRIPT
@@ -12,7 +12,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker exec -it %CurrDirName%_php_1 bash
+docker -f docker-compose.yml -f docker-compose.override.yml exec -it %CurrDirName%_php_1 bash -l -c "sudo -u www-data bash"
 EXIT /B
 
 
