@@ -10,6 +10,18 @@ services:
     networks:
       - "frontend-tier"
 
+  ui:
+    image: uifd/ui-for-docker
+    container_name: ui-for-docker
+    depends_on:
+      - "nginx"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "9000:9000"
+    networks:
+      - "frontend-tier"
+
 networks:
   frontend-tier:
     external:
