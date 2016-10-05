@@ -13,7 +13,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker -f docker-compose.yml -f docker-compose.override.yml exec -it %CurrDirName%_php_1 bash -l -c "sudo -u www-data composer %*"
+docker exec -it %CurrDirName%_php_1 bash -l -c "sudo -u www-data composer %*"
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase

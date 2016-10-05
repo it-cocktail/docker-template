@@ -11,7 +11,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker -f docker-compose.yml -f docker-compose.override.yml exec -it %CurrDirName%_db_1 mysql %*
+docker exec -it %CurrDirName%_db_1 mysql %*
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase

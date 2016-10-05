@@ -3,7 +3,7 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 PARAMETER="$@"
-docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bash -l -c "php $PARAMETER"
+docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bash -l -c "sudo -u www-data php $PARAMETER"
 exit
 
 :CMDSCRIPT
@@ -12,7 +12,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker -f docker-compose.yml -f docker-compose.override.yml exec -it %CurrDirName%_php_1 bash -l -c "php %*"
+docker exec -it %CurrDirName%_php_1 bash -l -c "sudo -u www-data php %*"
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase
