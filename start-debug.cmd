@@ -43,7 +43,7 @@ docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-co
 echo.
 echo updating container images if needed ...
 docker network create proxy > nul 2>&1
-docker-compose -f docker-data/config/docker-compose.proxy.yml up -d > nul 2>&1
+docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1:2375 up -d > nul 2>&1
 
 echo.
 echo starting services ...
