@@ -4,7 +4,7 @@ GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 PARAMETER="$@"
-docker-compose -f docker-compose.yml -f docker-compose.override.yml exec db mysql "$PARAMETER"
+docker-compose -f docker-compose.yml -f docker-compose.override.yml exec db mysqldump "$PARAMETER"
 exit
 
 :CMDSCRIPT
@@ -13,7 +13,7 @@ call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-docker exec -it %CurrDirName%_db_1 mysql "%*"
+docker exec -it %CurrDirName%_db_1 mysqldump "%*"
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase
