@@ -47,10 +47,11 @@ services:
       - "../volumes/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
       - "../volumes/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "../volumes/php/ssh:/ssh"
-      - "../../htdocs:/var/www/html"
+      - "../../${HTDOCS_FOLDER}:/var/www/html"
     environment:
       VIRTUAL_PORT: 80
       VIRTUAL_HOST: www.${BASE_DOMAIN}
+      DOCUMENT_ROOT: ${DOCUMENT_ROOT}
     networks:
       - "frontend-tier"
       - "backend-tier"
