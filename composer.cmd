@@ -4,7 +4,7 @@ GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 PARAMETER="$@"
-docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bash -l -c "sudo -u www-data composer $PARAMETER"
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -l -c "sudo -u www-data composer $PARAMETER"
 exit
 
 :CMDSCRIPT

@@ -3,32 +3,38 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-cp "$(pwd)/docker-data/config/docker-compose.yml" "$(pwd)/docker-compose.yml" >/dev/null
-
 printf "updating container images if needed ...\n"
 docker-compose -f docker-compose.live.yml pull 1>/dev/null 2>&1
 
 printf "\nstarting services ...\n"
 docker-compose -f docker-data/config/docker-compose.live.yml up -d
-
-printf "\nApplication is listening on: "
-docker-compose port nginx 80
 exit
 
 :CMDSCRIPT
-
-COPY "%cd%\docker-data\config\docker-compose.yml" "%cd%\docker-compose.yml" >NUL
+for %%* in (.) do set CurrDirName=%%~nx*
+call:toLower CurrDirName
+set CurrDirName=%CurrDirName: =%
+set CurrDirName=%CurrDirName:-=%
 
 echo.
 echo updating container images if needed ...
-docker-compose -f docker-data/config/docker-compose.live.yml pull > nul 2>&1
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.live.yml pull > nul 2>&1
 
 echo.
 echo starting services ...
-docker-compose -f docker-compose.live.yml up -d
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.live.yml up -d
+EXIT /B
 
-echo.
-echo Application is listening on:
-docker-compose port nginx 80
+:toLower str -- converts uppercase character to lowercase
+::           -- str [in,out] - valref of string variable to be converted
+:$created 20060101 :$changed 20080219 :$categories StringManipulation
+:$source http://www.dostips.com
+if not defined %~1 EXIT /B
+for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
+            "J=j" "K=k" "L=l" "M=m" "N=n" "O=o" "P=p" "Q=q" "R=r"
+            "S=s" "T=t" "U=u" "V=v" "W=w" "X=x" "Y=y" "Z=z" "Ä=ä"
+            "Ö=ö" "Ü=ü") do (
+    call set %~1=%%%~1:%%~a%%
+)
 EXIT /B
 

@@ -3,7 +3,7 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-docker-compose -f docker-compose.yml -f docker-compose.override.yml exec php bash -l -c "sudo -u www-data bash"
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -l -c "sudo -u www-data bash"
 exit
 
 :CMDSCRIPT

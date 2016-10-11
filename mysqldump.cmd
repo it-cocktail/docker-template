@@ -4,7 +4,7 @@ GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 PARAMETER="$@"
-docker-compose -f docker-compose.yml -f docker-compose.override.yml exec db mysqldump "$PARAMETER"
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec db mysqldump "$PARAMETER"
 exit
 
 :CMDSCRIPT

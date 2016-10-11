@@ -30,7 +30,7 @@ services:
   mail:
     image: fduarte42/docker-postfix
     volumes:
-      - "./docker-data/volumes-live/postfix/log:/var/log"
+      - "../volumes-live/postfix/log:/var/log"
     environment:
       MYHOSTNAME: domain.tld
       MYNETWORKS: 0.0.0.0/0
@@ -49,12 +49,10 @@ services:
       - db:db
       - mail:mail
     volumes:
-      - "./docker-data/volumes-live/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
-      - "./docker-data/volumes-live/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
-      - "./docker-data/volumes-live/php/ssh:/ssh"
-      - "./htdocs:/var/www/html"
-    ports:
-      - "8080:80"
+      - "../volumes-live/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
+      - "../volumes-live/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
+      - "../volumes-live/php/ssh:/ssh"
+      - "../../htdocs:/var/www/html"
     environment:
       VIRTUAL_HOST: domain.tld, www.domain.tld
       VIRTUAL_PORT: 80

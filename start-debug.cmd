@@ -4,41 +4,43 @@ SETLOCAL
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-cp "$(pwd)/docker-data/config-dist/docker-compose.yml" "$(pwd)/docker-compose.yml" >/dev/null
-if [ ! -f "$(pwd)/docker-compose.override.yml" ]; then
-    cp "$(pwd)/docker-data/config-dist/docker-compose.override.yml" "$(pwd)/docker-compose.override.yml" >/dev/null
-fi
-if [ ! -f "$(pwd)/docker-compose.debug.yml" ]; then
-    LOCALIP=$(ipconfig getifaddr en0)
-    cp "$(pwd)/docker-data/config-dist/docker-compose.debug.yml" "$(pwd)/docker-compose.debug.yml" >/dev/null
-    sed -i '' "s/localhost/$LOCALIP/" "$(pwd)/docker-compose.debug.yml"
+if [ ! -f "$(pwd)/.env" ]; then
+    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    exit
 fi
 
+LOCALIP=$(ipconfig getifaddr en0)
+sed -i '' "s/LOCAL_DEBUG_IP=localhost/LOCAL_DEBUG_IP=$LOCALIP/" "$(pwd)/.env"
+
 printf "updating container images if needed ...\n"
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull 1>/dev/null 2>&1
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml pull 1>/dev/null 2>&1
 
 printf "updating proxy if needed ...\n"
 docker network create proxy 1>/dev/null 2>&1
 docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
 
 printf "\nstarting services ...\n"
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml up -d
 exit
 
 :CMDSCRIPT
-COPY "%cd%\docker-data\config-dist\docker-compose.yml" "%cd%\docker-compose.yml" >NUL
-IF NOT EXIST "%cd%\docker-compose.override.yml" (
-    COPY "%cd%\docker-data\config-dist\docker-compose.override.yml" "%cd%\docker-compose.override.yml" >NUL
+IF NOT EXIST "%cd%\.env" (
+    echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
+    EXIT /B
 )
-IF NOT EXIST "%cd%\docker-compose.debug.yml" (
-    FOR /F "tokens=4 delims= " %%i IN ('route print ^| find " 0.0.0.0"') DO (
-        powershell -Command "(gc '%cd%\docker-data\config-dist\docker-compose.debug.yml') -replace 'localhost', '%%i' | Set-Content '%cd%\docker-compose.debug.yml'"
-    )
+
+for %%* in (.) do set CurrDirName=%%~nx*
+call:toLower CurrDirName
+set CurrDirName=%CurrDirName: =%
+set CurrDirName=%CurrDirName:-=%
+
+FOR /F "tokens=4 delims= " %%i IN ('route print ^| find " 0.0.0.0"') DO (
+    powershell -Command "(gc '%cd%\.env') -replace 'LOCAL_DEBUG_IP=localhost', 'LOCAL_DEBUG_IP=%%i' | Set-Content '%cd%\.env'"
 )
 
 echo.
 echo updating container images if needed ...
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml pull > nul 2>&1
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml pull > nul 2>&1
 
 echo.
 echo updating container images if needed ...
@@ -47,6 +49,19 @@ docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1
 
 echo.
 echo starting services ...
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.debug.yml up -d
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml up -d
+EXIT /B
+
+:toLower str -- converts uppercase character to lowercase
+::           -- str [in,out] - valref of string variable to be converted
+:$created 20060101 :$changed 20080219 :$categories StringManipulation
+:$source http://www.dostips.com
+if not defined %~1 EXIT /B
+for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
+            "J=j" "K=k" "L=l" "M=m" "N=n" "O=o" "P=p" "Q=q" "R=r"
+            "S=s" "T=t" "U=u" "V=v" "W=w" "X=x" "Y=y" "Z=z" "Ä=ä"
+            "Ö=ö" "Ü=ü") do (
+    call set %~1=%%%~1:%%~a%%
+)
 EXIT /B
 
