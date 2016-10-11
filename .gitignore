@@ -1,5 +1,5 @@
 .idea
-.env
+#.env
 /docker-data/volumes/mysql/*
 /docker-data/volumes-live/mysql/*
 /docker-data/volumes-live/postfix/*
