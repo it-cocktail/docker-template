@@ -1,6 +1,5 @@
 :<<"::CMDLITERAL"
 @ECHO OFF
-SETLOCAL
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
@@ -9,8 +8,11 @@ if [ ! -f "$(pwd)/.env" ]; then
     exit
 fi
 
+# Read .env file
+eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
+
 LOCALIP=$(ipconfig getifaddr en0)
-sed -i '' "s/LOCAL_DEBUG_IP=localhost/LOCAL_DEBUG_IP=$LOCALIP/" "$(pwd)/.env"
+sed -i '' "s/LOCAL_DEBUG_IP=.*$/LOCAL_DEBUG_IP=$LOCALIP/" "$(pwd)/.env"
 
 printf "updating container images if needed ...\n"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml pull 1>/dev/null 2>&1
@@ -21,6 +23,15 @@ docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 
 
 printf "\nstarting services ...\n"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml up -d
+
+printf "\nopening default browser (with 5s delay) ...\n"
+sleep 5
+
+if [[ "80" == "$PROXY_PORT" ]]; then
+    open "http://www.$BASE_DOMAIN"
+else
+    open "http://www.$BASE_DOMAIN:$PROXY_PORT"
+fi
 exit
 
 :CMDSCRIPT
@@ -29,27 +40,43 @@ IF NOT EXIST "%cd%\.env" (
     EXIT /B
 )
 
+for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
+    call :startsWith "%%G" "#" || SET %%G=%%H
+)
+
 for %%* in (.) do set CurrDirName=%%~nx*
 call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
 set CurrDirName=%CurrDirName:-=%
 
-FOR /F "tokens=4 delims= " %%i IN ('route print ^| find " 0.0.0.0"') DO (
-    powershell -Command "(gc '%cd%\.env') -replace 'LOCAL_DEBUG_IP=localhost', 'LOCAL_DEBUG_IP=%%i' | Set-Content '%cd%\.env'"
+for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
+    set thisip=%%a
 )
+powershell -Command "(gc '%cd%\.env') -replace 'LOCAL_DEBUG_IP=.*$', 'LOCAL_DEBUG_IP=%thisip%' | Set-Content '%cd%\.env'"
+EXIT /B
 
 echo.
 echo updating container images if needed ...
 docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml pull > nul 2>&1
 
 echo.
-echo updating container images if needed ...
+echo updating proxy if needed ...
 docker network create proxy > nul 2>&1
 docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1:2375 up -d > nul 2>&1
 
 echo.
 echo starting services ...
 docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.debug.yml up -d
+
+echo.
+echo opening default browser (with 5s delay) ...
+timeout 5 > NUL
+
+if "%PROXY_PORT%" == "80" (
+    start http://www.%BASE_DOMAIN%
+) else (
+    start http://www.%BASE_DOMAIN%:%PROXY_PORT%
+)
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase
@@ -63,5 +90,17 @@ for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
             "Ö=ö" "Ü=ü") do (
     call set %~1=%%%~1:%%~a%%
 )
+EXIT /B
+
+:startsWith text string -- Tests if a text starts with a given string
+::                      -- [IN] text   - text to be searched
+::                      -- [IN] string - string to be tested for
+:$created 20080320 :$changed 20080320 :$categories StringOperation,Condition
+:$source http://www.dostips.com
+SETLOCAL
+set "txt=%~1"
+set "str=%~2"
+if defined str call set "s=%str%%%txt:*%str%=%%"
+if /i "%txt%" NEQ "%s%" set=2>NUL
 EXIT /B
 
