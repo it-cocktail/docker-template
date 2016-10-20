@@ -3,6 +3,14 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
+for PARAMETER in "$@"; do
+    case "$PARAMETER" in
+        "-d")   ADDITIONAL_CONFIGFILE="-f docker-data/config/docker-compose.debug.yml"
+                break
+                ;;
+    esac
+done
+
 if [ ! -f "$(pwd)/.env" ]; then
     echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
     exit
@@ -11,15 +19,19 @@ fi
 # Read .env file
 eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
 
+# Update debug IP
+LOCALIP=$(ipconfig getifaddr en0)
+sed -i '' "s/LOCAL_DEBUG_IP=.*$/LOCAL_DEBUG_IP=$LOCALIP/" "$(pwd)/.env"
+
 printf "updating container images if needed ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml pull 1>/dev/null 2>&1
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull 1>/dev/null 2>&1
 
 printf "updating proxy if needed ...\n"
 docker network create proxy 1>/dev/null 2>&1
 docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
 
 printf "\nstarting services ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml up -d
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
 printf "\nopening default browser (with 5s delay) ...\n"
 sleep 5
@@ -32,6 +44,15 @@ fi
 exit
 
 :CMDSCRIPT
+
+set ADDITIONAL_CONFIGFILE=
+for %%P in (%*) do (
+    SET PARAMETER=%%P
+    if "%PARAMETER%" == "-d" (
+        SET ADDITIONAL_CONFIGFILE=-f docker-data/config/docker-compose.debug.yml
+    )
+)
+
 IF NOT EXIST "%cd%\.env" (
     echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
     EXIT /B
@@ -41,6 +62,12 @@ for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
 
+set thisip=localhost
+for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
+    set thisip=%%a
+)
+powershell -Command "(gc '%cd%\.env') -replace 'LOCAL_DEBUG_IP=.*$', 'LOCAL_DEBUG_IP=%thisip%' | Set-Content '%cd%\.env'"
+
 for %%* in (.) do set CurrDirName=%%~nx*
 call:toLower CurrDirName
 set CurrDirName=%CurrDirName: =%
@@ -48,7 +75,7 @@ set CurrDirName=%CurrDirName:-=%
 
 echo.
 echo updating container images if needed ...
-docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml pull > nul 2>&1
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull 
 
 echo.
 echo updating proxy if needed ...
@@ -57,7 +84,7 @@ docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1
 
 echo.
 echo starting services ...
-docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml up -d
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
 
 echo.
 echo opening default browser (with 5s delay) ...
