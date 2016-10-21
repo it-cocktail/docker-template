@@ -5,41 +5,41 @@
 * Das aktulle Release unter Tags herunterladen (**nicht auschecken**)
 * Die Datei .env-dist nach .env kopieren und anpassen (**mindestens die `BASE_DOMAIN`**)
 
-Folgende Einstellungsmöglichkeiten gibt es:
+Folgende EinstellungsmÃ¶glichkeiten gibt es:
 
 * `PROXY_PORT`<br />
-    Der Port für den Proxy unter dem Web-Container erreichbar sind
+    Der Port fÃ¼r den Proxy unter dem Web-Container erreichbar sind
 
 * `UI_PORT`<br />
-    Der Port für die Docker-UI Managing Applikation.<br />
-    Erreichbar unter http://localhost:<UI_PORT>
+    Der Port fÃ¼r die Docker-UI Managing Applikation.<br />
+    Erreichbar unter http://localhost:[UI_PORT]
 
 * `PHP_VERSION`<br />
-    Die PHP-Version des Web-Containers. (5.5, 5.6, 7.0 und 7.1 sind möglich)
+    Die PHP-Version des Web-Containers. (5.5, 5.6, 7.0 und 7.1 sind mÃ¶glich)
 
 * `MYSQL_VERSION`<br />
-    Die MySQL-Version der Datenbank-Containers. (5.5 und 5.7 sind möglich)
+    Die MySQL-Version der Datenbank-Containers. (5.5 und 5.7 sind mÃ¶glich)
 
 * `MYSQL_ROOT_PASSWORD`<br />
     Das MySQL Root Password.
 
 * `BASE_DOMAIN`<br />
-    Die Basis-Domain für diese Application.<br />
+    Die Basis-Domain fÃ¼r diese Application.<br />
     Es gibt folgende Hosts:
     
-    - www.<BASE_DOMAIN>
-    - phpmyadmin.<BASE_DOMAIN>
-    - mailhog.<BASE_DOMAIN>
+    - www.[BASE_DOMAIN]
+    - phpmyadmin.[BASE_DOMAIN]
+    - mailhog.[BASE_DOMAIN]
 
 * `HTDOCS_FOLDER`<br />
     Der htdocs Folder in den die PHP-Sourcen liegen.
 
 * `DOCUMENT_ROOT`<br />
-    Der Apache Document-Root relativ zum `HTDOCS_FOLDER`. (z.B. `web` für typo3 oder `public` für zend)
+    Der Apache Document-Root relativ zum `HTDOCS_FOLDER`. (z.B. `web` fÃ¼r typo3 oder `public` fÃ¼r zend)
 
 ## Betrieb
 
-Alle Kommandos befinden sich im Verzeichnis `bin` und müssen aus dem Hauptverzeichnis aus aufgerufen werden.
+Alle Kommandos befinden sich im Verzeichnis `bin` und mÃ¼ssen aus dem Hauptverzeichnis aus aufgerufen werden.
 
 Folgende Kommandos gibt es:
 
@@ -53,7 +53,7 @@ Folgende Kommandos gibt es:
     Das Compass Konsolen Kommando.
 
 * `bin/composer.cmd` (OSX) / `bin\composer.cmd` (Win)<br />
-    Das Composer Konsolen Kommando. Es wird mit der eingestellten PHP Version ausgeführt.
+    Das Composer Konsolen Kommando. Es wird mit der eingestellten PHP Version ausgefÃ¼hrt.
 
 * `bin/console.cmd` (OSX) / `bin\console.cmd` (Win)<br />
     Mit diesem Kommando kommt man in die Bash des PHP Containers.
