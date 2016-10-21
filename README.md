@@ -49,7 +49,7 @@ Folgende Kommandos gibt es:
 * `bin/start.cmd` (OSX) / `bin\start.cmd` (Win)<br />
     Zum starten der Services. Mit dem Parameter `-d` wird die XDebug Extension aktiviert.
  
-* `bin/stop.cmd` (OSX) / `bin\start.cmd` (Win)<br />
+* `bin/stop.cmd` (OSX) / `bin\stop.cmd` (Win)<br />
     Zum Beenden der Services.
   
 * `bin/compass.cmd` (OSX) / `bin\compass.cmd` (Win)<br />
