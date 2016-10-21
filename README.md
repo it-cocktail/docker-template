@@ -25,6 +25,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
 
 * `BASE_DOMAIN`<br />
     Die Basis-Domain für diese Application.<br />
+    Im DNS ist gehen alle Einträge unterhalb von *.local.orangehive.de auf localhost und können automatisch ohne Hosts-Eintrag genutzt werden.
     Es gibt folgende Hosts:
     
     - w<span>ww</span>.[BASE_DOMAIN]
