@@ -19,10 +19,6 @@ fi
 # Read .env file
 eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
 
-# Update debug IP
-LOCALIP=$(ipconfig getifaddr en0)
-sed -i '' "s/LOCAL_DEBUG_IP=.*$/LOCAL_DEBUG_IP=$LOCALIP/" "$(pwd)/.env"
-
 printf "updating container images if needed ...\n"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull 1>/dev/null 2>&1
 
@@ -31,7 +27,7 @@ docker network create proxy 1>/dev/null 2>&1
 docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
 
 printf "\nstarting services ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
+export LOCAL_DEBUG_IP=$(ipconfig getifaddr en0) && docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
 printf "\nopening default browser (with 5s delay) ...\n"
 sleep 5
@@ -58,15 +54,14 @@ IF NOT EXIST "%cd%\.env" (
     EXIT /B
 )
 
+set LOCAL_DEBUG_IP=localhost
+for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
+    set LOCAL_DEBUG_IP=%%a
+)
+
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
-
-set thisip=localhost
-for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
-    set thisip=%%a
-)
-powershell -Command "(gc '%cd%\.env') -replace 'LOCAL_DEBUG_IP=.*$', 'LOCAL_DEBUG_IP=%thisip%' | Set-Content '%cd%\.env'"
 
 for %%* in (.) do set CurrDirName=%%~nx*
 call:toLower CurrDirName
@@ -75,7 +70,7 @@ set CurrDirName=%CurrDirName:-=%
 
 echo.
 echo updating container images if needed ...
-docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull 
+docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull > nul 2>&1
 
 echo.
 echo updating proxy if needed ...
