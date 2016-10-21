@@ -12,7 +12,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
 
 * `UI_PORT`<br />
     Der Port für die Docker-UI Managing Applikation.<br />
-    Erreichbar unter http://localhost:[UI_PORT]
+    Erreichbar unter ht<span>tp://</span>localhost:[UI_PORT]
 
 * `PHP_VERSION`<br />
     Die PHP-Version des Web-Containers. (5.5, 5.6, 7.0 und 7.1 sind möglich)
@@ -27,7 +27,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
     Die Basis-Domain für diese Application.<br />
     Es gibt folgende Hosts:
     
-    - www.[BASE_DOMAIN]
+    - w<span>ww</span>.[BASE_DOMAIN]
     - phpmyadmin.[BASE_DOMAIN]
     - mailhog.[BASE_DOMAIN]
 
