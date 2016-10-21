@@ -32,6 +32,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
     - w<span>ww</span>.[BASE_DOMAIN]
     - phpmyadmin.[BASE_DOMAIN]
     - mailhog.[BASE_DOMAIN]
+    <br />
 
 * `HTDOCS_FOLDER`<br />
     Der htdocs Folder in den die PHP-Sourcen liegen.
