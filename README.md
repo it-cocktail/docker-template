@@ -44,7 +44,7 @@ Alle Kommandos befinden sich im Verzeichnis `bin` und müssen aus dem Hauptverze
 Folgende Kommandos gibt es:
 
 * `bin/start.cmd` (OSX) / `bin\start.cmd` (Win)<br />
-    Zum starten der Services. Mit dem Paramter `-d` wird die XDebug Extension aktiviert.
+    Zum starten der Services. Mit dem Parameter `-d` wird die XDebug Extension aktiviert.
  
 * `bin/stop.cmd` (OSX) / `bin\start.cmd` (Win)<br />
     Zum Beenden der Services.
