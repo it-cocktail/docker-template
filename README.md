@@ -35,7 +35,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
     <br /><br />
 
 * `HTDOCS_FOLDER`<br />
-    Der htdocs Folder in den die PHP-Sourcen liegen.
+    Der htdocs Folder in dem die PHP-Sourcen liegen.
 
 * `DOCUMENT_ROOT`<br />
     Der Apache Document-Root relativ zum `HTDOCS_FOLDER`. (z.B. `web` für typo3 oder `public` für zend)
