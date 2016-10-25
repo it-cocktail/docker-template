@@ -3,18 +3,24 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-for PARAMETER in "$@"; do
-    case "$PARAMETER" in
-        "-d")   ADDITIONAL_CONFIGFILE="-f docker-data/config/docker-compose.debug.yml"
-                break
-                ;;
-    esac
-done
+OLDCWD=$(pwd)
+CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
+CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
+cd "$CWD"
 
 if [ ! -f "$(pwd)/.env" ]; then
     echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
     exit
 fi
+
+for PARAMETER in "$@"; do
+    case "$PARAMETER" in
+        "-d")   ADDITIONAL_CONFIGFILE="-f docker-data/config/docker-compose.debug.yml"
+                printf "***DEBUGMODE***\n\n"
+                break
+                ;;
+    esac
+done
 
 # Read .env file
 eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
@@ -37,15 +43,28 @@ if [[ "80" == "$PROXY_PORT" ]]; then
 else
     open "http://www.$BASE_DOMAIN:$PROXY_PORT"
 fi
+
+cd "$OLDCWD"
 exit
 
 :CMDSCRIPT
+
+SET OLDCWD=%cd%
+SET CWD=%~dp0
+SET CWD=%CWD:~0,-5%
+cd "%CWD%"
+
+IF NOT EXIST "%cd%\.env" (
+    echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
+    EXIT /B
+)
 
 set ADDITIONAL_CONFIGFILE=
 for %%P in (%*) do (
     SET PARAMETER=%%P
     if "%PARAMETER%" == "-d" (
         SET ADDITIONAL_CONFIGFILE=-f docker-data/config/docker-compose.debug.yml
+        echo ***DEBUGMODE***
     )
 )
 
@@ -63,14 +82,16 @@ for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
 
-for %%* in (.) do set CurrDirName=%%~nx*
-call:toLower CurrDirName
-set CurrDirName=%CurrDirName: =%
-set CurrDirName=%CurrDirName:-=%
+set Projectname=%~dp0
+set Projectname=%Projectname:~0,-5%
+for %%* in (%Projectname%) do set Projectname=%%~nx*
+set Projectname=%Projectname: =%
+set Projectname=%Projectname:-=%
+set Projectname=%Projectname:.=%
 
 echo.
 echo updating container images if needed ...
-docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull > nul 2>&1
+docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull > nul 2>&1
 
 echo.
 echo updating proxy if needed ...
@@ -79,7 +100,7 @@ docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1
 
 echo.
 echo starting services ...
-docker-compose -p "%CurrDirName%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
+docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
 
 echo.
 echo opening default browser (with 5s delay) ...
@@ -90,6 +111,8 @@ if "%PROXY_PORT%" == "80" (
 ) else (
     start http://www.%BASE_DOMAIN%:%PROXY_PORT%
 )
+
+CD "%OLDCWD%"
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase

@@ -3,17 +3,33 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
+OLDCWD=$(pwd)
+CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
+CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
+cd "$CWD"
+
 PARAMETER="$@"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -l -c "sudo -u www-data composer $PARAMETER"
+
+cd "$OLDCWD"
 exit
 
 :CMDSCRIPT
-for %%* in (.) do set CurrDirName=%%~nx*
-call:toLower CurrDirName
-set CurrDirName=%CurrDirName: =%
-set CurrDirName=%CurrDirName:-=%
+SET OLDCWD=%cd%
+SET CWD=%~dp0
+SET CWD=%CWD:~0,-5%
+cd "%CWD%"
 
-docker exec -it %CurrDirName%_php_1 bash -l -c "sudo -u www-data composer %*"
+set Projectname=%~dp0
+set Projectname=%Projectname:~0,-5%
+for %%* in (%Projectname%) do set Projectname=%%~nx*
+set Projectname=%Projectname: =%
+set Projectname=%Projectname:-=%
+set Projectname=%Projectname:.=%
+
+docker exec -it %Projectname%_php_1 bash -l -c "sudo -u www-data composer %*"
+
+CD "%OLDCWD%"
 EXIT /B
 
 :toLower str -- converts uppercase character to lowercase
