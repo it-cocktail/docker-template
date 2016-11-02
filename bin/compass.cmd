@@ -9,7 +9,7 @@ CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
 # Read .env file
-eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
+source "$(pwd)/.env"
 
 docker pull fduarte42/docker-compass
 docker run --rm -t -v "$CWD/$HTDOCS_FOLDER:/var/www/html" -u www-data fduarte42/docker-compass "$@"

@@ -14,7 +14,7 @@ if [ ! -f "$(pwd)/.env" ]; then
 fi
 
 # Read .env file
-eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
+source "$(pwd)/.env"
 
 for PARAMETER in "$@"; do
     case "$PARAMETER" in

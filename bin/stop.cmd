@@ -9,11 +9,6 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
-if [ ! -f "$(pwd)/.env" ]; then
-    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
-    exit
-fi
-
 docker-compose  -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml down
 
 cd "$OLDCWD"
