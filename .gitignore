@@ -1,6 +1,4 @@
 .idea
 .env
 /docker-data/volumes/mysql/*
-/docker-data/volumes-live/mysql/*
-/docker-data/volumes-live/postfix/*
-/htdocs/.sass-cache/
+/java-example/*.class

@@ -13,17 +13,29 @@ if [ ! -f "$(pwd)/.env" ]; then
     exit
 fi
 
-for PARAMETER in "$@"; do
-    case "$PARAMETER" in
-        "-d")   ADDITIONAL_CONFIGFILE="-f docker-data/config/docker-compose.debug.yml"
-                printf "***DEBUGMODE***\n\n"
-                break
-                ;;
-    esac
-done
-
 # Read .env file
 eval $(cat "$(pwd)/.env" | grep -v ^# | sed 's/^([^$])/export $1/')
+
+for PARAMETER in "$@"; do
+    case "$PARAMETER" in
+        "-d")
+            ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.debug.yml"
+            printf "***DEBUGMODE***\n\n"
+            ;;
+        "--with-java")
+            if [ -d "$JAVA_SRC_FOLDER" ]; then
+                ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.java.yml"
+                printf "***Java Service will be activated***\n\n"
+            else
+                echo "JAVA_SRC_FOLDER not defined"
+                exit 1
+            fi
+            ;;
+        *)
+            echo "invalid parameter $PARAMETER"
+            ;;
+    esac
+done
 
 printf "updating container images if needed ...\n"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull 1>/dev/null 2>&1
@@ -59,27 +71,31 @@ IF NOT EXIST "%cd%\.env" (
     EXIT /B
 )
 
+for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
+    call :startsWith "%%G" "#" || SET %%G=%%H
+)
+
 set ADDITIONAL_CONFIGFILE=
 for %%P in (%*) do (
     SET PARAMETER=%%P
     if "%PARAMETER%" == "-d" (
-        SET ADDITIONAL_CONFIGFILE=-f docker-data/config/docker-compose.debug.yml
+        SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.debug.yml
         echo ***DEBUGMODE***
+    ) else if "%PARAMETER%" == "--with-java" (
+        if exist %JAVA_SRC_FOLDER%\nul (
+            SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
+            echo ***Java Service will be activated***
+        ) else (
+            echo JAVA_SRC_FOLDER not defined
+        )
+    ) else (
+        echo invalid parameter %PARAMETER%
     )
-)
-
-IF NOT EXIST "%cd%\.env" (
-    echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
-    EXIT /B
 )
 
 set LOCAL_DEBUG_IP=localhost
 for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
     set LOCAL_DEBUG_IP=%%a
-)
-
-for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
-    call :startsWith "%%G" "#" || SET %%G=%%H
 )
 
 set Projectname=%~dp0
