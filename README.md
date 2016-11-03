@@ -31,7 +31,8 @@ Folgende Einstellungsmöglichkeiten gibt es:
     
     - w<span>ww</span>.[BASE_DOMAIN]
     - phpmyadmin.[BASE_DOMAIN]
-    - mailhog.[BASE_DOMAIN]
+    - mailhog.[BASE_DOMAIN] bzw. mail.[BASE_DOMAIN]
+    - java.[BASE_DOMAIN], falls der `JAVA_SRC_FOLDER` existiert
     <br /><br />
 
 * `SECONDARY_DOMAIN`<br />
