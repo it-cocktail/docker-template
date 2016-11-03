@@ -34,6 +34,10 @@ Folgende Einstellungsmöglichkeiten gibt es:
     - mailhog.[BASE_DOMAIN]
     <br /><br />
 
+* `SECONDARY_DOMAIN`<br />
+    Die zweite Domain für diese Application.<br />
+    Sie wird genauso eingerichtet wie die `BASE_DOMAIN`, ist aber zusätzlich aktiv.
+
 * `HTDOCS_FOLDER`<br />
     Der htdocs Folder in dem die PHP-Sourcen liegen.
 

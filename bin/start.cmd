@@ -15,6 +15,9 @@ fi
 
 # Read .env file
 source "$(pwd)/.env"
+if [ -z "$SECONDARY_DOMAIN" ]; then
+    SECONDARY_DOMAIN=$BASE_DOMAIN
+fi
 
 for PARAMETER in "$@"; do
     case "$PARAMETER" in
@@ -76,6 +79,9 @@ IF NOT EXIST "%cd%\.env" (
 
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
+)
+if [%SECONDARY_DOMAIN%] == [] (
+    SET SECONDARY_DOMAIN=%BASE_DOMAIN%
 )
 
 set ADDITIONAL_CONFIGFILE=
