@@ -3,10 +3,7 @@ services:
   java:
     image: fduarte42/openjdk
     volumes:
-      - "../../${JAVA_SRC_FOLDER}:/usr/src/app"
-    environment:
-      BUILD_CMD: "${JAVA_BUILD_CMD}"
-      EXEC_CMD: "${JAVA_EXEC_CMD}"
+      - "../../${JAVA_SRC_FOLDER}:/opt/app/src"
     ports:
       - "8080:80"
     networks:
