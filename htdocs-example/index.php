@@ -11,6 +11,17 @@
     <hr />
     <?php
 
+    if (!empty($_GET['java'])) {
+        $cp = curl_init();
+        $my_url = "http://java";
+        curl_setopt($cp, CURLOPT_URL, $my_url);
+        curl_setopt($cp, CURLOPT_RETURNTRANSFER, 1);
+        $result = curl_exec($cp);
+        curl_close($cp);
+        echo "<p style=\"text-align: center\">Java Result: $result</p>";
+    }
+    echo "<hr />";
+
     $sent = mail('t.duarte@orangehive.de', 'docker test', 'Das ist ein Mail-Test aus Docker heraus');
 
     if ($sent) {
