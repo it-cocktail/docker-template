@@ -23,19 +23,22 @@ for PARAMETER in "$@"; do
             printf "***DEBUGMODE***\n\n"
             ;;
         "--with-java")
-            if [ -d "$JAVA_SRC_FOLDER" ]; then
-                ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.java.yml"
-                printf "***Java Service will be activated***\n\n"
-            else
-                echo "JAVA_SRC_FOLDER not defined"
-                exit 1
-            fi
+            printf "--with-java is deprecated. Java will start automatically if JAVA_SRC_FOLDER exists."
             ;;
         *)
             echo "invalid parameter $PARAMETER"
             ;;
     esac
 done
+
+if [ -d "$JAVA_SRC_FOLDER" ]; then
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.java.yml"
+    printf "***Java Service will be activated***\n\n"
+else
+    echo "JAVA_SRC_FOLDER not defined"
+    exit 1
+fi
+
 
 printf "updating container images if needed ...\n"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull 1>/dev/null 2>&1
@@ -82,16 +85,19 @@ for %%P in (%*) do (
         SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.debug.yml
         echo ***DEBUGMODE***
     ) else if "%PARAMETER%" == "--with-java" (
-        if exist %JAVA_SRC_FOLDER%\nul (
-            SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
-            echo ***Java Service will be activated***
-        ) else (
-            echo JAVA_SRC_FOLDER not defined
-        )
+        echo --with-java is deprecated. Java will start automatically if JAVA_SRC_FOLDER exists.
     ) else (
         echo invalid parameter %PARAMETER%
     )
 )
+
+if exist %JAVA_SRC_FOLDER%\nul (
+    SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
+    echo ***Java Service will be activated***
+) else (
+    echo JAVA_SRC_FOLDER not defined
+)
+
 
 set LOCAL_DEBUG_IP=localhost
 for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (

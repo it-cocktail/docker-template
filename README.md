@@ -41,9 +41,8 @@ Folgende Einstellungsmöglichkeiten gibt es:
     Der Apache Document-Root relativ zum `HTDOCS_FOLDER`. (z.B. `web` für typo3 oder `public` für zend)
 
 * `JAVA_SRC_FOLDER`<br />
-    Das Verzeichnis in dem der Java-Quelltext liegt. (Wird nur berücksichtigt wenn der Parameter `--with-java` beim starten angegenen wird.)<br />
-    Es muss ein build.xml Ant script im Verzeichnis liegen mit den targets clean, build, dist und run.
-    Diese Targets werden in dieser Reihenfolge automatisch gestartet und es sollte der Port 80 zum binden von Diensten benutzt werden.
+    Das Verzeichnis in dem der Java-Quelltext liegt.<br />
+    Es muss ein build.xml Ant script im Verzeichnis liegen mit den target `run.
 
 ## Betrieb
 
@@ -52,7 +51,7 @@ Alle Kommandos befinden sich im Verzeichnis `bin` und müssen aus dem Hauptverze
 Folgende Kommandos gibt es:
 
 * `bin/start.cmd` (OSX) / `bin\start.cmd` (Win)<br />
-    Zum starten der Services. Mit dem Parameter `-d` wird die XDebug Extension aktiviert. Mit dem Parameter `--with-java` startet man den Java-Service mit.
+    Zum starten der Services. Mit dem Parameter `-d` wird die XDebug Extension aktiviert.
  
 * `bin/stop.cmd` (OSX) / `bin\stop.cmd` (Win)<br />
     Zum Beenden der Services.
