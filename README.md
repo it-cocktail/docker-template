@@ -47,7 +47,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
 
 * `JAVA_SRC_FOLDER`<br />
     Das Verzeichnis in dem der Java-Quelltext liegt.<br />
-    Es muss ein build.xml Ant script im Verzeichnis liegen mit den target `run.
+    Es muss ein build.xml Ant script im Verzeichnis liegen mit den target `run`.
 
 ## Betrieb
 
