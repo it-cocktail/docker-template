@@ -51,7 +51,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
 
 ## Betrieb
 
-Alle Kommandos befinden sich im Verzeichnis `bin` und müssen aus dem Hauptverzeichnis aus aufgerufen werden.
+Alle Kommandos befinden sich im Verzeichnis `bin`.
 
 Folgende Kommandos gibt es:
 
