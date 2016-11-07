@@ -26,7 +26,9 @@ set Projectname=%Projectname: =%
 set Projectname=%Projectname:-=%
 set Projectname=%Projectname:.=%
 
-docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml logs -f %1
+start docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml logs -f %1
 
 CD "%OLDCWD%"
+
+:EOF
 EXIT /B

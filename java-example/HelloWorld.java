@@ -20,7 +20,7 @@ public class HelloWorld {
 
   static class MyHandler implements HttpHandler {
     public void handle(HttpExchange t) throws IOException {
-      String response = "Hello world inside docker template";
+      String response = "Hello world inside docker template!";
       t.sendResponseHeaders(200, response.length());
       OutputStream os = t.getResponseBody();
       os.write(response.getBytes());

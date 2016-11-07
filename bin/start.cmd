@@ -53,13 +53,22 @@ docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 
 printf "\nstarting services ...\n"
 export LOCAL_DEBUG_IP=$(ipconfig getifaddr en0) && docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
-printf "\nopening default browser (with 5s delay) ...\n"
-sleep 5
-
 if [[ "80" == "$PROXY_PORT" ]]; then
-    open "http://www.$BASE_DOMAIN"
+    printf "\nServices:\n\n"
+    echo "http://www.$BASE_DOMAIN"
+    echo "http://phpmyadmin.$BASE_DOMAIN"
+    echo "http://mail.$BASE_DOMAIN"
+    if [ -d "$JAVA_SRC_FOLDER" ]; then
+        echo "http://java.$BASE_DOMAIN"
+    fi
 else
-    open "http://www.$BASE_DOMAIN:$PROXY_PORT"
+    printf "\nServices:\n\n"
+    echo "http://www.$BASE_DOMAIN:$PROXY_PORT"
+    echo "http://phpmyadmin.$BASE_DOMAIN:$PROXY_PORT"
+    echo "http://mail.$BASE_DOMAIN:$PROXY_PORT"
+    if [ -d "$JAVA_SRC_FOLDER" ]; then
+        echo "http://java.$BASE_DOMAIN:$PROXY_PORT"
+    fi
 fi
 
 cd "$OLDCWD"
@@ -131,13 +140,25 @@ echo starting services ...
 docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
 
 echo.
-echo opening default browser (with 5s delay) ...
-timeout 5 > NUL
 
 if "%PROXY_PORT%" == "80" (
-    start http://www.%BASE_DOMAIN%
+    echo Services:
+    echo.
+    echo http://www.%BASE_DOMAIN%
+    echo http://phpmyadmin.%BASE_DOMAIN%
+    echo http://mail.%BASE_DOMAIN%
+    if exist %JAVA_SRC_FOLDER%\nul (
+        echo http://java.%BASE_DOMAIN%
+    )
 ) else (
-    start http://www.%BASE_DOMAIN%:%PROXY_PORT%
+    echo Services:
+    echo.
+    echo http://www.%BASE_DOMAIN%:%PROXY_PORT%
+    echo http://phpmyadmin.%BASE_DOMAIN%:%PROXY_PORT%
+    echo http://mail.%BASE_DOMAIN%:%PROXY_PORT%
+    if exist %JAVA_SRC_FOLDER%\nul (
+        echo http://java.%BASE_DOMAIN%:%PROXY_PORT%
+    )
 )
 
 CD "%OLDCWD%"
