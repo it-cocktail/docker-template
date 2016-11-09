@@ -49,6 +49,10 @@ Folgende Einstellungsmöglichkeiten gibt es:
     Das Verzeichnis in dem der Java-Quelltext liegt.<br />
     Es muss ein build.xml Ant script im Verzeichnis liegen mit den target `run`.
 
+* `JAVA_ANT_OPTS`<br />
+    Optionen die an die JVM weitergegeben werden<br />
+    Beispiel: `-Xmx1024m -XX:MaxPermSize=256m`
+
 ## Betrieb
 
 Alle Kommandos befinden sich im Verzeichnis `bin`.
