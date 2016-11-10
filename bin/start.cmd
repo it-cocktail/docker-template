@@ -14,22 +14,29 @@ if [ ! -f "$(pwd)/.env" ]; then
 fi
 
 # Read .env file
-source "$(pwd)/.env"
+loadENV() {
+    local IFS=$'\n'
+    for VAR in $(cat .env | grep -v "^#"); do
+        eval $(echo "$VAR" | sed 's/=\(.*\)/="\1"/')
+    done
+}
+loadENV
+
 if [ -z "$SECONDARY_DOMAIN" ]; then
     SECONDARY_DOMAIN=$BASE_DOMAIN
 fi
 
+DEBUGMODE=0
 for PARAMETER in "$@"; do
     case "$PARAMETER" in
         "-d")
             ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.debug.yml"
+            DEBUGMODE=1
             printf "***DEBUGMODE***\n\n"
-            ;;
-        "--with-java")
-            printf "--with-java is deprecated. Java will start automatically if JAVA_SRC_FOLDER exists."
             ;;
         *)
             echo "invalid parameter $PARAMETER"
+            exit
             ;;
     esac
 done
@@ -38,13 +45,13 @@ if [ -d "$JAVA_SRC_FOLDER" ]; then
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.java.yml"
     printf "***Java Service will be activated***\n\n"
 else
-    echo "JAVA_SRC_FOLDER not defined"
+    echo "JAVA_SRC_FOLDER not found"
     exit 1
 fi
 
 
 printf "updating container images if needed ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull 1>/dev/null 2>&1
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull
 
 printf "updating proxy if needed ...\n"
 docker network create proxy 1>/dev/null 2>&1
@@ -58,7 +65,7 @@ if [[ "80" == "$PROXY_PORT" ]]; then
     echo "http://www.$BASE_DOMAIN"
     echo "http://phpmyadmin.$BASE_DOMAIN"
     echo "http://mail.$BASE_DOMAIN"
-    if [ -d "$JAVA_SRC_FOLDER" ]; then
+    if [ -d "$JAVA_SRC_FOLDER" ] && [ "$DEBUGMODE" == "1" ]; then
         echo "http://java.$BASE_DOMAIN"
     fi
 else
@@ -66,7 +73,7 @@ else
     echo "http://www.$BASE_DOMAIN:$PROXY_PORT"
     echo "http://phpmyadmin.$BASE_DOMAIN:$PROXY_PORT"
     echo "http://mail.$BASE_DOMAIN:$PROXY_PORT"
-    if [ -d "$JAVA_SRC_FOLDER" ]; then
+    if [ -d "$JAVA_SRC_FOLDER" ] && [ "$DEBUGMODE" == "1" ]; then
         echo "http://java.$BASE_DOMAIN:$PROXY_PORT"
     fi
 fi
@@ -94,15 +101,18 @@ if [%SECONDARY_DOMAIN%] == [] (
 )
 
 set ADDITIONAL_CONFIGFILE=
+set DEGUBGMODE=0
 for %%P in (%*) do (
     SET PARAMETER=%%P
     if "%PARAMETER%" == "-d" (
         SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.debug.yml
         echo ***DEBUGMODE***
+        set DEBUGMODE=1
     ) else if "%PARAMETER%" == "--with-java" (
         echo --with-java is deprecated. Java will start automatically if JAVA_SRC_FOLDER exists.
     ) else (
         echo invalid parameter %PARAMETER%
+        EXIT /B
     )
 )
 
@@ -110,7 +120,7 @@ if exist %JAVA_SRC_FOLDER%\nul (
     SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
     echo ***Java Service will be activated***
 ) else (
-    echo JAVA_SRC_FOLDER not defined
+    echo JAVA_SRC_FOLDER not found
 )
 
 
@@ -128,7 +138,7 @@ set Projectname=%Projectname:.=%
 
 echo.
 echo updating container images if needed ...
-docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull > nul 2>&1
+docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull
 
 echo.
 echo updating proxy if needed ...
@@ -148,7 +158,9 @@ if "%PROXY_PORT%" == "80" (
     echo http://phpmyadmin.%BASE_DOMAIN%
     echo http://mail.%BASE_DOMAIN%
     if exist %JAVA_SRC_FOLDER%\nul (
-        echo http://java.%BASE_DOMAIN%
+        if "%DEBUGMODE%"=="1" (
+            echo http://java.%BASE_DOMAIN%
+        )
     )
 ) else (
     echo Services:
@@ -157,7 +169,9 @@ if "%PROXY_PORT%" == "80" (
     echo http://phpmyadmin.%BASE_DOMAIN%:%PROXY_PORT%
     echo http://mail.%BASE_DOMAIN%:%PROXY_PORT%
     if exist %JAVA_SRC_FOLDER%\nul (
-        echo http://java.%BASE_DOMAIN%:%PROXY_PORT%
+        if "%DEBUGMODE%"=="1" (
+            echo http://java.%BASE_DOMAIN%:%PROXY_PORT%
+        )
     )
 )
 

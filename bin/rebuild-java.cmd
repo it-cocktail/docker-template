@@ -14,7 +14,14 @@ if [ ! -f "$(pwd)/.env" ]; then
 fi
 
 # Read .env file
-source "$(pwd)/.env"
+loadENV() {
+    local IFS=$'\n'
+    for VAR in $(cat .env | grep -v "^#"); do
+        eval $(echo "$VAR" | sed 's/=\(.*\)/="\1"/')
+    done
+}
+loadENV
+
 if [ -z "$SECONDARY_DOMAIN" ]; then
     SECONDARY_DOMAIN=$BASE_DOMAIN
 fi

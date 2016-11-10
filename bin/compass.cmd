@@ -9,7 +9,13 @@ CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
 # Read .env file
-source "$(pwd)/.env"
+loadENV() {
+    local IFS=$'\n'
+    for VAR in $(cat .env | grep -v "^#"); do
+        eval $(echo "$VAR" | sed 's/=\(.*\)/="\1"/')
+    done
+}
+loadENV
 
 docker pull fduarte42/docker-compass
 docker run --rm -t -v "$CWD/$HTDOCS_FOLDER:/var/www/html" -u www-data fduarte42/docker-compass "$@"

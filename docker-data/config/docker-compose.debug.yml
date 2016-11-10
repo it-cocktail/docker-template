@@ -1,5 +1,10 @@
 version: '2'
 services:
+  java:
+    environment:
+      VIRTUAL_PORT: 80
+      VIRTUAL_HOST: java.${BASE_DOMAIN}, java.${SECONDARY_DOMAIN}
+
   php:
     image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
     environment:

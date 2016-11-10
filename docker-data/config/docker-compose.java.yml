@@ -1,18 +1,23 @@
 version: '2'
 services:
   java:
+    depends_on:
+      - db
+    links:
+      - db:db
     image: fduarte42/openjdk
     volumes:
       - "../../${JAVA_SRC_FOLDER}:/opt/app/src"
     environment:
-      VIRTUAL_PORT: 80
-      VIRTUAL_HOST: java.${BASE_DOMAIN}, java.${SECONDARY_DOMAIN}
       ANT_OPTS: ${JAVA_ANT_OPTS}
       JAVA_OPTS: ${JAVA_OPTS}
     networks:
       - "backend-tier"
       - "frontend-tier"
+
   php:
+    depends_on:
+      - java
     links:
       - java:java
 
