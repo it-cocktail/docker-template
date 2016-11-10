@@ -51,7 +51,7 @@ fi
 
 
 printf "updating container images if needed ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
 
 printf "updating proxy if needed ...\n"
 docker network create proxy 1>/dev/null 2>&1
@@ -138,7 +138,7 @@ set Projectname=%Projectname:.=%
 
 echo.
 echo updating container images if needed ...
-docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull
+docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull 2>&1 | findstr /R "^Status ^Pulling"
 
 echo.
 echo updating proxy if needed ...
