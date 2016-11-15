@@ -9,7 +9,7 @@ CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
 PARAMETER="$@"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -l -c "sudo -u www-data php $PARAMETER"
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -c "sudo -u www-data bash -l -c 'php $PARAMETER'"
 
 cd "$OLDCWD"
 exit
@@ -27,7 +27,7 @@ set Projectname=%Projectname: =%
 set Projectname=%Projectname:-=%
 set Projectname=%Projectname:.=%
 
-docker exec -it %Projectname%_php_1 bash -l -c "sudo -u www-data php %*"
+docker exec -it %Projectname%_php_1 bash -c "sudo -u www-data bash -l -c 'php %*'"
 
 CD "%OLDCWD%"
 EXIT /B

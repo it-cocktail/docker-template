@@ -8,7 +8,7 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -l -c "sudo -u www-data bash"
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -c "sudo -u www-data bash"
 
 cd "$OLDCWD"
 exit
@@ -26,7 +26,7 @@ set Projectname=%Projectname: =%
 set Projectname=%Projectname:-=%
 set Projectname=%Projectname:.=%
 
-docker exec -it %Projectname%_php_1 bash -l -c "sudo -u www-data bash"
+docker exec -it %Projectname%_php_1 bash -c "sudo -u www-data bash"
 
 CD "%OLDCWD%"
 EXIT /B
