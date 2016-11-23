@@ -47,6 +47,7 @@ services:
       - "../volumes/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
       - "../volumes/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "../volumes/php/ssh:/ssh"
+      - "../volumes/php/cron/crontab:/tmp/crontab"
       - "../../${HTDOCS_FOLDER}:/var/www/html"
     environment:
       VIRTUAL_PORT: 80
