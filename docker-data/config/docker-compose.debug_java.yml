@@ -1,0 +1,6 @@
+version: '2'
+services:
+  java:
+    environment:
+      VIRTUAL_PORT: 80
+      VIRTUAL_HOST: java.${BASE_DOMAIN}

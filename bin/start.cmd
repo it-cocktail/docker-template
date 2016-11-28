@@ -23,7 +23,13 @@ loadENV() {
 loadENV
 
 if [ -z "$SECONDARY_DOMAIN" ]; then
-    SECONDARY_DOMAIN=$BASE_DOMAIN
+    export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
+    export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
+    export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN"
+else
+    export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mail.$SECONDARY_DOMAIN, mailhog.$BASE_DOMAIN, mailhog.$SECONDARY_DOMAIN"
+    export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, www.$SECONDARY_DOMAIN, $BASE_DOMAIN, $SECONDARY_DOMAIN"
+    export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN, phpmyadmin.$SECONDARY_DOMAIN"
 fi
 
 DEBUGMODE=0
@@ -32,6 +38,7 @@ for PARAMETER in "$@"; do
         "-d")
             ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.debug.yml"
             DEBUGMODE=1
+            export LOCAL_DEBUG_IP=$(ipconfig getifaddr en0)
             printf "***DEBUGMODE***\n\n"
             ;;
         *)
@@ -41,14 +48,20 @@ for PARAMETER in "$@"; do
     esac
 done
 
-if [ -d "$JAVA_SRC_FOLDER" ]; then
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.java.yml"
-    printf "***Java Service will be activated***\n\n"
-else
-    echo "JAVA_SRC_FOLDER not found"
-    exit 1
+JAVADEBUGENABLED=0
+if [ ! -z "$JAVA_SRC_FOLDER" ]; then
+    if [ -d "$JAVA_SRC_FOLDER" ]; then
+        ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.java.yml"
+        if [ "$DEBUGMODE" == "1" ]; then
+            ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.debug_java.yml"
+            JAVADEBUGENABLED=1
+        fi
+        printf "***Java Service will be activated***\n\n"
+    else
+        echo "JAVA_SRC_FOLDER not found"
+        exit 1
+    fi
 fi
-
 
 printf "updating container images if needed ...\n"
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
@@ -58,14 +71,14 @@ docker network create proxy 1>/dev/null 2>&1
 docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
 
 printf "\nstarting services ...\n"
-export LOCAL_DEBUG_IP=$(ipconfig getifaddr en0) && docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
 if [[ "80" == "$PROXY_PORT" ]]; then
     printf "\nServices:\n\n"
     echo "http://www.$BASE_DOMAIN"
     echo "http://phpmyadmin.$BASE_DOMAIN"
     echo "http://mail.$BASE_DOMAIN"
-    if [ -d "$JAVA_SRC_FOLDER" ] && [ "$DEBUGMODE" == "1" ]; then
+    if [ "$JAVADEBUGENABLED" == "1" ]; then
         echo "http://java.$BASE_DOMAIN"
     fi
 else
@@ -73,7 +86,7 @@ else
     echo "http://www.$BASE_DOMAIN:$PROXY_PORT"
     echo "http://phpmyadmin.$BASE_DOMAIN:$PROXY_PORT"
     echo "http://mail.$BASE_DOMAIN:$PROXY_PORT"
-    if [ -d "$JAVA_SRC_FOLDER" ] && [ "$DEBUGMODE" == "1" ]; then
+    if [ "$JAVADEBUGENABLED" == "1" ]; then
         echo "http://java.$BASE_DOMAIN:$PROXY_PORT"
     fi
 fi
@@ -96,8 +109,15 @@ IF NOT EXIST "%cd%\.env" (
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
+
 if [%SECONDARY_DOMAIN%] == [] (
-    SET SECONDARY_DOMAIN=%BASE_DOMAIN%
+    set MAIL_VIRTUAL_HOST=mail.%BASE_DOMAIN%, mailhog.%BASE_DOMAIN%
+    set PHP_VIRTUAL_HOST=www.%BASE_DOMAIN%, %BASE_DOMAIN%
+    set PHPMYADMIN_VIRTUAL_HOST=phpmyadmin.%BASE_DOMAIN%
+) else (
+    set MAIL_VIRTUAL_HOST=mail.%BASE_DOMAIN%, mail.%SECONDARY_DOMAIN%, mailhog.%BASE_DOMAIN%, mailhog.%SECONDARY_DOMAIN%
+    set PHP_VIRTUAL_HOST=www.%BASE_DOMAIN%, www.%SECONDARY_DOMAIN%, %BASE_DOMAIN%, %SECONDARY_DOMAIN%
+    set PHPMYADMIN_VIRTUAL_HOST=phpmyadmin.%BASE_DOMAIN%, phpmyadmin.%SECONDARY_DOMAIN%
 )
 
 set ADDITIONAL_CONFIGFILE=
@@ -108,21 +128,26 @@ for %%P in (%*) do (
         SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.debug.yml
         echo ***DEBUGMODE***
         set DEBUGMODE=1
-    ) else if "%PARAMETER%" == "--with-java" (
-        echo --with-java is deprecated. Java will start automatically if JAVA_SRC_FOLDER exists.
     ) else (
         echo invalid parameter %PARAMETER%
         EXIT /B
     )
 )
 
-if exist %JAVA_SRC_FOLDER%\nul (
-    SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
-    echo ***Java Service will be activated***
-) else (
-    echo JAVA_SRC_FOLDER not found
+set JAVADEBUGENABLED=0
+if [%JAVA_SRC_FOLDER%] NEQ [] (
+    if exist %JAVA_SRC_FOLDER%\nul (
+        if "%DEBUGMODE%"=="1" (
+            SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml -f docker-data/config/docker-compose.debug_java.yml
+            set JAVADEBUGENABLED=1
+        ) else (
+            SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
+        )
+        echo ***Java Service will be activated***
+    ) else (
+        echo JAVA_SRC_FOLDER not found
+    )
 )
-
 
 set LOCAL_DEBUG_IP=localhost
 for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
@@ -157,10 +182,8 @@ if "%PROXY_PORT%" == "80" (
     echo http://www.%BASE_DOMAIN%
     echo http://phpmyadmin.%BASE_DOMAIN%
     echo http://mail.%BASE_DOMAIN%
-    if exist %JAVA_SRC_FOLDER%\nul (
-        if "%DEBUGMODE%"=="1" (
-            echo http://java.%BASE_DOMAIN%
-        )
+    if "%JAVADEBUGENABLED%"=="1" (
+        echo http://java.%BASE_DOMAIN%
     )
 ) else (
     echo Services:
@@ -168,10 +191,8 @@ if "%PROXY_PORT%" == "80" (
     echo http://www.%BASE_DOMAIN%:%PROXY_PORT%
     echo http://phpmyadmin.%BASE_DOMAIN%:%PROXY_PORT%
     echo http://mail.%BASE_DOMAIN%:%PROXY_PORT%
-    if exist %JAVA_SRC_FOLDER%\nul (
-        if "%DEBUGMODE%"=="1" (
-            echo http://java.%BASE_DOMAIN%:%PROXY_PORT%
-        )
+    if "%JAVADEBUGENABLED%"=="1" (
+        echo http://java.%BASE_DOMAIN%:%PROXY_PORT%
     )
 )
 

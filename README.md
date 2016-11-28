@@ -81,6 +81,9 @@ Folgende Kommandos gibt es:
 * `bin/mysql.cmd` (OSX) / `bin\mysql.cmd` (Win)<br />
     Das mysql Konsolen Kommando.
 
+* `bin/mysqlconsole.cmd` (OSX) / `bin\mysqlconsole.cmd` (Win)<br />
+    Das mysqldump Konsolen Kommando.
+
 * `bin/mysqldump.cmd` (OSX) / `bin\mysqldump.cmd` (Win)<br />
     Das mysqldump Konsolen Kommando.
 
@@ -91,3 +94,12 @@ Folgende Kommandos gibt es:
     Anzeigen von Logausgaben der Dienste. Ohne Parameter werden alle Dienst angezeigt. Man kann den Dienstnamen als Parameter übergeben und bekommt dann nur dies Logausgaben angezeigt.<br />
     <br />
     Folgende Dienste sind möglich: db, phpmyadmin, mail, php, java
+
+* `bin/update-crontab.cmd` (OSX) / `bin\update-crontab.cmd` (Win)<br />
+    Wenn das crontab-File geändert wurde, dann können die Änderungen mit diesem Kommand aktiviert werden
+
+* `bin/rebuild-java.cmd` (OSX) / `bin\rebuild-java.cmd` (Win)<br />
+    Das rebuilden des java-Services kann mit diesem Kommando gestartet werden.
+
+### Cronjobs
+Im Verzeichnis `docker-data/volumes/php/cron/crontab` liegt die crontab in der Cronjobs eingerichtet werden können.

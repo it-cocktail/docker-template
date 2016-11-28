@@ -3,31 +3,21 @@
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
-
 OLDCWD=$(pwd)
 CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
-export MAIL_VIRTUAL_HOST=
-export PHP_VIRTUAL_HOST=
-export PHPMYADMIN_VIRTUAL_HOST=
-
-docker-compose  -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml down
+docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec db bash
 
 cd "$OLDCWD"
 exit
 
 :CMDSCRIPT
-
 SET OLDCWD=%cd%
 SET CWD=%~dp0
 SET CWD=%CWD:~0,-5%
 cd "%CWD%"
-
-set MAIL_VIRTUAL_HOST=_
-set PHP_VIRTUAL_HOST=_
-set PHPMYADMIN_VIRTUAL_HOST=_
 
 set Projectname=%~dp0
 set Projectname=%Projectname:~0,-5%
@@ -36,11 +26,11 @@ set Projectname=%Projectname: =%
 set Projectname=%Projectname:-=%
 set Projectname=%Projectname:.=%
 
-docker-compose  -p "%Projectname%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml down
+docker exec -it %Projectname%_db_1 bash
 
 CD "%OLDCWD%"
-
 EXIT /B
+
 
 :toLower str -- converts uppercase character to lowercase
 ::           -- str [in,out] - valref of string variable to be converted
@@ -54,4 +44,3 @@ for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
     call set %~1=%%%~1:%%~a%%
 )
 EXIT /B
-
