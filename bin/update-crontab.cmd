@@ -8,6 +8,10 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
+export MAIL_VIRTUAL_HOST=
+export PHP_VIRTUAL_HOST=
+export PHPMYADMIN_VIRTUAL_HOST=
+
 if [ ! -f "$(pwd)/.env" ]; then
     echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
     exit
@@ -22,10 +26,6 @@ loadENV() {
 }
 loadENV
 
-if [ -z "$SECONDARY_DOMAIN" ]; then
-    SECONDARY_DOMAIN=$BASE_DOMAIN
-fi
-
 docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php crontab -u www-data /tmp/crontab
 
 cd "$OLDCWD"
@@ -36,6 +36,10 @@ SET OLDCWD=%cd%
 SET CWD=%~dp0
 SET CWD=%CWD:~0,-5%
 cd "%CWD%"
+
+set MAIL_VIRTUAL_HOST=_
+set PHP_VIRTUAL_HOST=_
+set PHPMYADMIN_VIRTUAL_HOST=_
 
 set Projectname=%~dp0
 set Projectname=%Projectname:~0,-5%
@@ -52,10 +56,6 @@ IF NOT EXIST "%cd%\.env" (
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
-if [%SECONDARY_DOMAIN%] == [] (
-    SET SECONDARY_DOMAIN=%BASE_DOMAIN%
-)
-
 docker exec -it %Projectname%_php_1 crontab -u www-data /tmp/crontab
 
 CD "%OLDCWD%"

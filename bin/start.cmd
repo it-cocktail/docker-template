@@ -38,8 +38,12 @@ for PARAMETER in "$@"; do
         "-d")
             ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.debug.yml"
             DEBUGMODE=1
-            export LOCAL_DEBUG_IP=$(ipconfig getifaddr en0)
-            printf "***DEBUGMODE***\n\n"
+            LOCAL_DEBUG_IP=$(ipconfig getifaddr en0)
+            if [ -z $LOCAL_DEBUG_IP ]; then
+                LOCAL_DEBUG_IP=$(ipconfig getifaddr en1)
+            fi
+            export LOCAL_DEBUG_IP
+            printf "***DEBUGMODE*** LOCAL_DEBUG_IP: $LOCAL_DEBUG_IP\n\n"
             ;;
         *)
             echo "invalid parameter $PARAMETER"
@@ -55,6 +59,7 @@ if [ ! -z "$JAVA_SRC_FOLDER" ]; then
         if [ "$DEBUGMODE" == "1" ]; then
             ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.debug_java.yml"
             JAVADEBUGENABLED=1
+            export JAVA_VIRTUAL_HOST="java.$BASE_DOMAIN, java.$SECONDARY_DOMAIN"
         fi
         printf "***Java Service will be activated***\n\n"
     else
@@ -120,13 +125,18 @@ if [%SECONDARY_DOMAIN%] == [] (
     set PHPMYADMIN_VIRTUAL_HOST=phpmyadmin.%BASE_DOMAIN%, phpmyadmin.%SECONDARY_DOMAIN%
 )
 
+
 set ADDITIONAL_CONFIGFILE=
 set DEGUBGMODE=0
 for %%P in (%*) do (
     SET PARAMETER=%%P
     if "%PARAMETER%" == "-d" (
         SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.debug.yml
-        echo ***DEBUGMODE***
+        set LOCAL_DEBUG_IP=localhost
+        for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
+            set LOCAL_DEBUG_IP=%%a
+        )
+        echo ***DEBUGMODE*** LOCAL_DEBUG_IP: %LOCAL_DEBUG_IP%
         set DEBUGMODE=1
     ) else (
         echo invalid parameter %PARAMETER%
@@ -140,6 +150,7 @@ if [%JAVA_SRC_FOLDER%] NEQ [] (
         if "%DEBUGMODE%"=="1" (
             SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml -f docker-data/config/docker-compose.debug_java.yml
             set JAVADEBUGENABLED=1
+            set JAVA_VIRTUAL_HOST=java.%BASE_DOMAIN%, java.%SECONDARY_DOMAIN%
         ) else (
             SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.java.yml
         )
@@ -147,11 +158,6 @@ if [%JAVA_SRC_FOLDER%] NEQ [] (
     ) else (
         echo JAVA_SRC_FOLDER not found
     )
-)
-
-set LOCAL_DEBUG_IP=localhost
-for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
-    set LOCAL_DEBUG_IP=%%a
 )
 
 set Projectname=%~dp0

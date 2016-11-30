@@ -46,7 +46,7 @@ services:
       - db:db
       - mail:mail
     volumes:
-      - "../volumes/php/php.ini:/usr/local/etc/php/conf.d/custom.ini"
+      - "../volumes/php/php.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
       - "../volumes/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
       - "../volumes/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "../volumes/php/ssh:/ssh"
