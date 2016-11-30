@@ -23,6 +23,7 @@ loadENV() {
 loadENV
 
 if [ -z "$SECONDARY_DOMAIN" ]; then
+    export SECONDARY_DOMAIN=$BASE_DOMAIN
     export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
     export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
     export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN"
@@ -116,6 +117,7 @@ for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
 )
 
 if [%SECONDARY_DOMAIN%] == [] (
+    set SECONDARY_DOMAIN=%BASE_DOMAIN%
     set MAIL_VIRTUAL_HOST=mail.%BASE_DOMAIN%, mailhog.%BASE_DOMAIN%
     set PHP_VIRTUAL_HOST=www.%BASE_DOMAIN%, %BASE_DOMAIN%
     set PHPMYADMIN_VIRTUAL_HOST=phpmyadmin.%BASE_DOMAIN%
