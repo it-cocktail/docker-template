@@ -16,7 +16,7 @@ services:
     links:
       - db:db
     volumes:
-      - "../volumes/phpmyadmin/php.ini:/etc/php5/conf.d/custom.ini"
+      - "../volumes/phpmyadmin/php.ini:/etc/php5/conf.d/zzz-custom.ini"
     environment:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
