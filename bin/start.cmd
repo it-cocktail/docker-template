@@ -125,17 +125,13 @@ if [%SECONDARY_DOMAIN%] == [] (
     set PHPMYADMIN_VIRTUAL_HOST=phpmyadmin.%BASE_DOMAIN%, phpmyadmin.%SECONDARY_DOMAIN%
 )
 
-
 set ADDITIONAL_CONFIGFILE=
 set DEGUBGMODE=0
 for %%P in (%*) do (
     SET PARAMETER=%%P
     if "%PARAMETER%" == "-d" (
         SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.debug.yml
-        set LOCAL_DEBUG_IP=localhost
-        for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
-            set LOCAL_DEBUG_IP=%%a
-        )
+        call :getLocalDebugIp
         echo ***DEBUGMODE*** LOCAL_DEBUG_IP: %LOCAL_DEBUG_IP%
         set DEBUGMODE=1
     ) else (
@@ -228,5 +224,12 @@ set "txt=%~1"
 set "str=%~2"
 if defined str call set "s=%str%%%txt:*%str%=%%"
 if /i "%txt%" NEQ "%s%" set=2>NUL
+EXIT /B
+
+:getLocalDebugIp
+set LOCAL_DEBUG_IP=localhost
+for /f "delims=[] tokens=2" %%a in ('ping -4 %computername% -n 1 ^| findstr "["') do (
+    set LOCAL_DEBUG_IP=%%a
+)
 EXIT /B
 
