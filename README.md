@@ -15,7 +15,7 @@ Folgende Einstellungsmöglichkeiten gibt es:
     Erreichbar unter ht<span>tp://</span>localhost:[UI_PORT]
 
 * `PHP_VERSION`<br />
-    Die PHP-Version des Web-Containers. (5.5, 5.6, 7.0 und 7.1 sind möglich)
+    Die PHP-Version des Web-Containers. (5.3, 5.5, 5.6, 7.0 und 7.1 sind möglich)
 
 * `MYSQL_VERSION`<br />
     Die MySQL-Version der Datenbank-Containers. (5.5 und 5.7 sind möglich)
