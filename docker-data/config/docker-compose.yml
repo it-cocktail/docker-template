@@ -3,7 +3,8 @@ services:
   db:
     image: 'mysql:${MYSQL_VERSION}'
     volumes:
-      - "../volumes/mysql:/var/lib/mysql"
+      - "../volumes/mysql/data:/var/lib/mysql"
+      - "../volumes/mysql/config/my.cnf:/etc/mysql/conf.d/custom.cnf"
     environment:
           MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
