@@ -11,6 +11,11 @@ services:
       - "${PROXY_PORT}:80"
     networks:
       - "frontend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "nginx-proxy"
 
   ui:
     image: uifd/ui-for-docker
@@ -22,6 +27,11 @@ services:
       VIRTUAL_HOST: docker-ui.local.orangehive.de
     networks:
       - "frontend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "docker-ui"
 
   graylog:
     image: graylog2/allinone
@@ -31,6 +41,7 @@ services:
     environment:
       VIRTUAL_PORT: 9000
       VIRTUAL_HOST: graylog.local.orangehive.de
+      GRAYLOG_PASSWORD: ${GRAYLOG_ADMIN_PASSWORD}
     networks:
       - "frontend-tier"
 
