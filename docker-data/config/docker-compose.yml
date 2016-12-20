@@ -9,6 +9,11 @@ services:
           MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
       - "backend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "mysql"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -27,6 +32,11 @@ services:
     networks:
       - "frontend-tier"
       - "backend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "phpmyadmin"
 
   mail:
     image: mailhog/mailhog
@@ -36,6 +46,11 @@ services:
     networks:
       - "frontend-tier"
       - "backend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "mail"
 
   php:
     depends_on:
@@ -67,6 +82,11 @@ services:
     networks:
       - "frontend-tier"
       - "backend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "php"
 
 networks:
   frontend-tier:

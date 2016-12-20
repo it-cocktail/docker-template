@@ -6,6 +6,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
       - "../volumes/nginx/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
+      - "../volumes/nginx/docker-ui.local.orangehive.de_location:/etc/nginx/vhost.d/docker-ui.local.orangehive.de_location:ro"
     ports:
       - "${PROXY_PORT}:80"
     networks:
@@ -14,12 +15,22 @@ services:
   ui:
     image: uifd/ui-for-docker
     container_name: ui-for-docker
-    depends_on:
-      - "nginx"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      VIRTUAL_PORT: 9000
+      VIRTUAL_HOST: docker-ui.local.orangehive.de
+    networks:
+      - "frontend-tier"
+
+  graylog:
+    image: graylog2/allinone
+    container_name: graylog
     ports:
-      - "${UI_PORT}:9000"
+      - "12201:12201/udp"
+    environment:
+      VIRTUAL_PORT: 9000
+      VIRTUAL_HOST: graylog.local.orangehive.de
     networks:
       - "frontend-tier"
 

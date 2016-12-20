@@ -10,10 +10,6 @@ Folgende Einstellungsmöglichkeiten gibt es:
 * `PROXY_PORT`<br />
     Der Port für den Proxy unter dem Web-Container erreichbar sind
 
-* `UI_PORT`<br />
-    Der Port für die Docker-UI Managing Applikation.<br />
-    Erreichbar unter ht<span>tp://</span>localhost:[UI_PORT]
-
 * `PHP_VERSION`<br />
     Die PHP-Version des Web-Containers. (5.3, 5.5, 5.6, 7.0 und 7.1 sind möglich)
 
