@@ -8,7 +8,7 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
-LATEST_TAG=$(git ls-remote --tags git@gitlab.orangehive.de:orangehive/docker-template.git | grep -v "\^" | awk -F/ ' { print $3 }' | sed "s/release-//" | sort -t. -s -k 1,1n -k 2,2n -k 3,3n | tail -n 1)
+LATEST_TAG=$(git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | awk -F/ ' { print $3 }' | sed "s/release-//" | sort -t. -s -k 1,1n -k 2,2n -k 3,3n | tail -n 1)
 
 if [ -e "$CWD/.version" ]; then
     CURRENT_VERSION=$(cat "$CWD/.version")
@@ -45,11 +45,72 @@ cd "$OLDCWD"
 exit
 
 :CMDSCRIPT
+setlocal
+
 SET OLDCWD=%cd%
 SET CWD=%~dp0
 SET CWD=%CWD:~0,-5%
 cd "%CWD%"
 
+for /f "usebackq delims=" %%v in (`powershell.exe "& { (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1 }"`) DO set "LATEST_TAG=%%v"
+rem for /f "usebackq delims=" %%v in (`powershell.exe "& { (git ls-remote --tags --refs http://t.duarte@gitlab.orangehive.de/orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1 }"`) DO set "LATEST_TAG=%%v"
+
+
+
+if exist "%cd%/.version" (
+    set /p CURRENT_VERSION=<"%cd%/.version"
+) else (
+    set CURRENT_VERSION=unknown
+)
+
+if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
+    echo already on latest version ^(%LATEST_TAG%^)
+) else (
+    set choice=n
+    for /f "usebackq delims=" %%c in (`powershell.exe "& { (read-host 'Upgrade from %CURRENT_VERSION% to %LATEST_TAG%? [y/N] ' | Out-String).toString() }"`) DO (
+        if "%%c" == "y" goto Yes
+        if "%%c" == "Y" goto Yes
+
+        echo not upgrading
+
+        Goto End
+
+        :Yes
+        echo updating...
+        mkdir "%cd%\.docker-update"
+        git clone --branch release-%LATEST_TAG% git@gitlab.orangehive.de:orangehive/docker-template.git "%cd%\.docker-update" > nul 2>&1
+        rem git clone --branch release-%LATEST_TAG% http://t.duarte@gitlab.orangehive.de/orangehive/docker-template.git "%cd%\.docker-update" > nul 2>&1
+        rmdir /s /q "%cd%\.docker-update\.git"
+        robocopy "%cd%\.docker-update" "%cd%" *.* /s /e > nul 2>&1
+
+        echo %LATEST_TAG%>"%cd%\.version"
+
+        rmdir /s /q "%CWD%\.docker-update"
+
+        :End
+        echo done
+    )
+
+)
+
+
+
 
 CD "%OLDCWD%"
+
+endlocal
+EXIT /B
+
+
+:toLower str -- converts uppercase character to lowercase
+::           -- str [in,out] - valref of string variable to be converted
+:$created 20060101 :$changed 20080219 :$categories StringManipulation
+:$source http://www.dostips.com
+if not defined %~1 EXIT /B
+for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
+            "J=j" "K=k" "L=l" "M=m" "N=n" "O=o" "P=p" "Q=q" "R=r"
+            "S=s" "T=t" "U=u" "V=v" "W=w" "X=x" "Y=y" "Z=z" "Ä=ä"
+            "Ö=ö" "Ü=ü") do (
+    call set %~1=%%%~1:%%~a%%
+)
 EXIT /B
