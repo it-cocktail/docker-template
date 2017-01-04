@@ -27,6 +27,14 @@ else
             cd "$CWD/.docker-update"
             git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git . 1> /dev/null 2>&1
             rm -Rf .git
+
+            if [ -d "$CWD/docker-data/volumes/mysql" ] && [ ! -d "$CWD/docker-data/volumes/mysql/data" ]; then
+                echo "moving old MySQL volume"
+                mkdir "$CWD/docker-data/volumes/mysql/data"
+                cd "$CWD/docker-data/volumes/mysql"
+                mv * data 1> /dev/null 2>&1
+                cd "$CWD/.docker-update"
+            fi
             cp -R * "$CWD"
             cp -R .[^.]* "$CWD"
 
@@ -53,9 +61,6 @@ SET CWD=%CWD:~0,-5%
 cd "%CWD%"
 
 for /f "usebackq delims=" %%v in (`powershell.exe "& { (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1 }"`) DO set "LATEST_TAG=%%v"
-rem for /f "usebackq delims=" %%v in (`powershell.exe "& { (git ls-remote --tags --refs http://t.duarte@gitlab.orangehive.de/orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1 }"`) DO set "LATEST_TAG=%%v"
-
-
 
 if exist "%cd%/.version" (
     set /p CURRENT_VERSION=<"%cd%/.version"
@@ -79,9 +84,16 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
         echo updating...
         mkdir "%cd%\.docker-update"
         git clone --branch release-%LATEST_TAG% git@gitlab.orangehive.de:orangehive/docker-template.git "%cd%\.docker-update" > nul 2>&1
-        rem git clone --branch release-%LATEST_TAG% http://t.duarte@gitlab.orangehive.de/orangehive/docker-template.git "%cd%\.docker-update" > nul 2>&1
         rmdir /s /q "%cd%\.docker-update\.git"
-        robocopy "%cd%\.docker-update" "%cd%" *.* /s /e > nul 2>&1
+
+        if exist %cd%\docker-data\volumes\mysql\nul (
+            if not exist %cd%\docker-data\volumes\mysql\data\nul (
+                echo moving old MySQL volume
+                mkdir "%cd%\docker-data\volumes\mysql\data"
+                robocopy "%cd%\docker-data\volumes\mysql" "%cd%\docker-data\volumes\mysql\data" *.* /s /e /move /xd "%cd%\docker-data\volumes\mysql\data" > nul 2>&1
+            )
+        )
+        robocopy "%cd%\.docker-update" "%cd%" *.* /s /e  > nul 2>&1
 
         echo %LATEST_TAG%>"%cd%\.version"
 
@@ -92,9 +104,6 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
     )
 
 )
-
-
-
 
 CD "%OLDCWD%"
 
