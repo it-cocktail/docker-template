@@ -2,4 +2,3 @@
 .env
 /docker-data/volumes/mysql/data/*
 /docker-data.backup*
-.version
