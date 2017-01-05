@@ -25,13 +25,14 @@ else
             echo "checking out release $LATEST_TAG"
             mkdir "$CWD/.docker-update"
             cd "$CWD/.docker-update"
-            git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git . 1> /dev/null 2>&1
+            git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git .
             rm -Rf .git
 
             if [ -d "$CWD/docker-data" ]; then
                 echo "backuping docker-data"
                 isodt=$(date "+%Y-%m-%dT%H:%M:%S")
-                cp -r "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
+                mv "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
+                mkdir "$CWD/docker-data"
             fi
 
             if [ -d "$CWD/docker-data/volumes/mysql" ] && [ ! -d "$CWD/docker-data/volumes/mysql/data" ]; then
@@ -50,6 +51,7 @@ else
 
             rm -Rf "$CWD/.docker-update"
             echo "done"
+            echo Please compare your .env file with the .env-dist file to add new or changed entries
             ;;
         *)
             echo "not updating"
@@ -91,13 +93,14 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
         :Yes
         echo checking out release %LATEST_TAG%
         mkdir "%cd%\.docker-update"
-        git clone --branch release-%LATEST_TAG% git@gitlab.orangehive.de:orangehive/docker-template.git "%cd%\.docker-update" > nul 2>&1
+        git clone --branch release-%LATEST_TAG% git@gitlab.orangehive.de:orangehive/docker-template.git "%cd%\.docker-update"
         rmdir /s /q "%cd%\.docker-update\.git"
 
         if exist %cd%\docker-data\nul (
             echo backuping docker-data
             for /f "usebackq delims=" %%d in (`powershell.exe "& { (get-date -format 'yyyyMMddTHHmmss' | Out-String).toString() }"`) DO (
-                robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e > nul 2>&1
+                robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e /move > nul 2>&1
+                mkdir "%cd%\docker-data"
             )
         )
 
@@ -113,6 +116,8 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
         (robocopy "%cd%\.docker-update" "%cd%" *.* /s /e > nul 2>&1) ^& (
             rmdir /s /q "%cd%\.docker-update"
             echo %LATEST_TAG%>"%cd%\.version"
+            echo .
+            echo Please compare your .env file with the .env-dist file to add new or changed entries
             goto End
         )
 
