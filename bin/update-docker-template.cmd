@@ -22,11 +22,17 @@ else
     read -r -p "Upgrade from $CURRENT_VERSION to $LATEST_TAG? [y/N] " response
     case $response in
         [yY][eE][sS]|[yY])
-            echo updating...
+            echo "checking out release $LATEST_TAG"
             mkdir "$CWD/.docker-update"
             cd "$CWD/.docker-update"
             git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git . 1> /dev/null 2>&1
             rm -Rf .git
+
+            if [ -d "$CWD/docker-data" ]; then
+                echo "backuping docker-data"
+                isodt=$(date "+%Y-%m-%dT%H:%M:%S")
+                cp -r "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
+            fi
 
             if [ -d "$CWD/docker-data/volumes/mysql" ] && [ ! -d "$CWD/docker-data/volumes/mysql/data" ]; then
                 echo "moving old MySQL volume"
@@ -35,6 +41,8 @@ else
                 mv * data 1> /dev/null 2>&1
                 cd "$CWD/.docker-update"
             fi
+
+            echo "updating"
             cp -R * "$CWD"
             cp -R .[^.]* "$CWD"
 
@@ -81,10 +89,17 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
         Goto End
 
         :Yes
-        echo updating...
+        echo checking out release %LATEST_TAG%
         mkdir "%cd%\.docker-update"
         git clone --branch release-%LATEST_TAG% git@gitlab.orangehive.de:orangehive/docker-template.git "%cd%\.docker-update" > nul 2>&1
         rmdir /s /q "%cd%\.docker-update\.git"
+
+        if exist %cd%\docker-data\nul (
+            echo backuping docker-data
+            for /f "usebackq delims=" %%d in (`powershell.exe "& { (get-date -format 'yyyyMMddTHHmmss' | Out-String).toString() }"`) DO (
+                robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e > nul 2>&1
+            )
+        )
 
         if exist %cd%\docker-data\volumes\mysql\nul (
             if not exist %cd%\docker-data\volumes\mysql\data\nul (
@@ -93,11 +108,13 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
                 robocopy "%cd%\docker-data\volumes\mysql" "%cd%\docker-data\volumes\mysql\data" *.* /s /e /move /xd "%cd%\docker-data\volumes\mysql\data" > nul 2>&1
             )
         )
-        robocopy "%cd%\.docker-update" "%cd%" *.* /s /e  > nul 2>&1
 
-        echo %LATEST_TAG%>"%cd%\.version"
-
-        rmdir /s /q "%CWD%\.docker-update"
+        echo updating
+        (robocopy "%cd%\.docker-update" "%cd%" *.* /s /e > nul 2>&1) ^& (
+            rmdir /s /q "%cd%\.docker-update"
+            echo %LATEST_TAG%>"%cd%\.version"
+            goto End
+        )
 
         :End
         echo done
