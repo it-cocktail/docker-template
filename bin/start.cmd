@@ -173,7 +173,7 @@ IF EXIST "%cd%\docker-data\config\docker-compose.custom.yml" (
     SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.custom.yml"
 )
 
-if [%PROJECTNAME%] EQ [] (
+if [%PROJECTNAME%] EQU [] (
     set PROJECTNAME=%~dp0
     set PROJECTNAME=%PROJECTNAME:~0,-5%
     for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*

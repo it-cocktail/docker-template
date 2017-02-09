@@ -62,7 +62,7 @@ set MAIL_VIRTUAL_HOST=_
 set PHP_VIRTUAL_HOST=_
 set PHPMYADMIN_VIRTUAL_HOST=_
 
-if [%PROJECTNAME%] EQ [] (
+if [%PROJECTNAME%] EQU [] (
     set PROJECTNAME=%~dp0
     set PROJECTNAME=%PROJECTNAME:~0,-5%
     for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
@@ -96,4 +96,17 @@ for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
     call set %~1=%%%~1:%%~a%%
 )
 EXIT /B
+
+:startsWith text string -- Tests if a text starts with a given string
+::                      -- [IN] text   - text to be searched
+::                      -- [IN] string - string to be tested for
+:$created 20080320 :$changed 20080320 :$categories StringOperation,Condition
+:$source http://www.dostips.com
+SETLOCAL
+set "txt=%~1"
+set "str=%~2"
+if defined str call set "s=%str%%%txt:*%str%=%%"
+if /i "%txt%" NEQ "%s%" set=2>NUL
+EXIT /B
+
 

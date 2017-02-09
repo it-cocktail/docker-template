@@ -2,6 +2,9 @@ version: '2'
 services:
   search:
     image: fduarte42/docker-elasticsearch
+    environment:
+          VIRTUAL_PORT: 9200
+          VIRTUAL_HOST: ${BASE_DOMAIN}
     networks:
       - "backend-tier"
     logging:
