@@ -28,19 +28,23 @@ else
             git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git .
             rm -Rf .git
 
-            if [ -d "$CWD/docker-data" ]; then
-                echo "backuping docker-data"
-                isodt=$(date "+%Y-%m-%dT%H:%M:%S")
-                mv "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
-                mkdir "$CWD/docker-data"
-            fi
-
             if [ -d "$CWD/docker-data/volumes/mysql" ] && [ ! -d "$CWD/docker-data/volumes/mysql/data" ]; then
                 echo "moving old MySQL volume"
                 mkdir "$CWD/docker-data/volumes/mysql/data"
                 cd "$CWD/docker-data/volumes/mysql"
                 mv * data 1> /dev/null 2>&1
                 cd "$CWD/.docker-update"
+            fi
+
+            if [ -d "$CWD/docker-data" ]; then
+                echo "backuping docker-data"
+                isodt=$(date "+%Y-%m-%dT%H:%M:%S")
+                mv "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
+                mkdir "$CWD/docker-data"
+
+                if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ ! -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
+                    cp "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql/data"
+                fi
             fi
 
             echo "updating"
@@ -96,19 +100,26 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
         git clone --branch release-%LATEST_TAG% git@gitlab.orangehive.de:orangehive/docker-template.git "%cd%\.docker-update"
         rmdir /s /q "%cd%\.docker-update\.git"
 
-        if exist %cd%\docker-data\nul (
-            echo backuping docker-data
-            for /f "usebackq delims=" %%d in (`powershell.exe "& { (get-date -format 'yyyyMMddTHHmmss' | Out-String).toString() }"`) DO (
-                robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e /move > nul 2>&1
-                mkdir "%cd%\docker-data"
-            )
-        )
-
         if exist %cd%\docker-data\volumes\mysql\nul (
             if not exist %cd%\docker-data\volumes\mysql\data\nul (
                 echo moving old MySQL volume
                 mkdir "%cd%\docker-data\volumes\mysql\data"
                 robocopy "%cd%\docker-data\volumes\mysql" "%cd%\docker-data\volumes\mysql\data" *.* /s /e /move /xd "%cd%\docker-data\volumes\mysql\data" > nul 2>&1
+            )
+        )
+
+        if exist %cd%\docker-data\nul (
+            echo backuping docker-data
+            for /f "usebackq delims=" %%d in (`powershell.exe "& { (get-date -format 'yyyyMMddTHHmmss' | Out-String).toString() }"`) DO (
+                robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e /move > nul 2>&1
+                mkdir "%cd%\docker-data"
+
+                if exist %cd%\docker-data\volumes\mysql\nul (
+                    if not exist %cd%\docker-data\volumes\mysql\data\nul (
+                        robocopy "%cd%\docker-data.backup_$isodt\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
+                    )
+                )
+
             )
         )
 
