@@ -43,7 +43,7 @@ else
                 mkdir "$CWD/docker-data"
 
                 if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
-                    cp "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql/data"
+                    cp -R "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql/data"
                 fi
             fi
 
