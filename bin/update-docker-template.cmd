@@ -117,12 +117,12 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
                 robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e /move > nul 2>&1
                 mkdir "%cd%\docker-data"
 
-                if exist %cd%\docker-data\volumes\mysql\nul (
+                if exist %cd%\docker-data.backup_%%d\volumes\mysql\nul (
                     if exist %cd%\docker-data\volumes\mysql\data\nul (
                         mkdir "%cd%\docker-data\volumes"
                         mkdir "%cd%\docker-data\volumes\mysql"
                         mkdir "%cd%\docker-data\volumes\mysql\data"
-                        robocopy "%cd%\docker-data.backup_$isodt\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
+                        robocopy "%cd%\docker-data.backup.backup_%%d\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
                     )
                 )
 
