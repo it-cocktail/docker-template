@@ -43,7 +43,9 @@ else
                 mkdir "$CWD/docker-data"
 
                 if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
-                    cp -R "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql/data"
+                    mkdir "$CWD/docker-data/volumes"
+                    mkdir "$CWD/docker-data/volumes/mysql"
+                    cp -R "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql"
                 fi
             fi
 
@@ -55,7 +57,7 @@ else
 
             rm -Rf "$CWD/.docker-update"
             echo "done"
-            echo Please compare your .env file with the .env-dist file to add new or changed entries
+            echo "Please compare your .env file with the .env-dist file to add new or changed entries"
             ;;
         *)
             echo "not updating"
@@ -65,6 +67,7 @@ fi
 
 cd "$OLDCWD"
 exit
+
 
 :CMDSCRIPT
 setlocal
@@ -116,6 +119,9 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
 
                 if exist %cd%\docker-data\volumes\mysql\nul (
                     if exist %cd%\docker-data\volumes\mysql\data\nul (
+                        mkdir "%cd%\docker-data\volumes"
+                        mkdir "%cd%\docker-data\volumes\mysql"
+                        mkdir "%cd%\docker-data\volumes\mysql\data"
                         robocopy "%cd%\docker-data.backup_$isodt\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
                     )
                 )
