@@ -61,6 +61,7 @@ services:
     links:
       - db:db
       - mail:mail
+      - mail:mailhog
     volumes:
       - "../volumes/php/php.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
       - "../volumes/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"

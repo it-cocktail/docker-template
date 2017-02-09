@@ -42,7 +42,7 @@ else
                 mv "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
                 mkdir "$CWD/docker-data"
 
-                if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ ! -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
+                if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
                     cp "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql/data"
                 fi
             fi
@@ -115,7 +115,7 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
                 mkdir "%cd%\docker-data"
 
                 if exist %cd%\docker-data\volumes\mysql\nul (
-                    if not exist %cd%\docker-data\volumes\mysql\data\nul (
+                    if exist %cd%\docker-data\volumes\mysql\data\nul (
                         robocopy "%cd%\docker-data.backup_$isodt\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
                     )
                 )
