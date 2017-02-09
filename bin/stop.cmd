@@ -9,11 +9,35 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
+if [ ! -f "$(pwd)/.env" ]; then
+    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    exit
+fi
+
+# Read .env file
+loadENV() {
+    local IFS=$'\n'
+    for VAR in $(cat .env | grep -v "^#"); do
+        eval $(echo "$VAR" | sed 's/=\(.*\)/="\1"/')
+    done
+}
+loadENV
+
 export MAIL_VIRTUAL_HOST=
 export PHP_VIRTUAL_HOST=
 export PHPMYADMIN_VIRTUAL_HOST=
 
-docker-compose  -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml down
+ADDITIONAL_CONFIGFILE=""
+if [ -f "$(pwd)/docker-data/config/docker-compose.custom.yml" ]; then
+    echo "adding custom configuration"
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.custom.yml"
+fi
+
+if [ -z "$PROJECTNAME" ]; then
+    PROJECTNAME="${PWD##*/}"
+fi
+
+docker-compose  -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml $ADDITIONAL_CONFIGFILE down
 
 cd "$OLDCWD"
 exit
@@ -25,18 +49,36 @@ SET CWD=%~dp0
 SET CWD=%CWD:~0,-5%
 cd "%CWD%"
 
+IF NOT EXIST "%cd%\.env" (
+    echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
+    EXIT /B
+)
+
+for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
+    call :startsWith "%%G" "#" || SET %%G=%%H
+)
+
 set MAIL_VIRTUAL_HOST=_
 set PHP_VIRTUAL_HOST=_
 set PHPMYADMIN_VIRTUAL_HOST=_
 
-set Projectname=%~dp0
-set Projectname=%Projectname:~0,-5%
-for %%* in (%Projectname%) do set Projectname=%%~nx*
-set Projectname=%Projectname: =%
-set Projectname=%Projectname:-=%
-set Projectname=%Projectname:.=%
+if [%PROJECTNAME%] EQ [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+)
 
-docker-compose  -p "%Projectname%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml down
+SET ADDITIONAL_CONFIGFILE=
+IF EXIST "%cd%\docker-data\config\docker-compose.custom.yml" (
+    echo adding custom configuration
+    SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.custom.yml"
+)
+
+
+docker-compose  -p "%PROJECTNAME%" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml %ADDITIONAL_CONFIGFILE% down
 
 CD "%OLDCWD%"
 

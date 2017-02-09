@@ -1,0 +1,18 @@
+version: '2'
+services:
+  search:
+    image: fduarte42/docker-elasticsearch
+    networks:
+      - "backend-tier"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "search"
+
+  php:
+    depends_on:
+      - search
+    links:
+      - search:search
+

@@ -34,6 +34,7 @@ else
 fi
 
 DEBUGMODE=0
+ADDITIONAL_CONFIGFILE=""
 for PARAMETER in "$@"; do
     case "$PARAMETER" in
         "-d")
@@ -69,15 +70,24 @@ if [ ! -z "$JAVA_SRC_FOLDER" ]; then
     fi
 fi
 
+if [ -f "$(pwd)/docker-data/config/docker-compose.custom.yml" ]; then
+    echo "adding custom configuration"
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.custom.yml"
+fi
+
+if [ -z "$PROJECTNAME" ]; then
+    PROJECTNAME="${PWD##*/}"
+fi
+
 printf "updating container images if needed ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
+docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
 
 printf "updating proxy if needed ...\n"
 docker network create proxy 1>/dev/null 2>&1
 docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
 
 printf "\nstarting services ...\n"
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
+docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
 if [[ "80" == "$PROXY_PORT" ]]; then
     printf "\nServices:\n\n"
@@ -158,16 +168,24 @@ if [%JAVA_SRC_FOLDER%] NEQ [] (
     )
 )
 
-set Projectname=%~dp0
-set Projectname=%Projectname:~0,-5%
-for %%* in (%Projectname%) do set Projectname=%%~nx*
-set Projectname=%Projectname: =%
-set Projectname=%Projectname:-=%
-set Projectname=%Projectname:.=%
+IF EXIST "%cd%\docker-data\config\docker-compose.custom.yml" (
+    echo adding custom configuration
+    SET ADDITIONAL_CONFIGFILE=%ADDITIONAL_CONFIGFILE% -f docker-data/config/docker-compose.custom.yml"
+)
+
+if [%PROJECTNAME%] EQ [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+)
+
 
 echo.
 echo updating container images if needed ...
-docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull 2>&1 | findstr /R "^Status ^Pulling"
+docker-compose -p "%PROJECTNAME%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull 2>&1 | findstr /R "^Status ^Pulling"
 
 echo.
 echo updating proxy if needed ...
@@ -176,7 +194,7 @@ docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1
 
 echo.
 echo starting services ...
-docker-compose -p "%Projectname%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
+docker-compose -p "%PROJECTNAME%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
 
 echo.
 
