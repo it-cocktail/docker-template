@@ -8,6 +8,8 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
+bin/stop.cmd
+
 LATEST_TAG=$(git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | awk -F/ ' { print $3 }' | sed "s/release-//" | sort -t. -s -k 1,1n -k 2,2n -k 3,3n | tail -n 1)
 
 if [ -e "$CWD/.version" ]; then
@@ -77,6 +79,8 @@ SET CWD=%~dp0
 SET CWD=%CWD:~0,-5%
 cd "%CWD%"
 
+bin/stop.cmd
+
 for /f "usebackq delims=" %%v in (`powershell.exe "& { (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1 }"`) DO set "LATEST_TAG=%%v"
 
 if exist "%cd%/.version" (
@@ -112,17 +116,17 @@ if "%CURRENT_VERSION%" == "%LATEST_TAG%" (
         )
 
         if exist %cd%\docker-data\nul (
-            echo backuping docker-data
+            echo backing up docker-data
             for /f "usebackq delims=" %%d in (`powershell.exe "& { (get-date -format 'yyyyMMddTHHmmss' | Out-String).toString() }"`) DO (
                 robocopy "%cd%\docker-data" "%cd%\docker-data.backup_%%d" *.* /s /e /move > nul 2>&1
                 mkdir "%cd%\docker-data"
 
                 if exist %cd%\docker-data.backup_%%d\volumes\mysql\nul (
-                    if exist %cd%\docker-data\volumes\mysql\data\nul (
+                    if exist %cd%\docker-data.backup_%%d\volumes\mysql\data\nul (
                         mkdir "%cd%\docker-data\volumes"
                         mkdir "%cd%\docker-data\volumes\mysql"
                         mkdir "%cd%\docker-data\volumes\mysql\data"
-                        robocopy "%cd%\docker-data.backup.backup_%%d\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
+                        robocopy "%cd%\docker-data.backup_%%d\volumes\mysql\data" "%cd%\docker-data\volumes\mysql\data" *.* /s /e > nul 2>&1
                     )
                 )
 
