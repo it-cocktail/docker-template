@@ -128,15 +128,15 @@ for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
 
-for /f "usebackq delims=" %%v in (`powershell.exe "& { (docker ps | findstr /R "nginx-proxy" | Out-String).toString() -replace '.*0\.0\.0\.0:([0-9]*)->80\/tcp.*','$2' | Select-Object -Last 1 }"`) DO set "PROXY_PORT=%%v"
+for /f "usebackq delims=" %%v in (`powershell.exe "& { (docker ps | findstr /R "nginx-proxy" | Out-String).toString() -replace '.*0\.0\.0\.0:([0-9]*)->80\/tcp.*','$1' | Select-Object -Last 1 }"`) DO set "PROXY_PORT=%%v"
 if [%PROXY_PORT%] EQU [] (
     echo ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy
     echo.
     echo.
-    exit 0
-fi
+    EXIT /B
+)
 
-if [%SECONDARY_DOMAIN%] == [] (
+if [%SECONDARY_DOMAIN%] EQU [] (
     set SECONDARY_DOMAIN=%BASE_DOMAIN%
     set MAIL_VIRTUAL_HOST=mail.%BASE_DOMAIN%, mailhog.%BASE_DOMAIN%
     set PHP_VIRTUAL_HOST=www.%BASE_DOMAIN%, %BASE_DOMAIN%
