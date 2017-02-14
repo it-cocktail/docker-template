@@ -22,6 +22,12 @@ loadENV() {
 }
 loadENV
 
+PROXY_PORT=$(docker ps | grep "nginx-proxy" | sed "s/.*0\.0\.0\.0:\([0-9]*\)->80\/tcp.*/\\1/")
+if [ -z "$PROXY_PORT" ]; then
+    printf "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy\n\n"
+    exit 0
+fi
+
 if [ -z "$SECONDARY_DOMAIN" ]; then
     export SECONDARY_DOMAIN=$BASE_DOMAIN
     export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
@@ -82,10 +88,6 @@ fi
 printf "updating container images if needed ...\n"
 docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
 
-printf "updating proxy if needed ...\n"
-docker network create proxy 1>/dev/null 2>&1
-docker-compose -f docker-data/config/docker-compose.proxy.yml up -d 1>/dev/null 2>&1
-
 printf "\nstarting services ...\n"
 docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
 
@@ -125,6 +127,14 @@ IF NOT EXIST "%cd%\.env" (
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
+
+for /f "usebackq delims=" %%v in (`powershell.exe "& { (docker ps | findstr /R "nginx-proxy" | Out-String).toString() -replace '.*0\.0\.0\.0:([0-9]*)->80\/tcp.*','$2' | Select-Object -Last 1 }"`) DO set "PROXY_PORT=%%v"
+if [%PROXY_PORT%] EQU [] (
+    echo ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy
+    echo.
+    echo.
+    exit 0
+fi
 
 if [%SECONDARY_DOMAIN%] == [] (
     set SECONDARY_DOMAIN=%BASE_DOMAIN%
@@ -181,7 +191,6 @@ if [%PROJECTNAME%] EQU [] (
     set PROJECTNAME=%PROJECTNAME:-=%
     set PROJECTNAME=%PROJECTNAME:.=%
 )
-
 
 echo.
 echo updating container images if needed ...

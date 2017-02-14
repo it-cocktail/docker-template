@@ -4,11 +4,12 @@
 
 * Das aktulle Release unter Tags herunterladen (**nicht auschecken**)
 * Die Datei .env-dist nach .env kopieren und anpassen (**mindestens die `BASE_DOMAIN`**)
+* Der Docker Proxy sollten vorher gestartet sein. (http://gitlab.orangehive.de/orangehive/docker-proxy)
 
 Folgende Einstellungsmöglichkeiten gibt es:
 
 * `PROXY_PORT`<br />
-    Der Port für den Proxy unter dem Web-Container erreichbar sind
+    Der Port für den Proxy unter dem Web-Container erreichbar sind (nur um korrekt Links zu bauen)
 
 * `PHP_VERSION`<br />
     Die PHP-Version des Web-Containers. (5.3, 5.5, 5.6, 7.0 und 7.1 sind möglich)
