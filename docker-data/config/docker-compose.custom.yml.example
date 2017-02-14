@@ -3,9 +3,12 @@ services:
   search:
     image: fduarte42/docker-elasticsearch
     environment:
-          VIRTUAL_PORT: 9200
-          VIRTUAL_HOST: ${BASE_DOMAIN}
+      VIRTUAL_PORT: 9200
+      VIRTUAL_HOST: search.${BASE_DOMAIN}
+    volumes:
+      - "../volumes/search/data:/usr/share/elasticsearch/data"
     networks:
+      - "frontend-tier"
       - "backend-tier"
     logging:
       driver: gelf
