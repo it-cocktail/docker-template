@@ -26,6 +26,10 @@ loadENV() {
 }
 loadENV
 
+if [ -z "$PROJECTNAME" ]; then
+    PROJECTNAME="${PWD##*/}"
+fi
+
 if [ -z "$SECONDARY_DOMAIN" ]; then
     SECONDARY_DOMAIN=$BASE_DOMAIN
 fi
@@ -35,7 +39,7 @@ if [ ! -d "$JAVA_SRC_FOLDER" ]; then
     exit
 fi
 
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml exec java /restart.sh
+docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml -f docker-data/config/docker-compose.java.yml exec java /restart.sh
 
 cd "$OLDCWD"
 exit
@@ -50,13 +54,6 @@ set MAIL_VIRTUAL_HOST=_
 set PHP_VIRTUAL_HOST=_
 set PHPMYADMIN_VIRTUAL_HOST=_
 
-set Projectname=%~dp0
-set Projectname=%Projectname:~0,-5%
-for %%* in (%Projectname%) do set Projectname=%%~nx*
-set Projectname=%Projectname: =%
-set Projectname=%Projectname:-=%
-set Projectname=%Projectname:.=%
-
 IF NOT EXIST "%cd%\.env" (
     echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
     EXIT /B
@@ -65,6 +62,17 @@ IF NOT EXIST "%cd%\.env" (
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
+
+if [%PROJECTNAME%] EQU [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+    call :toLower PROJECTNAME
+)
+
 if [%SECONDARY_DOMAIN%] == [] (
     SET SECONDARY_DOMAIN=%BASE_DOMAIN%
 )
@@ -74,7 +82,7 @@ if not exist %JAVA_SRC_FOLDER%\nul (
     EXIT /B
 )
 
-docker exec -it %Projectname%_java_1 /restart.sh
+docker exec -it %PROJECTNAME%_java_1 /restart.sh
 
 CD "%OLDCWD%"
 EXIT /B

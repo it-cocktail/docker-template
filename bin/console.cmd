@@ -12,7 +12,25 @@ export MAIL_VIRTUAL_HOST=
 export PHP_VIRTUAL_HOST=
 export PHPMYADMIN_VIRTUAL_HOST=
 
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php bash -c "sudo -u www-data bash"
+if [ ! -f "$(pwd)/.env" ]; then
+    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    exit
+fi
+
+# Read .env file
+loadENV() {
+    local IFS=$'\n'
+    for VAR in $(cat .env | grep -v "^#"); do
+        eval $(echo "$VAR" | sed 's/=\(.*\)/="\1"/')
+    done
+}
+loadENV
+
+if [ -z "$PROJECTNAME" ]; then
+    PROJECTNAME="${PWD##*/}"
+fi
+
+docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml exec php bash -c "sudo -u www-data bash"
 
 cd "$OLDCWD"
 exit
@@ -27,14 +45,26 @@ set MAIL_VIRTUAL_HOST=_
 set PHP_VIRTUAL_HOST=_
 set PHPMYADMIN_VIRTUAL_HOST=_
 
-set Projectname=%~dp0
-set Projectname=%Projectname:~0,-5%
-for %%* in (%Projectname%) do set Projectname=%%~nx*
-set Projectname=%Projectname: =%
-set Projectname=%Projectname:-=%
-set Projectname=%Projectname:.=%
+IF NOT EXIST "%cd%\.env" (
+    echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
+    EXIT /B
+)
 
-docker exec -it %Projectname%_php_1 bash -c "sudo -u www-data bash"
+for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
+    call :startsWith "%%G" "#" || SET %%G=%%H
+)
+
+if [%PROJECTNAME%] EQU [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+    call :toLower PROJECTNAME
+)
+
+docker exec -it %PROJECTNAME%_php_1 bash -c "sudo -u www-data bash"
 
 CD "%OLDCWD%"
 EXIT /B

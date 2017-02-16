@@ -26,7 +26,11 @@ loadENV() {
 }
 loadENV
 
-docker-compose -p "${PWD##*/}" -f docker-data/config/docker-compose.yml exec php crontab -u www-data /tmp/crontab
+if [ -z "$PROJECTNAME" ]; then
+    PROJECTNAME="${PWD##*/}"
+fi
+
+docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml exec php crontab -u www-data /tmp/crontab
 
 cd "$OLDCWD"
 exit
@@ -41,13 +45,6 @@ set MAIL_VIRTUAL_HOST=_
 set PHP_VIRTUAL_HOST=_
 set PHPMYADMIN_VIRTUAL_HOST=_
 
-set Projectname=%~dp0
-set Projectname=%Projectname:~0,-5%
-for %%* in (%Projectname%) do set Projectname=%%~nx*
-set Projectname=%Projectname: =%
-set Projectname=%Projectname:-=%
-set Projectname=%Projectname:.=%
-
 IF NOT EXIST "%cd%\.env" (
     echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
     EXIT /B
@@ -56,7 +53,18 @@ IF NOT EXIST "%cd%\.env" (
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
-docker exec -it %Projectname%_php_1 crontab -u www-data /tmp/crontab
+
+if [%PROJECTNAME%] EQU [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+    call :toLower PROJECTNAME
+)
+
+docker exec -it %PROJECTNAME%_php_1 crontab -u www-data /tmp/crontab
 
 CD "%OLDCWD%"
 EXIT /B

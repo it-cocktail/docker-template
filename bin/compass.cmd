@@ -12,6 +12,11 @@ export MAIL_VIRTUAL_HOST=
 export PHP_VIRTUAL_HOST=
 export PHPMYADMIN_VIRTUAL_HOST=
 
+if [ ! -f "$(pwd)/.env" ]; then
+    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    exit
+fi
+
 # Read .env file
 loadENV() {
     local IFS=$'\n'
@@ -20,6 +25,10 @@ loadENV() {
     done
 }
 loadENV
+
+if [ -z "$PROJECTNAME" ]; then
+    PROJECTNAME="${PWD##*/}"
+fi
 
 docker pull fduarte42/docker-compass
 docker run --rm -t -v "$CWD/$HTDOCS_FOLDER:/var/www/html" -u www-data fduarte42/docker-compass "$@"
@@ -37,16 +46,24 @@ set MAIL_VIRTUAL_HOST=_
 set PHP_VIRTUAL_HOST=_
 set PHPMYADMIN_VIRTUAL_HOST=_
 
+IF NOT EXIST "%cd%\.env" (
+    echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
+    EXIT /B
+)
+
 for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
     call :startsWith "%%G" "#" || SET %%G=%%H
 )
 
-set Projectname=%~dp0
-set Projectname=%Projectname:~0,-5%
-for %%* in (%Projectname%) do set Projectname=%%~nx*
-set Projectname=%Projectname: =%
-set Projectname=%Projectname:-=%
-set Projectname=%Projectname:.=%
+if [%PROJECTNAME%] EQU [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+    call :toLower PROJECTNAME
+)
 
 docker pull fduarte42/docker-compass
 docker run --rm -t -v "%CWD%\%HTDOCS_FOLDER%:/var/www/html" fduarte42/docker-compass %*

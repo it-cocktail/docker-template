@@ -197,11 +197,6 @@ echo updating container images if needed ...
 docker-compose -p "%PROJECTNAME%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% pull 2>&1 | findstr /R "^Status ^Pulling"
 
 echo.
-echo updating proxy if needed ...
-docker network create proxy > nul 2>&1
-docker-compose -f docker-data/config/docker-compose.proxy.yml -H tcp://127.0.0.1:2375 up -d > nul 2>&1
-
-echo.
 echo starting services ...
 docker-compose -p "%PROJECTNAME%" -f docker-data/config/docker-compose.yml %ADDITIONAL_CONFIGFILE% up -d
 
@@ -228,19 +223,6 @@ if "%PROXY_PORT%" == "80" (
 )
 
 CD "%OLDCWD%"
-EXIT /B
-
-:toLower str -- converts uppercase character to lowercase
-::           -- str [in,out] - valref of string variable to be converted
-:$created 20060101 :$changed 20080219 :$categories StringManipulation
-:$source http://www.dostips.com
-if not defined %~1 EXIT /B
-for %%a in ("A=a" "B=b" "C=c" "D=d" "E=e" "F=f" "G=g" "H=h" "I=i"
-            "J=j" "K=k" "L=l" "M=m" "N=n" "O=o" "P=p" "Q=q" "R=r"
-            "S=s" "T=t" "U=u" "V=v" "W=w" "X=x" "Y=y" "Z=z" "Ä=ä"
-            "Ö=ö" "Ü=ü") do (
-    call set %~1=%%%~1:%%~a%%
-)
 EXIT /B
 
 :startsWith text string -- Tests if a text starts with a given string
