@@ -1,4 +1,8 @@
 .idea
 .env
+#/docker-data/config
 /docker-data/volumes/mysql/data/*
+!/docker-data/volumes/mysql/data/.gitkeep
+/docker-data/volumes/search/data/*
+!/docker-data/volumes/search/data/.gitkeep
 /docker-data.backup*

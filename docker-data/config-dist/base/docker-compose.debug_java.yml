@@ -1,9 +1,9 @@
-version: '2'
+version: '2.1'
 services:
   java:
     environment:
       VIRTUAL_PORT: 80
-      VIRTUAL_HOST: ${JAVA_VIRTUAL_HOST}
+      VIRTUAL_HOST: ${JAVA_VIRTUAL_HOST:-""}
     logging:
       driver: gelf
       options:

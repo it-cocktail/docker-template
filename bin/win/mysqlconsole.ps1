@@ -8,6 +8,10 @@ CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 CWD=$(sed 's/.\{4\}$//' <<< "$CWD")
 cd "$CWD"
 
+export MAIL_VIRTUAL_HOST=
+export PHP_VIRTUAL_HOST=
+export PHPMYADMIN_VIRTUAL_HOST=
+
 if [ ! -f "$(pwd)/.env" ]; then
     echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
     exit
@@ -26,8 +30,7 @@ if [ -z "$PROJECTNAME" ]; then
     PROJECTNAME="${PWD##*/}"
 fi
 
-COMMAND=$(echo $0 | sed "s/bin\/\(.*\)\.cmd/bin\/unix\/\\1.sh/")
-. "$CWD/$COMMAND"
+docker-compose -p "$PROJECTNAME" -f docker-data/config/base/docker-compose.yml exec db bash
 
 cd "$OLDCWD"
 exit
@@ -38,16 +41,30 @@ SET CWD=%~dp0
 SET CWD=%CWD:~0,-5%
 cd "%CWD%"
 
+set MAIL_VIRTUAL_HOST=_
+set PHP_VIRTUAL_HOST=_
+set PHPMYADMIN_VIRTUAL_HOST=_
+
 IF NOT EXIST "%cd%\.env" (
     echo Environment File missing. Rename .env-dist to .env and customize it before starting this project.
     EXIT /B
 )
 
-set COMMAND=%0
-set COMMAND=%COMMAND:cmd=ps1%
-set COMMAND=%COMMAND:bin\=bin\win\%
+for /f "delims== tokens=1,2" %%G in (%cd%\.env) do (
+    call :startsWith "%%G" "#" || SET %%G=%%H
+)
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { . bin/win/_global.ps1; . %COMMAND% }"
+if [%PROJECTNAME%] EQU [] (
+    set PROJECTNAME=%~dp0
+    set PROJECTNAME=%PROJECTNAME:~0,-5%
+    for %%* in (%PROJECTNAME%) do set PROJECTNAME=%%~nx*
+    set PROJECTNAME=%PROJECTNAME: =%
+    set PROJECTNAME=%PROJECTNAME:-=%
+    set PROJECTNAME=%PROJECTNAME:.=%
+    call :toLower PROJECTNAME
+)
+
+docker exec -it %PROJECTNAME%_db_1 bash
 
 CD "%OLDCWD%"
 EXIT /B

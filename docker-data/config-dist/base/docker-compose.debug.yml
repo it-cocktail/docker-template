@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
   php:
     image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
