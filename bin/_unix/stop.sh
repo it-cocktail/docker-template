@@ -2,7 +2,6 @@
 
 ADDITIONAL_CONFIGFILE=""
 if [ -f "$(pwd)/docker-data/config/docker-compose.custom.yml" ]; then
-    echo "adding custom configuration"
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.custom.yml"
 fi
 
