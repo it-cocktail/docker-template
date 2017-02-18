@@ -1,5 +1,13 @@
-$lines = cat .env
+if (-Not (Test-Path "$env:CWD\.env")) {
+    throw "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+}
 
+if (-Not (Test-Path "$env:CWD\docker-data\config")) {
+    throw "docker-data\config is missing. Rename docker-data\config-dist to docker-data\config and customize it before starting this project."
+}
+
+
+$lines = cat .env
 foreach ($line in $lines) {
     if (-Not ($line.StartsWith('#'))) {
         $parts = $line.Split('=')
@@ -9,7 +17,7 @@ foreach ($line in $lines) {
     }
 }
 
-if (-Not $env:PROJECTNAME) {
+if (-Not ($env:PROJECTNAME)) {
     $PROJECTNAME = ($env:CWD.ToLower() -replace "^.*\\","" | Out-String).ToString() -replace "[ -\.]",""
     [Environment]::SetEnvironmentVariable("PROJECTNAME", $PROJECTNAME)
 }
