@@ -33,8 +33,8 @@ else
             if [ -d "$CWD/docker-data" ]; then
                 echo "backuping docker-data"
                 isodt=$(date "+%Y-%m-%dT%H:%M:%S")
-                mv "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
-                mkdir "$CWD/docker-data"
+                cp -R "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
+                rm -Rf "$CWD/docker-data/config-dist"
 
                 if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
                     mkdir "$CWD/docker-data/volumes"
@@ -51,7 +51,7 @@ else
 
             rm -Rf "$CWD/.docker-update"
             echo "done"
-            echo "Please compare your .env file with the .env-dist file to add new or changed entries"
+            echo "Please compare your .env file with the .env-dist file to add new or changed entries and look into the config-dist folder also."
             ;;
         *)
             echo "not updating"
