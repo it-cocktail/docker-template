@@ -1,5 +1,5 @@
 
-. $env:CWD\bin\_win\stop.ps1
+. $env:CWD\scripts\_win\stop.ps1
 
 $LATEST_TAG = (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1
 
@@ -19,7 +19,7 @@ if ($CURRENT_VERSION -eq $LATEST_TAG) {
         git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git "$env:CWD\.docker-update"
         rmdir /s /q "$env:CWD\.docker-update\.git"
 
-        if (Test-Path "$env:CWD\docker-data\volumes\mysql" {
+        if (Test-Path "$env:CWD\docker-data\volumes\mysql") {
             if (-Not (Test-Path "$env:CWD\docker-data\volumes\mysql\data")) {
                 Write-Host "moving old MySQL volume"
                 mkdir "$env:CWD\docker-data\volumes\mysql\data"
