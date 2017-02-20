@@ -1,7 +1,7 @@
 
 . $env:CWD\scripts\_win\stop.ps1
 
-$LATEST_TAG = (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split '\n' | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1
+$LATEST_TAG = (git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-','' -split "`n" | Where-object{$_} | Sort-Object { [regex]::Replace($_, '\d+', { $args[0].Value.PadLeft(20) }) } | Select-Object -Last 1
 
 if (Test-Path "$env:CWD\.version") {
     $CURRENT_VERSION = cat "$env:CWD\.version"
