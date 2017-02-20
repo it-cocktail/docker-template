@@ -25,7 +25,7 @@ for ( $i = 0; $i -lt $args.count; $i++ ) {
         Write-Host "***DEBUGMODE*** LOCAL_DEBUG_IP: $env:LOCAL_DEBUG_IP"
         $DEBUGMODE = 1
     } else {
-        throw "invalid parameter $args[$i]"
+        throw "invalid parameter " + $args[$i]
     }
 }
 
