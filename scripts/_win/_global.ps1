@@ -21,3 +21,15 @@ if (-Not ($env:PROJECTNAME)) {
     $PROJECTNAME = gi $env:CWD | select -expand basename
     [Environment]::SetEnvironmentVariable("PROJECTNAME", $PROJECTNAME)
 }
+
+if (-Not ($env:PHPMYADMIN_VIRTUAL_HOST)) {
+    [Environment]::SetEnvironmentVariable("PHPMYADMIN_VIRTUAL_HOST", "phpmyadmin." + $env:BASE_DOMAIN)
+}
+
+if (-Not ($env:PHP_VIRTUAL_HOST)) {
+    [Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", "www." + $env:BASE_DOMAIN)
+}
+
+if (-Not ($env:MAIL_VIRTUAL_HOST)) {
+    [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail." + $env:BASE_DOMAIN)
+}
