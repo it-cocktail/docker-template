@@ -54,7 +54,12 @@ else
             fi
 
             echo "updating"
-            rm -Rf "$CWD/bin"
+            if [ -d "$CWD/bin" ]; then
+                rm -Rf "$CWD/bin"
+            fi
+            if [ -d "$CWD/scripts" ]; then
+                rm -Rf "$CWD/scripts"
+            fi
             cp -R * "$CWD"
             cp -R .[^.]* "$CWD"
 

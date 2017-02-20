@@ -52,7 +52,12 @@ if ($CURRENT_VERSION -eq $LATEST_TAG) {
         }
 
         Write-Host "updating"
-        rmdir /s /q "$env:CWD\bin"
+        if (Test-Path "$env:CWD\bin") {
+            rmdir /s /q "$env:CWD\bin"
+        }
+        if (Test-Path "$env:CWD\scripts") {
+            rmdir /s /q "$env:CWD\scripts"
+        }
         robocopy "$env:CWD\.docker-update" "$env:CWD" *.* /s /e > nul 2>&1
         rmdir /s /q "$env:CWD\.docker-update"
         Set-Content -Path "$env:CWD\.version" -Value "$LATEST_TAG"
