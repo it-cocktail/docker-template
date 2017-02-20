@@ -34,16 +34,27 @@ else
                 echo "backuping docker-data"
                 isodt=$(date "+%Y-%m-%dT%H:%M:%S")
                 cp -R "$CWD/docker-data" "$CWD/docker-data.backup_$isodt"
-                rm -Rf "$CWD/docker-data/config-dist"
 
-                if [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql" ] && [ -d "$CWD/docker-data.backup_$isodt/volumes/mysql/data" ]; then
-                    mkdir "$CWD/docker-data/volumes"
-                    mkdir "$CWD/docker-data/volumes/mysql"
-                    cp -R "$CWD/docker-data.backup_$isodt/volumes/mysql/data" "$CWD/docker-data/volumes/mysql"
+
+                if [ -d "$CWD/docker-data/config-dist" ]; then
+                    rm -Rf "$CWD/docker-data/config-dist"
+                fi
+
+                if [ -d "$CWD/docker-data/volumes/mysql/config" ]; then
+                    rm -Rf "$CWD/docker-data/volumes/mysql/config"
+                fi
+
+                if [ -d "$CWD/docker-data/volumes/php" ]; then
+                    rm -Rf "$CWD/docker-data/volumes/php"
+                fi
+
+                if [ -d "$CWD/docker-data/volumes/phpmyadmin" ]; then
+                    rm -Rf "$CWD/docker-data/volumes/phpmyadmin"
                 fi
             fi
 
             echo "updating"
+            rm -Rf "$CWD/bin"
             cp -R * "$CWD"
             cp -R .[^.]* "$CWD"
 

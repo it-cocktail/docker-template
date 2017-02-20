@@ -18,6 +18,6 @@ foreach ($line in $lines) {
 }
 
 if (-Not ($env:PROJECTNAME)) {
-    $PROJECTNAME = ($env:CWD.ToLower() -replace "^.*\\","" | Out-String).ToString() -replace "[ -\.]",""
+    $PROJECTNAME = gi $env:CWD | select -expand basename
     [Environment]::SetEnvironmentVariable("PROJECTNAME", $PROJECTNAME)
 }

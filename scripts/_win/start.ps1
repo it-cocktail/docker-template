@@ -1,5 +1,5 @@
 
-$PROXY_PORT = (docker ps | findstr /R "nginx-proxy" | Out-String).toString() -replace '.*0\.0\.0\.0:([0-9]*)->80\/tcp.*','$1' | Select-Object -Last 1
+$PROXY_PORT = (((docker ps | Out-String) -split "`r`n" | Select-String "CONTAINER ID|nginx-proxy") -replace "  +", "`t" | ConvertFrom-CSV -Delimiter "`t" | Select -expand PORTS | Out-String) -replace ".*0\.0\.0\.0:([0-9]+)->80.*`n", '$1'
 if (-Not ($PROXY_PORT)) {
     throw "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy"
 }
@@ -18,9 +18,8 @@ if ($env:SECONDARY_DOMAIN) {
 $ADDITIONAL_CONFIGFILE = ""
 $DEGUBGMODE = 0
 for ( $i = 0; $i -lt $args.count; $i++ ) {
-    SET PARAMETER=%%P
     if ($args[$i] -eq "-d") {
-        $ADDITIONAL_CONFIGFILE = "$ADDITIONAL_CONFIGFILE -f docker-data\config\base\docker-compose.debug.yml"
+        $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.debug.yml"
         $localIP = (Test-Connection -ComputerName (hostname) -Count 1  | Select -ExpandProperty IPV4Address).IPAddressToString
         [Environment]::SetEnvironmentVariable("LOCAL_DEBUG_IP", $localIP)
         Write-Host "***DEBUGMODE*** LOCAL_DEBUG_IP: $env:LOCAL_DEBUG_IP"
@@ -34,11 +33,11 @@ $JAVADEBUGENABLED = 0
 if ($env:JAVA_SRC_FOLDER) {
     if (Test-Path "$env:JAVA_SRC_FOLDER") {
         if ($DEBUGMODE -eq 1) {
-            $ADDITIONAL_CONFIGFILE = "$ADDITIONAL_CONFIGFILE -f docker-data\config\base\docker-compose.java.yml -f docker-data\config\base\docker-compose.debug_java.yml"
+            $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.java.yml -f docker-data\config\base\docker-compose.debug_java.yml"
             $JAVADEBUGENABLED = 1
             [Environment]::SetEnvironmentVariable("JAVA_VIRTUAL_HOST", "java.$env:BASE_DOMAIN, java.$env:SECONDARY_DOMAIN")
         } else {
-            $ADDITIONAL_CONFIGFILE = "$ADDITIONAL_CONFIGFILE -f docker-data\config\base\docker-compose.java.yml"
+            $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.java.yml"
         }
         Write-Host ***Java Service will be activated***
     } else {
@@ -49,14 +48,14 @@ if ($env:JAVA_SRC_FOLDER) {
 
 if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     Write-Host "adding custom configuration"
-    $ADDITIONAL_CONFIGFILE = "$ADDITIONAL_CONFIGFILE -f docker-data\config\docker-compose.custom.yml"
+    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"
 }
 
 Write-Host "`nupdating container images if needed ..."
-docker-compose -p "$env:PROJECTNAME" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull 2>&1 | findstr /R "^Status ^Pulling"
+Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
 
 Write-Host "`nstarting services ..."
-docker-compose -p "$env:PROJECTNAME" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d
+Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d }"
 
 Write-Host "`n"
 
