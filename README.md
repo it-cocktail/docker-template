@@ -4,12 +4,13 @@
 
 * Das aktulle Release unter Tags herunterladen (**nicht auschecken**)
 * Die Datei .env-dist nach .env kopieren und anpassen (**mindestens die `BASE_DOMAIN`**)
+* Das Verzeichnis docker-data/config-dist nach docker-data/config kopieren und anpassen falls nötig
 * Der Docker Proxy sollten vorher gestartet sein. (http://gitlab.orangehive.de/orangehive/docker-proxy)
 
 Folgende Einstellungsmöglichkeiten gibt es:
 
-* `PROXY_PORT`<br />
-    Der Port für den Proxy unter dem Web-Container erreichbar sind (nur um korrekt Links zu bauen)
+* `PROJECTNAME`<br />
+    Der Projektname für die Container (falls leer, wird der Verzeichnisname genommen)
 
 * `PHP_VERSION`<br />
     Die PHP-Version des Web-Containers. (5.3, 5.5, 5.6, 7.0 und 7.1 sind möglich)
@@ -60,43 +61,47 @@ Alle Kommandos befinden sich im Verzeichnis `bin`.
 
 Folgende Kommandos gibt es:
 
-* `bin/start.cmd` (OSX) / `bin\start.cmd` (Win)<br />
+* `./control.cmd start` (OSX) / `control.cmd start` (Win)<br />
     Zum starten der Services. Mit dem Parameter `-d` wird die XDebug Extension aktiviert.
  
-* `bin/stop.cmd` (OSX) / `bin\stop.cmd` (Win)<br />
+* `./control.cmd stop` (OSX) / `control.cmd stop` (Win)<br />
     Zum Beenden der Services.
   
-* `bin/compass.cmd` (OSX) / `bin\compass.cmd` (Win)<br />
+* `./control.cmd compass` (OSX) / `control.cmd compass` (Win)<br />
     Das Compass Konsolen Kommando.
 
-* `bin/composer.cmd` (OSX) / `bin\composer.cmd` (Win)<br />
+* `./control.cmd composer` (OSX) / `control.cmd composer` (Win)<br />
     Das Composer Konsolen Kommando. Es wird mit der eingestellten PHP Version ausgeführt.
 
-* `bin/console.cmd` (OSX) / `bin\console.cmd` (Win)<br />
+* `./control.cmd console` (OSX) / `control.cmd console` (Win)<br />
     Mit diesem Kommando kommt man in die Bash des PHP Containers.
 
-* `bin/mysql.cmd` (OSX) / `bin\mysql.cmd` (Win)<br />
+* `./control.cmd mysql` (OSX) / `control.cmd mysql` (Win)<br />
     Das mysql Konsolen Kommando.
 
-* `bin/mysqlconsole.cmd` (OSX) / `bin\mysqlconsole.cmd` (Win)<br />
+* `./control.cmd mysqlconsole` (OSX) / `control.cmd mysqlconsole` (Win)<br />
     Das mysqldump Konsolen Kommando.
 
-* `bin/mysqldump.cmd` (OSX) / `bin\mysqldump.cmd` (Win)<br />
+* `./control.cmd mysqldump` (OSX) / `control.cmd mysqldump` (Win)<br />
     Das mysqldump Konsolen Kommando.
 
-* `bin/php.cmd` (OSX) / `bin\php.cmd` (Win)<br />
+* `./control.cmd php` (OSX) / `control.cmd php` (Win)<br />
     Das PHP Konsolen Kommando.
 
-* `bin/showlogs.cmd` (OSX) / `bin\showlogs.cmd` (Win)<br />
+* `./control.cmd showlogs` (OSX) / `control.cmd showlogs` (Win)<br />
     Anzeigen von Logausgaben der Dienste. Ohne Parameter werden alle Dienst angezeigt. Man kann den Dienstnamen als Parameter übergeben und bekommt dann nur dies Logausgaben angezeigt.<br />
     <br />
     Folgende Dienste sind möglich: db, phpmyadmin, mail, php, java
 
-* `bin/update-crontab.cmd` (OSX) / `bin\update-crontab.cmd` (Win)<br />
+* `./control.cmd update-crontab` (OSX) / `control.cmd update-crontab` (Win)<br />
     Wenn das crontab-File geändert wurde, dann können die Änderungen mit diesem Kommand aktiviert werden
 
-* `bin/rebuild-java.cmd` (OSX) / `bin\rebuild-java.cmd` (Win)<br />
+* `./control.cmd rebuild-java` (OSX) / `control.cmd rebuild-java` (Win)<br />
     Das rebuilden des java-Services kann mit diesem Kommando gestartet werden.
 
+* `./control.cmd update-docker-template` (OSX) / `control.cmd update-docker-template` (Win)<br />
+    Aktualisiert dieses System
+
+
 ### Cronjobs
-Im Verzeichnis `docker-data/volumes/php/cron/crontab` liegt die crontab in der Cronjobs eingerichtet werden können.
+Im Verzeichnis `docker-data/config/container/php/cron/crontab` liegt die crontab in der Cronjobs eingerichtet werden können.
