@@ -31,24 +31,22 @@ if ($CURRENT_VERSION -eq $LATEST_TAG) {
             Write-Host "backing up docker-data"
             $date = (get-date -format 'yyyyMMddTHHmmss' | Out-String).toString()
             robocopy "$env:CWD\docker-data" "$env:CWD\docker-data.backup_$date" *.* /s /e > nul 2>&1
-            rmdir /s /q "$env:CWD\docker-data\config-dist"
 
-                if (Test-Path "$env:CWD\docker-data\config-dist") {
-                    rmdir /s /q "$env:CWD\docker-data\config-dist"
-                }
+            if (Test-Path "$env:CWD\docker-data\config-dist") {
+                rmdir /s /q "$env:CWD\docker-data\config-dist"
+            }
 
-                if (Test-Path "$env:CWD\docker-data\volumes\mysql\config") {
-                    rmdir /s /q "$env:CWD\docker-data\volumes\mysql\config"
-                }
+            if (Test-Path "$env:CWD\docker-data\volumes\mysql\config") {
+                rmdir /s /q "$env:CWD\docker-data\volumes\mysql\config"
+            }
 
-                if (Test-Path "$env:CWD\docker-data\volumes\php") {
-                    rmdir /s /q "$env:CWD\docker-data\volumes\php"
-                }
+            if (Test-Path "$env:CWD\docker-data\volumes\php") {
+                rmdir /s /q "$env:CWD\docker-data\volumes\php"
+            }
 
-                if (Test-Path "$env:CWD\docker-data\volumes\phpmyadmin") {
-                    rmdir /s /q "$env:CWD\docker-data\volumes\phpmyadmin"
-                }
-
+            if (Test-Path "$env:CWD\docker-data\volumes\phpmyadmin") {
+                rmdir /s /q "$env:CWD\docker-data\volumes\phpmyadmin"
+            }
         }
 
         Write-Host "updating"
