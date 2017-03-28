@@ -7,16 +7,9 @@ if [ -z "$PROXY_PORT" ]; then
     exit 0
 fi
 
-if [ -z "$SECONDARY_DOMAIN" ]; then
-    export SECONDARY_DOMAIN=$BASE_DOMAIN
-    export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
-    export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
-    export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN"
-else
-    export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mail.$SECONDARY_DOMAIN, mailhog.$BASE_DOMAIN, mailhog.$SECONDARY_DOMAIN"
-    export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, www.$SECONDARY_DOMAIN, $BASE_DOMAIN, $SECONDARY_DOMAIN"
-    export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN, phpmyadmin.$SECONDARY_DOMAIN"
-fi
+export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
+export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
+export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN"
 
 DEBUGMODE=0
 ADDITIONAL_CONFIGFILE=""
@@ -46,7 +39,7 @@ if [ ! -z "$JAVA_SRC_FOLDER" ]; then
         if [ "$DEBUGMODE" == "1" ]; then
             ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.debug_java.yml"
             JAVADEBUGENABLED=1
-            export JAVA_VIRTUAL_HOST="java.$BASE_DOMAIN, java.$SECONDARY_DOMAIN"
+            export JAVA_VIRTUAL_HOST="java.$BASE_DOMAIN"
         fi
         printf "***Java Service will be activated***\n\n"
     else

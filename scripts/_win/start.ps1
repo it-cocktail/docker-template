@@ -4,16 +4,9 @@ if (-Not ($PROXY_PORT)) {
     throw "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy"
 }
 
-if ($env:SECONDARY_DOMAIN) {
-    [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail.$env:BASE_DOMAIN, mail.$env:SECONDARY_DOMAIN, mailhog.$env:BASE_DOMAIN, mailhog.$env:SECONDARY_DOMAIN")
-    [Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", "www.$env:BASE_DOMAIN, www.$env:SECONDARY_DOMAIN, $env:BASE_DOMAIN, $env:SECONDARY_DOMAIN")
-    [Environment]::SetEnvironmentVariable("PHPMYADMIN_VIRTUAL_HOST", "phpmyadmin.$env:BASE_DOMAIN, phpmyadmin.$env:SECONDARY_DOMAIN")
-} else {
-    [Environment]::SetEnvironmentVariable("SECONDARY_DOMAIN", "$env:BASE_DOMAIN")
-    [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail.$env:BASE_DOMAIN, mailhog.$env:BASE_DOMAIN")
-    [Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", "www.$env:BASE_DOMAIN, $env:BASE_DOMAIN")
-    [Environment]::SetEnvironmentVariable("PHPMYADMIN_VIRTUAL_HOST", "phpmyadmin.$env:BASE_DOMAIN")
-}
+[Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail.$env:BASE_DOMAIN, mailhog.$env:BASE_DOMAIN")
+[Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", "www.$env:BASE_DOMAIN, $env:BASE_DOMAIN")
+[Environment]::SetEnvironmentVariable("PHPMYADMIN_VIRTUAL_HOST", "phpmyadmin.$env:BASE_DOMAIN")
 
 $ADDITIONAL_CONFIGFILE = ""
 $DEGUBGMODE = 0
@@ -35,7 +28,7 @@ if ($env:JAVA_SRC_FOLDER) {
         if ($DEBUGMODE -eq 1) {
             $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.java.yml -f docker-data\config\base\docker-compose.debug_java.yml"
             $JAVADEBUGENABLED = 1
-            [Environment]::SetEnvironmentVariable("JAVA_VIRTUAL_HOST", "java.$env:BASE_DOMAIN, java.$env:SECONDARY_DOMAIN")
+            [Environment]::SetEnvironmentVariable("JAVA_VIRTUAL_HOST", "java.$env:BASE_DOMAIN")
         } else {
             $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.java.yml"
         }

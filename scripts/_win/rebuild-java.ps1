@@ -1,4 +1,4 @@
-if (-Not (Test-Path "$JAVA_SRC_FOLDER")) {
+if (-Not (Test-Path "$env:JAVA_SRC_FOLDER")) {
     throw "No JAVA_SRC_FOLDER specified"
 }
 
