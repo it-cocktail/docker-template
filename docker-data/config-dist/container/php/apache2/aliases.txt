@@ -1,0 +1,2 @@
+# Domain aliases for the php container
+# Add a domain per line

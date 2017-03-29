@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PROXY_PORT=$(docker ps | grep "nginx-proxy" | sed "s/.*0\.0\.0\.0:\([0-9]*\)->80\/tcp.*/\\1/")
+PROXY_PORT=$(docker ps | grep "jwilder/nginx-proxy" | sed "s/.*0\.0\.0\.0:\([0-9]*\)->80\/tcp.*/\\1/")
 
 if [ -z "$PROXY_PORT" ]; then
     printf "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy\n\n"
@@ -8,8 +8,23 @@ if [ -z "$PROXY_PORT" ]; then
 fi
 
 export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
-export PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
 export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN"
+
+PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
+if [ -f "$(pwd)/docker-data/config/container/php/apache2/aliases.txt" ]; then
+    loadAliasDomain() {
+        local IFS=$'\n'
+        for DOMAIN in $(cat docker-data/config/container/php/apache2/aliases.txt | grep -v "^#"); do
+            DOMAIN=$(echo $DOMAIN | xargs)
+            if [ ! -z $DOMAIN ]; then
+                PHP_VIRTUAL_HOST="$PHP_VIRTUAL_HOST, $DOMAIN"
+            fi
+        done
+    }
+    loadAliasDomain
+fi
+export PHP_VIRTUAL_HOST
+
 
 DEBUGMODE=0
 ADDITIONAL_CONFIGFILE=""

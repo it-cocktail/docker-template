@@ -1,12 +1,23 @@
 
-$PROXY_PORT = (((docker ps | Out-String) -split "`r`n" | Select-String "CONTAINER ID|nginx-proxy") -replace "  +", "`t" | ConvertFrom-CSV -Delimiter "`t" | Select -expand PORTS | Out-String) -replace ".*0\.0\.0\.0:([0-9]+)->80.*`n", '$1'
+$PROXY_PORT = (((docker ps | Out-String) -split "`r`n" | Select-String "CONTAINER ID|jwilder/nginx-proxy") -replace "  +", "`t" | ConvertFrom-CSV -Delimiter "`t" | Select -expand PORTS | Out-String) -replace ".*0\.0\.0\.0:([0-9]+)->80.*`n", '$1'
 if (-Not ($PROXY_PORT)) {
     throw "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy"
 }
 
 [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail.$env:BASE_DOMAIN, mailhog.$env:BASE_DOMAIN")
-[Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", "www.$env:BASE_DOMAIN, $env:BASE_DOMAIN")
 [Environment]::SetEnvironmentVariable("PHPMYADMIN_VIRTUAL_HOST", "phpmyadmin.$env:BASE_DOMAIN")
+
+$PHP_VIRTUAL_HOST = "www.$env:BASE_DOMAIN, $env:BASE_DOMAIN"
+if (Test-Path $env:CWD\docker-data\config\container\php\apache2\aliases.txt) {
+    $domains = cat docker-data\config\container\php\apache2\aliases.txt
+    foreach ($domain in $domains) {
+        $domain = $domain.Trim()
+        if ($domain -And -Not ($domain.StartsWith('#'))) {
+            $PHP_VIRTUAL_HOST = "$PHP_VIRTUAL_HOST, $domain"
+        }
+    }
+fi
+[Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", $PHP_VIRTUAL_HOST)
 
 $ADDITIONAL_CONFIGFILE = ""
 $DEGUBGMODE = 0
