@@ -64,7 +64,7 @@ services:
       - mail:mailhog
     volumes:
       - "../container/php/php.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
-      - "../container/php/apache2/vhost.conf:/etc/apache2/sites-enabled/vhost.conf"
+      - "../container/php/apache2/sites-enabled:/etc/apache2/sites-enabled"
       - "../container/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "../container/php/ssh:/ssh"
       - "../container/php/cron/crontab:/tmp/crontab"
