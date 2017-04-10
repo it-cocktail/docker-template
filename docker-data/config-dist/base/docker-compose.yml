@@ -16,7 +16,7 @@ services:
         tag: "mysql"
 
   phpmyadmin:
-    image: 'phpmyadmin/phpmyadmin${PHPMYADMIN_VERSION}'
+    image: 'phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}'
     depends_on:
       - db
     links:
