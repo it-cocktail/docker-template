@@ -16,7 +16,7 @@ if (Test-Path $env:CWD\docker-data\config\container\php\apache2\aliases.txt) {
             $PHP_VIRTUAL_HOST = "$PHP_VIRTUAL_HOST, $domain"
         }
     }
-fi
+}
 [Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", $PHP_VIRTUAL_HOST)
 
 $ADDITIONAL_CONFIGFILE = ""
