@@ -11,6 +11,7 @@ export MAIL_VIRTUAL_HOST="mail.$BASE_DOMAIN, mailhog.$BASE_DOMAIN"
 export PHPMYADMIN_VIRTUAL_HOST="phpmyadmin.$BASE_DOMAIN"
 
 PHP_VIRTUAL_HOST="www.$BASE_DOMAIN, $BASE_DOMAIN"
+PHP_APACHE_ALIAS="localhost"
 if [ -f "$(pwd)/docker-data/config/container/php/apache2/aliases.txt" ]; then
     loadAliasDomain() {
         local IFS=$'\n'
@@ -18,6 +19,7 @@ if [ -f "$(pwd)/docker-data/config/container/php/apache2/aliases.txt" ]; then
             DOMAIN=$(echo $DOMAIN | xargs)
             if [ ! -z $DOMAIN ]; then
                 PHP_VIRTUAL_HOST="$PHP_VIRTUAL_HOST, $DOMAIN"
+                PHP_APACHE_ALIAS="$PHP_APACHE_ALIAS $DOMAIN"
             fi
         done
     }
