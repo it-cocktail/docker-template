@@ -18,8 +18,9 @@ if (Test-Path $env:CWD\docker-data\config\container\php\apache2\aliases.txt) {
             $PHP_APACHE_ALIAS = "$PHP_APACHE_ALIAS $domain"
         }
     }
-}
-[Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", $PHP_VIRTUAL_HOST)
+}V
+[Environment]::SetEnvironmentariable("PHP_VIRTUAL_HOST", $PHP_VIRTUAL_HOST)
+[Environment]::SetEnvironmentariable("PHP_APACHE_ALIAS", $PHP_APACHE_ALIAS)
 
 $ADDITIONAL_CONFIGFILE = ""
 $DEGUBGMODE = 0

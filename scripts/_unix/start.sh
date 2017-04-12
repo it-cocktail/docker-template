@@ -26,6 +26,7 @@ if [ -f "$(pwd)/docker-data/config/container/php/apache2/aliases.txt" ]; then
     loadAliasDomain
 fi
 export PHP_VIRTUAL_HOST
+export PHP_APACHE_ALIAS
 
 
 DEBUGMODE=0
