@@ -1,6 +1,8 @@
 version: '2.1'
 services:
   db:
+    volumes:
+      - "../../volumes/mysql/init:/docker-entrypoint-initdb.d"
     restart: always
 
   phpmyadmin:

@@ -1,107 +1,109 @@
-# Anleitung
+# Instructions
 
 ## Installation
 
-* Das aktulle Release unter Tags herunterladen (**nicht auschecken**)
-* Die Datei .env-dist nach .env kopieren und anpassen (**mindestens die `BASE_DOMAIN`**)
-* Das Verzeichnis docker-data/config-dist nach docker-data/config kopieren und anpassen falls nötig
-* Der Docker Proxy sollten vorher gestartet sein. (http://gitlab.orangehive.de/orangehive/docker-proxy)
+* Download the new release tag (**do not checkout master branch**)
+* Copy .env-dist to .env and configure it
+* Copy docker-data/config-dist to docker-data/config and configure it if necessary
+* The Docker-Proxy should be started before using this template (http://gitlab.orangehive.de/orangehive/docker-proxy)
 
-Folgende Einstellungsmöglichkeiten gibt es:
+Configuration in .env:
 
 * `PROJECTNAME`<br />
-    Der Projektname für die Container (falls leer, wird der Verzeichnisname genommen)
+    projectname for composer stack
 
 * `PHP_VERSION`<br />
-    Die PHP-Version des Web-Containers. (5.3, 5.5, 5.6, 7.0 und 7.1 sind möglich)
+    PHP version of web container. (5.3, 5.5, 5.6, 7.0 und 7.1)
 
 * `MYSQL_VERSION`<br />
-    Die MySQL-Version der Datenbank-Containers. (5.5 und 5.7 sind möglich)
+    MySQL version of DB container. (5.5 und 5.7)
 
 * `MYSQL_ROOT_PASSWORD`<br />
-    Das MySQL Root Password.
+    MySQL Root Password.
+
+* `PHPMYADMIN_VERSION`<br />
+    PHPMyAdmin version used (4.7 seems to be buggy, use 4.6)
+
+* `AUTOPULL`<br />
+    Automatically pull newer docker images on startup
+
+* `ENVIRONMENT`<br />
+    Application environment, will be added as APP_ENV, APPLICATION_ENVIRONMENT and TYPO3_CONTEXT
 
 * `BASE_DOMAIN`<br />
-    Die Basis-Domain für diese Application.<br />
-    Im DNS gehen alle Einträge unterhalb von *.local.orangehive.de auf localhost und können automatisch ohne Hosts-Eintrag genutzt werden.<br />
+    Base-Domain of the Application.<br />
+    You can use lvh.me for delevopment porposes and all host of the domain resolve to 127.0.0.1<br />
     <br />
-    Es gibt folgende Hosts die automatisch der `BASE_DOMAIN` vorangestellt werden:
+    The `BASE_DOMAIN` will be prefixes with the following hosts:
     
     - w<span>ww</span>.[BASE_DOMAIN]
     - phpmyadmin.[BASE_DOMAIN]
-    - mailhog.[BASE_DOMAIN] bzw. mail.[BASE_DOMAIN]
-    - java.[BASE_DOMAIN], falls der `JAVA_SRC_FOLDER` existiert
+    - mailhog.[BASE_DOMAIN] or mail.[BASE_DOMAIN]
+    - java.[BASE_DOMAIN], if `JAVA_SRC_FOLDER` exists
     <br /><br />
 
-* `SECONDARY_DOMAIN`<br />
-    Die zweite Domain für diese Application.<br />
-    Sie wird genauso eingerichtet wie die `BASE_DOMAIN`, ist aber zusätzlich aktiv.
-
 * `HTDOCS_FOLDER`<br />
-    Der htdocs Folder in dem die PHP-Sourcen liegen.
+    Folder for PHP-Sources
 
 * `DOCUMENT_ROOT`<br />
-    Der Apache Document-Root relativ zum `HTDOCS_FOLDER`. (z.B. `web` für typo3 oder `public` für zend)
+    Apache Document-Root relative to `HTDOCS_FOLDER`. (i.e. `web` for typo3 or `public` for zf)
 
 * `JAVA_SRC_FOLDER`<br />
-    Das Verzeichnis in dem der Java-Quelltext liegt.<br />
-    Es muss ein build.xml Ant script im Verzeichnis liegen mit den target `run`.
+    The java source folder.<br />
+    The has to be a build.xml Ant script with target `run`.
 
 * `JAVA_OPTS`<br />
-    Optionen die an die JVM weitergegeben werden<br />
-    Beispiel: `-Xmx1024m -XX:MaxPermSize=256m`
+    Options for JVM<br />
+    Example: `-Xmx1024m -XX:MaxPermSize=256m`
 
 * `JAVA_ANT_OPTS`<br />
-    Optionen die an die JVM beim bauen mit Ant weitergegeben werden<br />
-    Beispiel: `-Xmx1024m -XX:MaxPermSize=256m`
+    Options for JVM used by Ant<br />
+    Example: `-Xmx1024m -XX:MaxPermSize=256m`
 
-## Betrieb
 
-Alle Kommandos befinden sich im Verzeichnis `bin`.
+## Usage
 
-Folgende Kommandos gibt es:
+There are the following commands:
 
-* `./control.cmd start` (OSX) / `control.cmd start` (Win)<br />
-    Zum starten der Services. Mit dem Parameter `-d` wird die XDebug Extension aktiviert.
+* `./control.cmd start` (Unix) / `control.cmd start` (Win)<br />
+    start services
  
-* `./control.cmd stop` (OSX) / `control.cmd stop` (Win)<br />
-    Zum Beenden der Services.
-  
-* `./control.cmd compass` (OSX) / `control.cmd compass` (Win)<br />
-    Das Compass Konsolen Kommando.
+* `./control.cmd stop` (Unix) / `control.cmd stop` (Win)<br />
+    stop services.
 
-* `./control.cmd composer` (OSX) / `control.cmd composer` (Win)<br />
-    Das Composer Konsolen Kommando. Es wird mit der eingestellten PHP Version ausgeführt.
+* `./control.cmd pull` (Unix) / `control.cmd pull` (Win)<br />
+    download new container images if available.
 
-* `./control.cmd console` (OSX) / `control.cmd console` (Win)<br />
-    Mit diesem Kommando kommt man in die Bash des PHP Containers.
+* `./control.cmd compass` (Unix) / `control.cmd compass` (Win)<br />
+    compass console command.
 
-* `./control.cmd mysql` (OSX) / `control.cmd mysql` (Win)<br />
-    Das mysql Konsolen Kommando.
+* `./control.cmd composer` (Unix) / `control.cmd composer` (Win)<br />
+    composer command. Will be executed with the configured PHP version.
 
-* `./control.cmd mysqlconsole` (OSX) / `control.cmd mysqlconsole` (Win)<br />
-    Das mysqldump Konsolen Kommando.
+* `./control.cmd console` (Unix) / `control.cmd console` (Win)<br />
+    enter the console of the PHP container.
 
-* `./control.cmd mysqldump` (OSX) / `control.cmd mysqldump` (Win)<br />
-    Das mysqldump Konsolen Kommando.
+* `./control.cmd mysql` (Unix) / `control.cmd mysql` (Win)<br />
+    mysql console command.
 
-* `./control.cmd php` (OSX) / `control.cmd php` (Win)<br />
-    Das PHP Konsolen Kommando.
+* `./control.cmd mysqlconsole` (Unix) / `control.cmd mysqlconsole` (Win)<br />
+    enter the console of the MySQL container.
 
-* `./control.cmd showlogs` (OSX) / `control.cmd showlogs` (Win)<br />
-    Anzeigen von Logausgaben der Dienste. Ohne Parameter werden alle Dienst angezeigt. Man kann den Dienstnamen als Parameter übergeben und bekommt dann nur dies Logausgaben angezeigt.<br />
-    <br />
-    Folgende Dienste sind möglich: db, phpmyadmin, mail, php, java
+* `./control.cmd mysqldump` (Unix) / `control.cmd mysqldump` (Win)<br />
+    mysqldump console command.
 
-* `./control.cmd update-crontab` (OSX) / `control.cmd update-crontab` (Win)<br />
-    Wenn das crontab-File geändert wurde, dann können die Änderungen mit diesem Kommand aktiviert werden
+* `./control.cmd php` (Unix) / `control.cmd php` (Win)<br />
+    PHP console command.
 
-* `./control.cmd rebuild-java` (OSX) / `control.cmd rebuild-java` (Win)<br />
-    Das rebuilden des java-Services kann mit diesem Kommando gestartet werden.
+* `./control.cmd update-crontab` (Unix) / `control.cmd update-crontab` (Win)<br />
+    use this command to activate changes made in crontab.
 
-* `./control.cmd update-docker-template` (OSX) / `control.cmd update-docker-template` (Win)<br />
-    Aktualisiert dieses System
+* `./control.cmd rebuild-java` (Unix) / `control.cmd rebuild-java` (Win)<br />
+    rebuild java with ant.
+
+* `./control.cmd update-docker-template` (Unix) / `control.cmd update-docker-template` (Win)<br />
+    update this template
 
 
 ### Cronjobs
-Im Verzeichnis `docker-data/config/container/php/cron/crontab` liegt die crontab in der Cronjobs eingerichtet werden können.
+The crontab is in the following directory `docker-data/config/container/php/cron/crontab`.
