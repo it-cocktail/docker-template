@@ -5,7 +5,7 @@
 * Download the new release tag (**do not checkout master branch**)
 * Copy .env-dist to .env and configure it
 * Copy docker-data/config-dist to docker-data/config and configure it if necessary
-* The Docker-Proxy should be started before using this template (http://gitlab.orangehive.de/orangehive/docker-proxy)
+* The Docker-Proxy should be started before using this template (https://github.com/orange-hive/docker-proxy.git)
 
 Configuration in .env:
 

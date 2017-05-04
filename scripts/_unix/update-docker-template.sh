@@ -2,7 +2,7 @@
 
 scripts/_unix/stop.sh
 
-LATEST_TAG=$(git ls-remote --tags --refs git@gitlab.orangehive.de:orangehive/docker-template.git | awk -F/ ' { print $3 }' | sed "s/release-//" | sort -t. -s -k 1,1n -k 2,2n -k 3,3n | tail -n 1)
+LATEST_TAG=$(git ls-remote --tags --refs https://github.com/orange-hive/docker-template.git | awk -F/ ' { print $3 }' | sed "s/release-//" | sort -t. -s -k 1,1n -k 2,2n -k 3,3n | tail -n 1)
 
 if [ -e "$CWD/.version" ]; then
     CURRENT_VERSION=$(cat "$CWD/.version")
