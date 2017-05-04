@@ -10,6 +10,10 @@ if [ ! -d "$(pwd)/docker-data/config" ]; then
     exit
 fi
 
+# Setting permissions
+chmod -R 777 docker-data/config/container/*
+chmod -R 777 docker-data/volumes/*
+
 # Read .env file
 loadENV() {
     local IFS=$'\n'

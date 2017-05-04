@@ -19,6 +19,9 @@ if [ ! -e "$CWD/scripts/_unix/$COMMAND.sh" ]; then
     exit
 fi
 
+# setting permissions
+chmod 755 scripts/_unix/*.sh
+
 . scripts/_unix/_global.sh
 . scripts/_unix/$COMMAND.sh
 

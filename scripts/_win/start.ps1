@@ -63,8 +63,10 @@ if (Test-Path $env:CWD\docker-data\config\docker-compose.$env:ENVIRONMENT.yml) {
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.$env:ENVIRONMENT.yml"
 }
 
-Write-Host "`nupdating container images if needed ..."
-Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
+if ($env:AUTOPULL -eq "1") {
+    Write-Host "`nupdating container images if needed ..."
+    Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
+}
 
 Write-Host "`nstarting services ..."
 Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE up -d }"

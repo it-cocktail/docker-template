@@ -76,8 +76,10 @@ if [ -f "$(pwd)/docker-data/config/docker-compose.$ENVIRONMENT.yml" ]; then
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.$ENVIRONMENT.yml"
 fi
 
-printf "updating container images if needed ...\n"
-docker-compose -p "$PROJECTNAME" -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
+if [ $AUTOPULL == "1" ]; then
+    printf "updating container images if needed ...\n"
+    docker-compose -p "$PROJECTNAME" -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE pull | grep '^Status'
+fi
 
 printf "\nstarting services ...\n"
 docker-compose -p "$PROJECTNAME" -f docker-data/config/base/docker-compose.yml $ADDITIONAL_CONFIGFILE up -d

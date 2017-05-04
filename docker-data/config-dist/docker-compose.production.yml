@@ -1,0 +1,16 @@
+version: '2.1'
+services:
+  db:
+    restart: always
+
+  phpmyadmin:
+    restart: always
+
+  mail:
+    image: tianon/true
+    command: "/true"
+
+  php:
+    volumes:
+      - "../container/php/ssmtp/ssmtp.production.conf:/etc/ssmtp/ssmtp.conf"
+    restart: always
