@@ -19,7 +19,7 @@ else
             echo "checking out release $LATEST_TAG"
             mkdir "$CWD/.docker-update"
             cd "$CWD/.docker-update"
-            git clone --branch release-$LATEST_TAG git@gitlab.orangehive.de:orangehive/docker-template.git .
+            git clone --branch release-$LATEST_TAG https://github.com/orange-hive/docker-template.git .
             rm -Rf .git
 
             if [ -d "$CWD/docker-data/volumes/mysql" ] && [ ! -d "$CWD/docker-data/volumes/mysql/data" ]; then
