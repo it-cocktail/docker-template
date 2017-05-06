@@ -1,3 +1,45 @@
+# Introduction
+
+## About this template
+
+This template was build to ease the usage of Docker and a containerized LAMP-Stack used for development, testing and
+production environments. It consist out of up to 4 services building a docker compose stack.
+
+
+## Images used
+
+We use the offical MySQL and PHPMyAdmin images without modifications, but with configured volumes.
+MySQL has the data Folder in an persistent Folder and init Volumes to initialize the Database on first startup.
+The PHPMyAdmin has a custom php.ini exposed, so you can customize it if needed.
+
+In development mode we use Mailhog to intercept every mail send by the php application for debugging and testing purposes.
+
+The PHP image is a custom image with a lot of functionality explained below.
+
+
+## PHP Images
+
+We have build custom docker images for php that are available on docker hub. The images use apache mod_php as it has
+some advantages over php-fpm and htaccess files can be used easily. A lot of PHP extensions are already included and
+also some additional tools that are helpful as wkhtmltopdf, the cron daemon, gnupg, ssh keychain manager or composer.
+
+The images are available with the following php versions: 5.3, 5.5, 5.6, 7.0 and 7.1 and every version is additionally
+build with xdebug enabled as {version}-debug.
+
+
+## Debugging
+
+For debugging purposes we added the -d parameter to the start script that automatically sets the local IP for xdebug so
+step-by-step debugging is as easy as never before.
+
+
+## Nginx Proxy
+
+The template needs our docker-proxy that adds an nginx proxy for multiple template projects
+and an ELK-Stack for easy logging.<br />
+It can be found here: (http://gitlab.orangehive.de/orangehive/docker-proxy)
+
+
 # Instructions
 
 ## Installation
