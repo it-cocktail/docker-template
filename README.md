@@ -37,7 +37,7 @@ step-by-step debugging is as easy as never before.
 
 The template needs our docker-proxy that adds an nginx proxy for multiple template projects
 and an ELK-Stack for easy logging.<br />
-It can be found here: (http://gitlab.orangehive.de/orangehive/docker-proxy)
+It can be found here: (https://github.com/orange-hive/docker-proxy)
 
 
 # Instructions
