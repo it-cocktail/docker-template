@@ -74,7 +74,7 @@ Configuration in .env:
 
 * `BASE_DOMAIN`<br />
     Base-Domain of the Application.<br />
-    You can use lvh.me for delevopment porposes and all host of the domain resolve to 127.0.0.1<br />
+    You can use lvh.me for delevopment porposes and every host of this domain resolves to 127.0.0.1<br />
     <br />
     The `BASE_DOMAIN` will be prefixes with the following hosts:
     
