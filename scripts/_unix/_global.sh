@@ -11,8 +11,8 @@ if [ ! -d "$(pwd)/docker-data/config" ]; then
 fi
 
 # Setting permissions
-chmod -R 777 docker-data/config/container/*
-chmod -R 777 docker-data/volumes/*
+chmod -R 777 docker-data/config/container/* 2>/dev/null
+chmod -R 777 docker-data/volumes/* 2>/dev/null
 
 # Read .env file
 loadENV() {

@@ -20,7 +20,7 @@ if [ ! -e "$CWD/scripts/_unix/$COMMAND.sh" ]; then
 fi
 
 # setting permissions
-chmod 755 scripts/_unix/*.sh
+chmod 755 scripts/_unix/*.sh 2>/dev/null
 
 . scripts/_unix/_global.sh
 . scripts/_unix/$COMMAND.sh
