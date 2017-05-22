@@ -11,9 +11,10 @@ if [ -f "$(pwd)/docker-data/config/docker-compose.custom.yml" ]; then
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.custom.yml"
 fi
 
-if [ -f "$(pwd)/docker-data/config/docker-compose.$ENVIRONMENT.yml" ]; then
+ENV_SANATIZED=$(echo $ENVIRONMENT | tr "[:upper:]/\\.:," "[:lower:]-----")
+if [ -f "$(pwd)/docker-data/config/docker-compose.$ENV_SANATIZED.yml" ]; then
     echo "adding $ENVIRONMENT configuration"
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.$ENVIRONMENT.yml"
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.$ENV_SANATIZED.yml"
 fi
 
 docker-compose  -p "$PROJECTNAME" -f docker-data/config/base/docker-compose.yml -f docker-data/config/base/docker-compose.java.yml $ADDITIONAL_CONFIGFILE down

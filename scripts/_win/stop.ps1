@@ -9,9 +9,10 @@ if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"
 }
 
-if (Test-Path $env:CWD\docker-data\config\docker-compose.$env:ENVIRONMENT.yml) {
+$ENV_SANATIZED = $env:ENVIRONMENT.toLower() -replace '[/\\.:,]', '-'
+if (Test-Path $env:CWD\docker-data\config\docker-compose.$ENV_SANATIZED.yml) {
     Write-Host "adding $env:ENVIRONMENT configuration"
-    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.$env:ENVIRONMENT.yml"
+    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.$ENV_SANATIZED.yml"
 }
 
 Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\base\docker-compose.yml $ADDITIONAL_CONFIGFILE down }"
