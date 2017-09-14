@@ -26,11 +26,8 @@ services:
     environment:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
-      VIRTUAL_PORT: 80
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      VIRTUAL_HOST: ${PHPMYADMIN_VIRTUAL_HOST:-""}
     networks:
-      - "frontend-tier"
       - "backend-tier"
     logging:
       driver: gelf
@@ -62,6 +59,7 @@ services:
       - db:db
       - mail:mail
       - mail:mailhog
+      - phpmyadmin:phpmyadmin
     volumes:
       - "../container/php/php.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
       - "../container/php/apache2/sites-enabled:/etc/apache2/sites-enabled"
@@ -71,7 +69,7 @@ services:
       - "../../../${HTDOCS_FOLDER}:/var/www/html"
     environment:
       VIRTUAL_PORT: 80
-      VIRTUAL_HOST: ${PHP_VIRTUAL_HOST:-""}
+      VIRTUAL_HOST: phpmyadmin.${BASE_DOMAIN}, ${PHP_VIRTUAL_HOST:-""}
       APACHE_HOST: www.${BASE_DOMAIN}
       APACHE_ALIAS: ${PHP_APACHE_ALIAS:-"localhost"}
       BASE_DOMAIN: ${BASE_DOMAIN}
@@ -79,6 +77,7 @@ services:
       APP_ENV: ${ENVIRONMENT}
       APPLICATION_ENVIRONMENT: ${ENVIRONMENT}
       TYPO3_CONTEXT: ${ENVIRONMENT}
+      PHPMYADMIN_RESTRICTION: ${PHPMYADMIN_RESTRICTION:-"1"}
     networks:
       - "frontend-tier"
       - "backend-tier"
