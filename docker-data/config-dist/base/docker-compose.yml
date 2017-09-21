@@ -4,6 +4,7 @@ services:
     image: 'mysql:${MYSQL_VERSION}'
     volumes:
       - "../../volumes/mysql/data:/var/lib/mysql"
+      - "../../volumes/mysql/init:/docker-entrypoint-initdb.d"
       - "../container/mysql/config/my.cnf:/etc/mysql/conf.d/custom.cnf"
     environment:
           MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -62,10 +63,12 @@ services:
       - phpmyadmin:phpmyadmin
     volumes:
       - "../container/php/php.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
+      - "../../volumes/php/session:/var/php/sessions"
       - "../container/php/apache2/sites-enabled:/etc/apache2/sites-enabled"
       - "../container/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
       - "../container/php/ssh:/ssh"
       - "../container/php/cron/crontab:/tmp/crontab"
+      - "../../../.env:/etc/environment"
       - "../../../${HTDOCS_FOLDER}:/var/www/html"
     environment:
       VIRTUAL_PORT: 80
@@ -86,6 +89,15 @@ services:
       options:
         gelf-address: "udp://localhost:12201"
         tag: "php"
+
+  sftp:
+    image: atmoz/sftp
+    volumes:
+      - "../../../${HTDOCS_FOLDER}:/home/sftp/htdocs"
+      - "../container/sftp/scripts:/etc/sftp.d"
+    command: "sftp:${SFTP_PASSWORD:-123456}:33:33:htdocs"
+    ports:
+      - "${SFTP_PORT:-2222}:22"
 
 networks:
   frontend-tier:

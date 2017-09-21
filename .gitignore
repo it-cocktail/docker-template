@@ -4,4 +4,6 @@
 !/docker-data/volumes/mysql/data/.gitkeep
 /docker-data/volumes/search/data/*
 !/docker-data/volumes/search/data/.gitkeep
+/docker-data/volumes/php/session/*
+!/docker-data/volumes/php/session/.gitkeep
 /docker-data.backup*
