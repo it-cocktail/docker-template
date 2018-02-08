@@ -1,0 +1,21 @@
+version: '2.1'
+services:
+  rsync:
+    image: atmoz/sftp
+    volumes:
+      - "../../../${HTDOCS_FOLDER}:/home/${RSYNC_USER:-rsync}/htdocs"
+      - "../container/sftp/scripts:/etc/sftp.d"
+      - "../container/sftp/config/sshd_config_allow_ssh:/etc/ssh/sshd_config"
+      - "../container/sftp/keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key"
+      - "../container/sftp/keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key"
+    command: "${RSYNC_USER:-rsync}:${RSYNC_PASSWORD:-123456}:33:33:htdocs"
+    networks:
+      - "backend-tier"
+    ports:
+      - "${RSYNC_PORT:-2222}:22"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "rsync"
+
