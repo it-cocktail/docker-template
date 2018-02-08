@@ -31,7 +31,7 @@
     }
     echo "<hr />";
 
-    //phpinfo();
+    phpinfo();
     ?>
 </body>
 </html>
