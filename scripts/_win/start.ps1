@@ -53,6 +53,14 @@ if ($env:JAVA_SRC_FOLDER) {
     }
 }
 
+if ($SFTP_ENABLED -eq 1) {
+    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.sftp.yml"
+}
+
+if ($RSYNC_ENABLED -eq 1) {
+    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\base\docker-compose.rsync.yml"
+}
+
 if (Test-Path $env:CWD\docker-data\config\docker-compose.custom.yml) {
     Write-Host "adding custom configuration"
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.custom.yml"

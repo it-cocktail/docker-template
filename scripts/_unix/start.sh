@@ -66,6 +66,16 @@ if [ ! -z "$JAVA_SRC_FOLDER" ]; then
     fi
 fi
 
+if [ "$SFTP_ENABLED" == "1" ]; then
+    echo "adding sftp configuration"
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.sftp.yml"
+fi
+
+if [ "$RSYNC_ENABLED" == "1" ]; then
+    echo "adding rsync configuration"
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/base/docker-compose.rsync.yml"
+fi
+
 if [ -f "$(pwd)/docker-data/config/docker-compose.custom.yml" ]; then
     echo "adding custom configuration"
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.custom.yml"
