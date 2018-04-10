@@ -1,4 +1,3 @@
-
 . $env:CWD\scripts\_win\stop.ps1
 
 $LATEST_TAG = (git ls-remote --tags --refs https://github.com/orange-hive/docker-template.git | Out-String).toString() -replace '.*refs/tags/release-',''

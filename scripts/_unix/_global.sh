@@ -26,3 +26,11 @@ loadENV
 if [ -z "$PROJECTNAME" ]; then
     PROJECTNAME="${PWD##*/}"
 fi
+
+ADDITIONAL_CONFIGFILE=""
+
+ENV_SANATIZED=$(echo $ENVIRONMENT | tr "[:upper:]/\\.:," "[:lower:]-----")
+if [ -f "$(pwd)/docker-data/config/docker-compose.$ENV_SANATIZED.yml" ]; then
+    echo "adding $ENVIRONMENT configuration"
+    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.$ENV_SANATIZED.yml"
+fi

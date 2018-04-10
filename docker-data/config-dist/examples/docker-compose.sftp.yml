@@ -1,9 +1,9 @@
-version: '2.1'
+version: '3'
 services:
   sftp:
     image: atmoz/sftp
     volumes:
-      - "../../../${HTDOCS_FOLDER}:/home/sftp/htdocs"
+      - "./../../${HTDOCS_FOLDER}:/home/sftp/htdocs"
     command: "${SFTP_USER:-sftp}:${SFTP_PASSWORD:-123456}:33:33:htdocs"
     networks:
       - "backend-tier"

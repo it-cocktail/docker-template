@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 services:
   java:
     depends_on:
@@ -7,7 +7,7 @@ services:
       - db:db
     image: fduarte42/openjdk
     volumes:
-      - "../../../${JAVA_SRC_FOLDER}:/opt/app/src"
+      - "../../${JAVA_SRC_FOLDER}:/opt/app/src"
     environment:
       ANT_OPTS: ${JAVA_ANT_OPTS}
       JAVA_OPTS: ${JAVA_OPTS}

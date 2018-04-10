@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 services:
   search:
     image: "docker.elastic.co/elasticsearch/elasticsearch:5.5.2"
@@ -15,7 +15,7 @@ services:
         hard: -1
     mem_limit: 1g
     volumes:
-      - "../../volumes/search/data:/usr/share/elasticsearch/data"
+      - "../volumes/search/data:/usr/share/elasticsearch/data"
     networks:
       - "frontend-tier"
       - "backend-tier"
@@ -45,7 +45,7 @@ services:
 
   db:
     volumes:
-      - "../../volumes/mysql/init:/docker-entrypoint-initdb.d"
+      - "../volumes/mysql/init:/docker-entrypoint-initdb.d"
     ports:
       - 13306:3306
 

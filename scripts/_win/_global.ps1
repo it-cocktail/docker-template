@@ -33,3 +33,13 @@ if (-Not ($env:PHP_VIRTUAL_HOST)) {
 if (-Not ($env:MAIL_VIRTUAL_HOST)) {
     [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail." + $env:BASE_DOMAIN)
 }
+
+$ADDITIONAL_CONFIGFILE = ""
+
+$ENV_SANATIZED = $env:ENVIRONMENT.toLower() -replace '[/\\.:,]', '-'
+if (Test-Path $env:CWD\docker-data\config\docker-compose.$ENV_SANATIZED.yml) {
+    Write-Host "adding $env:ENVIRONMENT configuration"
+    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.$ENV_SANATIZED.yml"
+}
+
+[Environment]::SetEnvironmentVariable('COMPOSE_CONVERT_WINDOWS_PATHS', 1)

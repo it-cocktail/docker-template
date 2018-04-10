@@ -1,18 +1,29 @@
-version: '2.1'
+version: '3'
 services:
   db:
     volumes:
-      - "../../volumes/mysql/init:/docker-entrypoint-initdb.d"
+      - "../volumes/mysql/init:/docker-entrypoint-initdb.d"
     restart: always
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "mysql"
 
   phpmyadmin:
     restart: always
-
-  mail:
-    image: tianon/true
-    command: "/true"
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "phpmyadmin"
 
   php:
     volumes:
-      - "../container/php/ssmtp/ssmtp.production.conf:/etc/ssmtp/ssmtp.conf"
+      - "./container/php/ssmtp/ssmtp.production.conf:/etc/ssmtp/ssmtp.conf"
     restart: always
+    logging:
+      driver: gelf
+      options:
+        gelf-address: "udp://localhost:12201"
+        tag: "php"

@@ -1,1 +1,1 @@
-docker-compose -p "$env:PROJECTNAME" -f docker-data\config\base\docker-compose.yml exec php crontab -u www-data /tmp/crontab
+Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\docker-compose.yml $ADDITIONAL_CONFIGFILE exec php crontab -u www-data /tmp/crontab }"

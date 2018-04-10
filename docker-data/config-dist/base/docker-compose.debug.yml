@@ -1,7 +1,0 @@
-version: '2.1'
-services:
-  php:
-    image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
-    environment:
-      # set your local ip address
-      XDEBUG_REMOTE_HOST: '${LOCAL_DEBUG_IP}'
