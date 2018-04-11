@@ -1,12 +1,12 @@
 #!/bin/sh
 
 if [ ! -f "$(pwd)/.env" ]; then
-    echo "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    echo "Environment File missing. Use setup command to create it."
     exit
 fi
 
 if [ ! -d "$(pwd)/docker-data/config" ]; then
-    echo "docker-data/config is missing. Rename docker-data/config-dist to docker-data/config and customize it before starting this project."
+    echo "docker-data/config is missing. Use setup command to create it."
     exit
 fi
 
@@ -34,3 +34,11 @@ if [ -f "$(pwd)/docker-data/config/docker-compose.$ENV_SANATIZED.yml" ]; then
     echo "adding $ENVIRONMENT configuration"
     ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.$ENV_SANATIZED.yml"
 fi
+
+# utility for searching in bash arrays
+arrayContains () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}

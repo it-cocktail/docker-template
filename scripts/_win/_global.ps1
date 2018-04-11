@@ -1,11 +1,10 @@
 if (-Not (Test-Path "$env:CWD\.env")) {
-    throw "Environment File missing. Rename .env-dist to .env and customize it before starting this project."
+    throw "Environment File missing. Use setup command to create it."
 }
 
 if (-Not (Test-Path "$env:CWD\docker-data\config")) {
-    throw "docker-data\config is missing. Rename docker-data\config-dist to docker-data\config and customize it before starting this project."
+    throw "docker-data\config is missing. Use setup command to create it."
 }
-
 
 $lines = cat .env
 foreach ($line in $lines) {

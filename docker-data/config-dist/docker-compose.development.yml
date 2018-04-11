@@ -1,9 +1,5 @@
 version: '3'
 services:
-  db:
-    volumes:
-      - "../volumes/mysql/init:/docker-entrypoint-initdb.d"
-
   mail:
     image: mailhog/mailhog
     environment:
@@ -17,3 +13,6 @@ services:
     image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
     environment:
       XDEBUG_REMOTE_HOST: 'host.docker.internal'
+    volumes:
+      - "./container/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
+
