@@ -6,13 +6,34 @@ services:
       VIRTUAL_PORT: 8025
       VIRTUAL_HOST: ${MAIL_VIRTUAL_HOST:-""}
     networks:
-      - "frontend-tier"
-      - "backend-tier"
+      - "default"
+      - "proxy"
 
   php:
     image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
+    links:
+      - db-proxy:db
     environment:
       XDEBUG_REMOTE_HOST: 'host.docker.internal'
     volumes:
       - "./container/php/ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf"
 
+  db-proxy:
+    image: toumoro/lottip
+    depends_on:
+      - db
+    links:
+      - db:mysql
+    environment:
+      LOTTIP_PROXY: 0.0.0.0:3306
+      LOTTIP_MYSQL: mysql:3306
+      LOTTIP_DSN: root:${MYSQL_ROOT_PASSWORD}
+      VIRTUAL_HOST: db.${BASE_DOMAIN}
+      VIRTUAL_PORT: 9999
+    networks:
+      - "default"
+      - "proxy"
+
+#  db:
+#    ports:
+#      - <enter-local-port-here>:3306

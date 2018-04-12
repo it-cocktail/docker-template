@@ -9,8 +9,6 @@ services:
       - "./container/sftp/keys/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key"
       - "./container/sftp/keys/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key"
     command: "${RSYNC_USER:-rsync}:${RSYNC_PASSWORD:-123456}:33:33:htdocs"
-    networks:
-      - "backend-tier"
     ports:
       - "${RSYNC_PORT:-2222}:22"
     logging:

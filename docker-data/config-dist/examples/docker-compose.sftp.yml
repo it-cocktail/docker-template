@@ -5,8 +5,6 @@ services:
     volumes:
       - "./../../${HTDOCS_FOLDER}:/home/sftp/htdocs"
     command: "${SFTP_USER:-sftp}:${SFTP_PASSWORD:-123456}:33:33:htdocs"
-    networks:
-      - "backend-tier"
     ports:
       - "${SFTP_PORT:-2222}:22"
     logging:

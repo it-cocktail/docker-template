@@ -2,14 +2,12 @@ version: '3'
 services:
   db:
     image: 'mysql:${MYSQL_VERSION}'
-    entrypoint: ["docker-entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "64M"]
+    command: ["--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "64M"]
     volumes:
       - "../volumes/mysql/data:/var/lib/mysql"
       - "../volumes/mysql/init:/docker-entrypoint-initdb.d"
     environment:
           MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - "backend-tier"
 
   phpmyadmin:
     image: 'phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}'
@@ -23,8 +21,6 @@ services:
       MYSQL_HOST: db
       UPLOAD_SIZE: "500M"
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - "backend-tier"
 
   php:
     depends_on:
@@ -57,13 +53,11 @@ services:
       TYPO3_CONTEXT: ${ENVIRONMENT}
       PHPMYADMIN_RESTRICTION: ${PHPMYADMIN_RESTRICTION:-"1"}
     networks:
-      - "frontend-tier"
-      - "backend-tier"
+      - "default"
+      - "proxy"
 
 networks:
-  frontend-tier:
+  proxy:
     external:
       name: proxy
-  backend-tier:
-    driver: bridge
 

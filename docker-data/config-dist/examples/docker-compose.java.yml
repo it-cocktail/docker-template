@@ -12,8 +12,8 @@ services:
       ANT_OPTS: ${JAVA_ANT_OPTS}
       JAVA_OPTS: ${JAVA_OPTS}
     networks:
-      - "backend-tier"
-      - "frontend-tier"
+      - "default"
+      - "proxy"
 
   php:
     depends_on:

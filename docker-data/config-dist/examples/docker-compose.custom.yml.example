@@ -17,8 +17,8 @@ services:
     volumes:
       - "../volumes/search/data:/usr/share/elasticsearch/data"
     networks:
-      - "frontend-tier"
-      - "backend-tier"
+      - "default"
+      - "proxy"
 
     logging:
       driver: gelf
@@ -34,8 +34,8 @@ services:
       VIRTUAL_PORT: 9100
       VIRTUAL_HOST: search_head.${BASE_DOMAIN}
     networks:
-      - "frontend-tier"
-      - "backend-tier"
+      - "default"
+      - "proxy"
 
     logging:
       driver: gelf
