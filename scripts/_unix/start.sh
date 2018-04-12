@@ -3,7 +3,7 @@
 PROXY_PORT=$(docker ps | grep "jwilder/nginx-proxy" | sed "s/.*0\.0\.0\.0:\([0-9]*\)->80\/tcp.*/\\1/")
 
 if [ -z "$PROXY_PORT" ]; then
-    printf "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy\n\n"
+    printf "ERROR: Please start docker proxy. Project can be found on Gitlab under https://github.com/orange-hive/docker-proxy\n\n"
     exit 0
 fi
 

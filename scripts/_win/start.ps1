@@ -1,7 +1,7 @@
 
 $PROXY_PORT = (((docker ps | Out-String) -split "`r`n" | Select-String "CONTAINER ID|jwilder/nginx-proxy") -replace "  +", "`t" | ConvertFrom-CSV -Delimiter "`t" | Select -expand PORTS | Out-String) -replace ".*0\.0\.0\.0:([0-9]+)->80.*`n", '$1'
 if (-Not ($PROXY_PORT)) {
-    throw "ERROR: Please start docker proxy. Project can be found on Gitlab under http://gitlab.orangehive.de/orangehive/docker-proxy"
+    throw "ERROR: Please start docker proxy. Project can be found on Gitlab under https://github.com/orange-hive/docker-proxy"
 }
 
 [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail.$env:BASE_DOMAIN, mailhog.$env:BASE_DOMAIN")
