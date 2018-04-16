@@ -26,7 +26,6 @@ services:
     depends_on:
       - db
       - phpmyadmin
-      - mail
     image: 'fduarte42/docker-php:${PHP_VERSION}'
     links:
       - db:db

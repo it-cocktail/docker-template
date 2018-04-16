@@ -11,6 +11,8 @@ services:
 
   php:
     image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
+    depends_on:
+      - mail
     links:
       - db-proxy:db
     environment:
