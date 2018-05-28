@@ -8,4 +8,5 @@
 !/docker-data/volumes/php/session/.gitkeep
 /docker-data.backup*
 /logs/*
+!/logs/.gitkeep
 
