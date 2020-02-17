@@ -23,7 +23,7 @@ We have build custom docker images for php that are available on docker hub. The
 some advantages over php-fpm and htaccess files can be used easily. A lot of PHP extensions are already included and
 also some additional tools that are helpful as wkhtmltopdf, the cron daemon, gnupg, ssh keychain manager or composer.
 
-The images are available with the following php versions: 5.3, 5.5, 5.6, 7.0 and 7.1 and every version is additionally
+The images are available with the following php versions: 5.3, 5.5, 5.6, 7.0, 7.1, 7.2, 7.3, 7.4 and every version is additionally
 build with xdebug enabled as {version}-debug.
 
 
