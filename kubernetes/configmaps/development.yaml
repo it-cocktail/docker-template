@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{$PROJECTNAME}"
+  namespace: ingress-nginx
+data:
+  MYSQL_ROOT_PASSWORD: "{$MYSQL_ROOT_PASSWORD}"
+  MYSQL_HOST: "{$PROJECTNAME}-db-service"
+  APP_ENV: "{$ENVIRONMENT}"
+  BASE_DOMAIN: "{$BASE_DOMAIN}"

@@ -1,18 +1,6 @@
 #!/bin/sh
 
-if [ ! -f "$(pwd)/.env" ]; then
-    echo "Environment File missing. Use setup command to create it."
-    exit
-fi
-
-if [ ! -d "$(pwd)/docker-data/config" ]; then
-    echo "docker-data/config is missing. Use setup command to create it."
-    exit
-fi
-
-# Setting permissions
-chmod -R 777 docker-data/config/container/* 2>/dev/null
-chmod -R 777 docker-data/volumes/* 2>/dev/null
+CWD_SANATIZED=$(echo "$CWD" | sed 's/\//\\\//g')
 
 # Read .env file
 loadENV() {
@@ -23,22 +11,19 @@ loadENV() {
 }
 loadENV
 
-if [ -z "$PROJECTNAME" ]; then
-    PROJECTNAME="${PWD##*/}"
-fi
+function parseFile() {
+    local FILEDATA=$(cat "$1")
 
-ADDITIONAL_CONFIGFILE=""
+    local IFS=$'\n'
+    for VAR in $(cat .env | grep -v "^#"); do
+        local PLACEHOLDER=$(echo "$VAR" | sed 's/\(.*\)=.*/\1/')
+        local VALUE=$(echo "$VAR" | sed 's/.*=\(.*\)/\1/')
+        FILEDATA=$(echo "$FILEDATA" | sed "s/{\$$PLACEHOLDER}/$VALUE/g")
+    done
+    FILEDATA=$(echo "$FILEDATA" | sed "s/{\$CWD}/$CWD_SANATIZED/g")
 
-ENV_SANATIZED=$(echo $ENVIRONMENT | tr "[:upper:]/\\.:," "[:lower:]-----")
-if [ -f "$(pwd)/docker-data/config/docker-compose.$ENV_SANATIZED.yml" ]; then
-    echo "adding $ENVIRONMENT configuration"
-    ADDITIONAL_CONFIGFILE="$ADDITIONAL_CONFIGFILE -f docker-data/config/docker-compose.$ENV_SANATIZED.yml"
-fi
-
-# utility for searching in bash arrays
-arrayContains () {
-  local e match="$1"
-  shift
-  for e; do [[ "$e" == "$match" ]] && return 0; done
-  return 1
+    echo "$FILEDATA"
 }
+
+PROJECTNAME=$(echo $PROJECTNAME | tr "[:upper:]/\\.:," "[:lower:]-----")
+ENVIRONMENT=$(echo $ENVIRONMENT | tr "[:upper:]/\\.:," "[:lower:]-----")

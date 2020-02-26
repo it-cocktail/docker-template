@@ -1,5 +1,8 @@
 #!/bin/sh
 
-docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE exec db bash
+JSONPATH="{range .items[?(@.metadata.name=='${PROJECTNAME}-db-app')]}{range .status.containerStatuses[?(@.name=='db')]}{.containerID}{end}"
+CONTAINER=$(kubectl get pods -n ingress-nginx -o jsonpath="$JSONPATH" | sed 's/docker:\/\///g')
+
+docker exec -it -u mysql:mysql $CONTAINER bash
 
 exit

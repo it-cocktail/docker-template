@@ -1,6 +1,9 @@
 #!/bin/sh
 
+JSONPATH="{range .items[?(@.metadata.name=='${PROJECTNAME}-db-app')]}{range .status.containerStatuses[?(@.name=='db')]}{.containerID}{end}"
+CONTAINER=$(kubectl get pods -n ingress-nginx -o jsonpath="$JSONPATH" | sed 's/docker:\/\///g')
+
 PARAMETER="$@"
-docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE exec db mysql "$PARAMETER"
+docker exec -it -u mysql:mysql $CONTAINER bash -l -c "mysql $PARAMETER"
 
 exit

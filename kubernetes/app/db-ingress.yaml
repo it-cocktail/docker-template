@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: "{$PROJECTNAME}-db-ingress"
+  namespace: ingress-nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: "phpmyadmin.{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: "{$PROJECTNAME}-db-service"
+              servicePort: 80

@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{$PROJECTNAME}-app-service"
+  namespace: ingress-nginx
+spec:
+  selector:
+    app: "{$PROJECTNAME}-app"
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{$PROJECTNAME}-app"
+  namespace: ingress-nginx
+  labels:
+    app: "{$PROJECTNAME}-app"
+spec:
+  hostAliases:
+    - ip: "127.0.0.1"
+      hostnames:
+        - "php"
+        - "mail"
+  initContainers:
+    - name: init-env
+      image: busybox
+      command: ['sh', '-c', 'printenv > /volume/environment']
+      volumeMounts:
+        - name: "{$PROJECTNAME}-container-pv-storage"
+          mountPath: /volume
+      envFrom:
+        - configMapRef:
+            name: "{$PROJECTNAME}"
+  containers:
+    - name: mail
+      image: "nibirrayy/docker-smtp"
+      imagePullPolicy: Always
+
+    - name: php
+      image: "fduarte42/docker-php:{$PHP_VERSION}"
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: "{$PROJECTNAME}-container-pv-storage"
+          mountPath: /etc/environment
+          subPath: environment
+        - name: "{$PROJECTNAME}-container-pv-storage"
+          mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
+          subPath: php/php.ini
+        - name: "{$PROJECTNAME}-container-pv-storage"
+          mountPath: /etc/ssmtp/ssmtp.conf
+          subPath: php/ssmtp.conf
+        - name: "{$PROJECTNAME}-container-pv-storage"
+          mountPath: /tmp/crontab
+          subPath: php/crontab
+        - name: "{$PROJECTNAME}-htdocs-pv-storage"
+          mountPath: /var/www/html
+      envFrom:
+        - configMapRef:
+            name: "{$PROJECTNAME}"
+      ports:
+        - containerPort: 80
+
+  volumes:
+    - name: "{$PROJECTNAME}-container-pv-storage"
+      persistentVolumeClaim:
+        claimName: "{$PROJECTNAME}-container-pv-claim"
+    - name: "{$PROJECTNAME}-htdocs-pv-storage"
+      persistentVolumeClaim:
+        claimName: "{$PROJECTNAME}-htdocs-pv-claim"

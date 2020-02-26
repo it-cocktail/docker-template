@@ -1,0 +1,5 @@
+MAILTO=""
+0 0 * * 4 cd /var/www/html; /usr/local/bin/php info4C/import.php
+* * * * * cd /var/www/html; /usr/local/bin/php process.php >> process.log
+* * * * * cd /var/www/html; /usr/local/bin/php send.php >> send.log
+0 0 1 * * cd /var/www/html; /usr/local/bin/php monthly_job.php >> monthly_job.log

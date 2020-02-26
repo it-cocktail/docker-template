@@ -1,3 +1,7 @@
-Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\docker-compose.yml $ADDITIONAL_CONFIGFILE exec db mysql $args }"
+$PROJECTNAME = $envHash.PROJECTNAME
+$JSONPATH = "{range .items[?(@.metadata.name=='$PROJECTNAME-db-app')]}{range .status.containerStatuses[?(@.name=='db')]}{.containerID}{end}"
+$CONTAINER = (Invoke-Expression "kubectl get pods -n ingress-nginx -o jsonpath=`"$JSONPATH`"") -replace 'docker://', ''
+
+Invoke-Expression "& { docker exec -it -u mysql:mysql $CONTAINER bash -l -c `"mysql $args`" }"
 
 exit

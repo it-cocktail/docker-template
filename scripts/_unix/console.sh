@@ -1,5 +1,8 @@
 #!/bin/sh
 
-docker-compose -p "$PROJECTNAME" -f docker-data/config/docker-compose.yml $ADDITIONAL_CONFIGFILE exec -u www-data:www-data php bash
+JSONPATH="{range .items[?(@.metadata.name=='${PROJECTNAME}-app')]}{range .status.containerStatuses[?(@.name=='php')]}{.containerID}{end}"
+CONTAINER=$(kubectl get pods -n ingress-nginx -o jsonpath="$JSONPATH" | sed 's/docker:\/\///g')
+
+docker exec -it -u www-data:www-data $CONTAINER bash
 
 exit
