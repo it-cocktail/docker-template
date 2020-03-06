@@ -1,3 +1,4 @@
 container/environment
+container/mysql/data
 logs/*
 !logs/.gitkeep
