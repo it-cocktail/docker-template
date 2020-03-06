@@ -9,6 +9,7 @@ else
   echo "$(parseFile kubernetes/configmaps/default.yaml)" | kubectl apply -f -
 fi
 
+echo "$(parseFile kubernetes/volumes/logs.yaml)" | kubectl apply -f -
 echo "$(parseFile kubernetes/volumes/container.yaml)" | kubectl apply -f -
 echo "$(parseFile kubernetes/volumes/htdocs.yaml)" | kubectl apply -f -
 

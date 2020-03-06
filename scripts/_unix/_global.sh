@@ -11,6 +11,9 @@ loadENV() {
 }
 loadENV
 
+PROJECTNAME=$(echo $PROJECTNAME | tr "[:upper:]/\\.:," "[:lower:]-----")
+ENVIRONMENT=$(echo $ENVIRONMENT | tr "[:upper:]/\\.:," "[:lower:]-----")
+
 function parseFile() {
     local FILEDATA=$(cat "$1")
 
@@ -24,6 +27,3 @@ function parseFile() {
 
     echo "$FILEDATA"
 }
-
-PROJECTNAME=$(echo $PROJECTNAME | tr "[:upper:]/\\.:," "[:lower:]-----")
-ENVIRONMENT=$(echo $ENVIRONMENT | tr "[:upper:]/\\.:," "[:lower:]-----")

@@ -10,6 +10,9 @@ foreach ($line in $lines) {
     }
 }
 
+$envHash.PROJECTNAME = $envHash.PROJECTNAME.toLower() -replace '[/\\.:,]', '-'
+$envHash.ENVIRONMENT = $envHash.ENVIRONMENT.toLower() -replace '[/\\.:,]', '-'
+
 function global:Parse-File([String] $file) {
     $lines = Get-Content -Path "$file"
     foreach ($placeholder in $envHash.keys) {
@@ -21,5 +24,3 @@ function global:Parse-File([String] $file) {
 }
 
 [Environment]::SetEnvironmentVariable('COMPOSE_CONVERT_WINDOWS_PATHS', 1)
-$envHash.PROJECTNAME = $envHash.PROJECTNAME.toLower() -replace '[/\\.:,]', '-'
-$envHash.ENVIRONMENT = $envHash.ENVIRONMENT.toLower() -replace '[/\\.:,]', '-'

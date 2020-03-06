@@ -1,1 +1,3 @@
 container/environment
+logs/*
+!logs/.gitkeep
