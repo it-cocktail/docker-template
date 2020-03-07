@@ -1,8 +1,5 @@
 #!/bin/sh
 
-kubectl apply -f kubernetes/ingress/mandatory.yaml > /dev/null
-kubectl apply -f kubernetes/ingress/cloud-generic.yaml > /dev/null
-
 if [ -f "kubernetes/configmaps/${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/configmaps/${ENVIRONMENT}.yaml)" | kubectl apply -f -
 else
