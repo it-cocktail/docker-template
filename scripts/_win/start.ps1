@@ -1,6 +1,3 @@
-Invoke-Expression "kubectl apply -f kubernetes/ingress/mandatory.yaml" > $null
-Invoke-Expression "kubectl apply -f kubernetes/ingress/cloud-generic.yaml" > $null
-
 $environment = $envHash['ENVIRONMENT']
 
 if (Test-Path "kubernetes/configmaps/$environment.yaml") {
