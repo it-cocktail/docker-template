@@ -28,8 +28,9 @@ spec:
       image: busybox
       command: ['sh', '-c', 'printenv > /volume/environment']
       volumeMounts:
-        - name: "{$PROJECTNAME}-container-pv-storage"
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /volume
+          subPath: container
       envFrom:
         - configMapRef:
             name: "{$PROJECTNAME}"
@@ -42,39 +43,33 @@ spec:
       image: "fduarte42/docker-php:{$PHP_VERSION}"
       imagePullPolicy: Always
       volumeMounts:
-        - name: "{$PROJECTNAME}-container-pv-storage"
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /etc/environment
-          subPath: environment
-        - name: "{$PROJECTNAME}-container-pv-storage"
+          subPath: container/environment
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /etc/apache2/sites-enabled
-          subPath: apache2/sites-enabled
-        - name: "{$PROJECTNAME}-container-pv-storage"
+          subPath: container/apache2/sites-enabled
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
-          subPath: php/php.default.ini
-        - name: "{$PROJECTNAME}-container-pv-storage"
+          subPath: container/php/php.default.ini
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /etc/ssmtp/ssmtp.conf
-          subPath: php/ssmtp.default.conf
-        - name: "{$PROJECTNAME}-container-pv-storage"
+          subPath: container/php/ssmtp.default.conf
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /tmp/crontab
-          subPath: php/crontab.default
-        - name: "{$PROJECTNAME}-htdocs-pv-storage"
+          subPath: container/php/crontab.default
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /var/www/html
-        - name: "{$PROJECTNAME}-logs-pv-storage"
+          subPath: "{$HTDOCS_FOLDER}"
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /var/log/apache
-          subPath: apache
+          subPath: logs/apache
       envFrom:
         - configMapRef:
             name: "{$PROJECTNAME}"
       ports:
         - containerPort: 80
-
   volumes:
-    - name: "{$PROJECTNAME}-logs-pv-storage"
-      persistentVolumeClaim:
-        claimName: "{$PROJECTNAME}-logs-pv-claim"
-    - name: "{$PROJECTNAME}-container-pv-storage"
-      persistentVolumeClaim:
-        claimName: "{$PROJECTNAME}-container-pv-claim"
-    - name: "{$PROJECTNAME}-htdocs-pv-storage"
-      persistentVolumeClaim:
-        claimName: "{$PROJECTNAME}-htdocs-pv-claim"
+    - name: "{$PROJECTNAME}-pv"
+      hostPath:
+        path: "{$CWD}"

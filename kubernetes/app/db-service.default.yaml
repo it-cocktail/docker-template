@@ -35,12 +35,12 @@ spec:
               key: MYSQL_ROOT_PASSWORD
               name: "{$PROJECTNAME}"
       volumeMounts:
-        - name: "{$PROJECTNAME}-container-pv-storage"
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /var/lib/mysql
-          subPath: mysql/data
-        - name: "{$PROJECTNAME}-container-pv-storage"
+          subPath: container/mysql/data
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /docker-entrypoint-initdb.d/init.sql
-          subPath: mysql/init.sql
+          subPath: container/mysql/init.sql
 
     - name: phpmyadmin
       image: phpmyadmin/phpmyadmin
@@ -59,11 +59,10 @@ spec:
       ports:
         - containerPort: 80
       volumeMounts:
-        - name: "{$PROJECTNAME}-container-pv-storage"
+        - name: "{$PROJECTNAME}-pv"
           mountPath: /etc/php5/conf.d/zzz-custom.ini
-          subPath: phpmyadmin/php.ini
-
+          subPath: container/phpmyadmin/php.ini
   volumes:
-    - name: "{$PROJECTNAME}-container-pv-storage"
-      persistentVolumeClaim:
-        claimName: "{$PROJECTNAME}-container-pv-claim"
+    - name: "{$PROJECTNAME}-pv"
+      hostPath:
+        path: "{$CWD}"

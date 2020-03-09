@@ -6,10 +6,6 @@ else
   echo "$(parseFile kubernetes/configmaps/default.yaml)" | kubectl apply -f -
 fi
 
-echo "$(parseFile kubernetes/volumes/logs.yaml)" | kubectl apply -f -
-echo "$(parseFile kubernetes/volumes/container.yaml)" | kubectl apply -f -
-echo "$(parseFile kubernetes/volumes/htdocs.yaml)" | kubectl apply -f -
-
 if [ -f "kubernetes/app/db-service.${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/app/db-service.${ENVIRONMENT}.yaml)" | kubectl apply -f -
 else

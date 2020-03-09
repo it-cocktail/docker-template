@@ -15,10 +15,6 @@ if (Test-Path "kubernetes/app/db-service.$environment.yaml") {
     Parse-File "kubernetes/app/db-service.default.yaml" | kubectl delete -f -
 }
 
-Parse-File "kubernetes/volumes/htdocs.yaml" | kubectl delete -f -
-Parse-File "kubernetes/volumes/container.yaml" | kubectl delete -f -
-Parse-File "kubernetes/volumes/logs.yaml" | kubectl delete -f -
-
 if (Test-Path "kubernetes/configmaps/$environment.yaml") {
     Parse-File "kubernetes/configmaps/$environment.yaml" | kubectl delete -f -
 } else {

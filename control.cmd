@@ -34,6 +34,7 @@ exit
 SET OLDCWD=%cd%
 SET CWD=%~dp0
 CD "%CWD%"
+IF %CWD:~-1%==\ SET CWD=%CWD:~0,-1%
 
 SET COMMAND=%1
 

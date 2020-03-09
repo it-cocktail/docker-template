@@ -1,3 +1,5 @@
+$global:cwdSanatized = $env:CWD -replace '\\', '/'
+$global:cwdSanatized = "/" + ($cwdSanatized -replace ':', '')
 $global:envHash = @{}
 
 $lines = Get-Content -Path .env
@@ -18,7 +20,7 @@ function global:Parse-File([String] $file) {
     foreach ($placeholder in $envHash.keys) {
         $lines = $lines.replace("{`$$placeholder}", $envHash[$placeholder])
     }
-    $lines = $lines.replace("{`$CWD}", $env:CWD)
+    $lines = $lines.replace("{`$CWD}", $cwdSanatized)
 
     return $lines
 }

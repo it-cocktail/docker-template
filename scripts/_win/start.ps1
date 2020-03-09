@@ -6,10 +6,6 @@ if (Test-Path "kubernetes/configmaps/$environment.yaml") {
     Parse-File "kubernetes/configmaps/default.yaml" | kubectl apply -f -
 }
 
-Parse-File "kubernetes/volumes/logs.yaml" | kubectl apply -f -
-Parse-File "kubernetes/volumes/container.yaml" | kubectl apply -f -
-Parse-File "kubernetes/volumes/htdocs.yaml" | kubectl apply -f -
-
 if (Test-Path "kubernetes/app/db-service.$environment.yaml") {
     Parse-File "kubernetes/app/db-service.$environment.yaml" | kubectl apply -f -
 } else {

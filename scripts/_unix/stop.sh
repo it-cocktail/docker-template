@@ -15,10 +15,6 @@ else
   echo "$(parseFile kubernetes/app/db-service.default.yaml)" | kubectl delete -f -
 fi
 
-echo "$(parseFile kubernetes/volumes/htdocs.yaml)" | kubectl delete -f -
-echo "$(parseFile kubernetes/volumes/container.yaml)" | kubectl delete -f -
-echo "$(parseFile kubernetes/volumes/logs.yaml)" | kubectl delete -f -
-
 if [ -f "kubernetes/configmaps/${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/configmaps/${ENVIRONMENT}.yaml)" | kubectl delete -f -
 else
