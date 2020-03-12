@@ -43,6 +43,8 @@ spec:
       image: "fduarte42/docker-php:{$PHP_VERSION}"
       imagePullPolicy: Always
       volumeMounts:
+        - name: "{$PROJECTNAME}-ssh-pv"
+          mountPath: /ssh
         - name: "{$PROJECTNAME}-pv"
           mountPath: /etc/environment
           subPath: container/environment
@@ -73,3 +75,6 @@ spec:
     - name: "{$PROJECTNAME}-pv"
       hostPath:
         path: "{$CWD}"
+    - name: "{$PROJECTNAME}-ssh-pv"
+      secret:
+        secretName: "{$PROJECTNAME}-ssh"

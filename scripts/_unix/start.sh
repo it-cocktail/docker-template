@@ -6,6 +6,8 @@ else
   echo "$(parseFile kubernetes/configmaps/default.yaml)" | kubectl apply -f -
 fi
 
+kubectl create secret generic "${PROJECTNAME}-ssh" --from-file=$HOME/.ssh/id_rsa.pub --from-file=$HOME/.ssh/id_rsa
+
 if [ -f "kubernetes/app/db-service.${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/app/db-service.${ENVIRONMENT}.yaml)" | kubectl apply -f -
 else

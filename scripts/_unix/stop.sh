@@ -19,6 +19,8 @@ else
   echo "$(parseFile kubernetes/app/db-service.default.yaml)" | kubectl delete -f -
 fi
 
+kubectl delete secret "${PROJECTNAME}-ssh"
+
 if [ -f "kubernetes/configmaps/${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/configmaps/${ENVIRONMENT}.yaml)" | kubectl delete -f -
 else
