@@ -1,44 +1,28 @@
-if (-Not (Test-Path "$env:CWD\.env")) {
-    throw "Environment File missing. Use setup command to create it."
-}
+$global:cwdSanatized = $env:CWD -replace '\\', '/'
+$global:cwdSanatized = "/" + ($cwdSanatized -replace ':', '')
+$global:envHash = @{}
 
-if (-Not (Test-Path "$env:CWD\docker-data\config")) {
-    throw "docker-data\config is missing. Use setup command to create it."
-}
-
-$lines = cat .env
+$lines = Get-Content -Path .env
 foreach ($line in $lines) {
     if (-Not ($line.StartsWith('#'))) {
         $parts = $line.Split('=')
         if ($parts.Length -eq 2) {
-            [Environment]::SetEnvironmentVariable($parts[0], $parts[1])
+            $envHash[$parts[0]] = $parts[1]
         }
     }
 }
 
-if (-Not ($env:PROJECTNAME)) {
-    $PROJECTNAME = gi $env:CWD | select -expand basename
-    [Environment]::SetEnvironmentVariable("PROJECTNAME", $PROJECTNAME)
-}
+$envHash.PROJECTNAME = $envHash.PROJECTNAME.toLower() -replace '[/\\.:,]', '-'
+$envHash.ENVIRONMENT = $envHash.ENVIRONMENT.toLower() -replace '[/\\.:,]', '-'
 
-if (-Not ($env:PHPMYADMIN_VIRTUAL_HOST)) {
-    [Environment]::SetEnvironmentVariable("PHPMYADMIN_VIRTUAL_HOST", "phpmyadmin." + $env:BASE_DOMAIN)
-}
+function global:Parse-File([String] $file) {
+    $lines = Get-Content -Path "$file"
+    foreach ($placeholder in $envHash.keys) {
+        $lines = $lines.replace("{`$$placeholder}", $envHash[$placeholder])
+    }
+    $lines = $lines.replace("{`$CWD}", $cwdSanatized)
 
-if (-Not ($env:PHP_VIRTUAL_HOST)) {
-    [Environment]::SetEnvironmentVariable("PHP_VIRTUAL_HOST", "www." + $env:BASE_DOMAIN)
-}
-
-if (-Not ($env:MAIL_VIRTUAL_HOST)) {
-    [Environment]::SetEnvironmentVariable("MAIL_VIRTUAL_HOST", "mail." + $env:BASE_DOMAIN)
-}
-
-$ADDITIONAL_CONFIGFILE = ""
-
-$ENV_SANATIZED = $env:ENVIRONMENT.toLower() -replace '[/\\.:,]', '-'
-if (Test-Path $env:CWD\docker-data\config\docker-compose.$ENV_SANATIZED.yml) {
-    Write-Host "adding $env:ENVIRONMENT configuration"
-    $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-data\config\docker-compose.$ENV_SANATIZED.yml"
+    return $lines
 }
 
 [Environment]::SetEnvironmentVariable('COMPOSE_CONVERT_WINDOWS_PATHS', 1)

@@ -1,3 +1,5 @@
-Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\docker-compose.yml $ADDITIONAL_CONFIGFILE exec -u www-data:www-data php bash -l -c `"composer $args`" }"
+$PROJECTNAME = $envHash.PROJECTNAME
+
+kubectl exec -it "$PROJECTNAME-app" --container php -- sudo -u www-data -E HOME=/var/www COMPOSER_HOME=~/.composer composer $args
 
 exit

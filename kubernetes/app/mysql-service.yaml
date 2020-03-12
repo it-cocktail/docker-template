@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{$PROJECTNAME}-mysql-service"
+spec:
+  selector:
+    app: "{$PROJECTNAME}-db-app"
+  type: LoadBalancer
+  ports:
+    - name: mysql
+      port: 13306
+      targetPort: mysql

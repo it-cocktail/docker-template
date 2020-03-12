@@ -1,1 +1,5 @@
-Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-data\config\docker-compose.yml $ADDITIONAL_CONFIGFILE exec php crontab -u www-data /tmp/crontab }"
+$PROJECTNAME = $envHash.PROJECTNAME
+
+kubectl exec -it "$PROJECTNAME-app" --container php -- sudo -u www-data -E HOME=/var/www crontab /tmp/crontab
+
+exit
