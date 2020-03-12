@@ -46,6 +46,9 @@ Configuration in .env:
 * `MYSQL_ROOT_PASSWORD`<br />
     MySQL Root Password.
 
+* `MYSQL_PORT`<br />
+    Local port to forward to mysql port in pod.
+
 * `PHPMYADMIN_VERSION`<br />
     PHPMyAdmin version used (4.7, 4.8, 4.9, 5.0)
 
@@ -87,9 +90,6 @@ There are the following commands:
 
 * `./control.cmd restart` (Unix) / `control.cmd restart` (Win)<br />
     restart services.
-
-* `./control.cmd composer` (Unix) / `control.cmd composer` (Win)<br />
-    composer command. Will be executed with the configured PHP version.
 
 * `./control.cmd console` (Unix) / `control.cmd console` (Win)<br />
     enter the console of the PHP container.
