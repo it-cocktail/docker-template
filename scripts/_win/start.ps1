@@ -21,10 +21,7 @@ if (Test-Path "kubernetes/app/app-service.$environment.yaml") {
 Parse-File "kubernetes/ingress/db-ingress.yaml" | kubectl apply -f -
 Parse-File "kubernetes/ingress/app-ingress.yaml" | kubectl apply -f -
 
-if ($envHash.MYSQL_PORT_FORWARD) {
-    $pod = $envHash.PROJECTNAME + "-db-app"
-    $portForward = $envHash.MYSQL_PORT_FORWARD
-    $name = $envHash.PROJECTNAME + "-db-app-mysql-fw"
-    Start-Process -WindowStyle Minimized -FilePath "kubectl" -ArgumentList "port-forward", "$pod", "$portForward"
+if ($envHash.MYSQL_PORT) {
+    Parse-File "kubernetes/app/mysql-service.yaml" | kubectl apply -f -
 }
 exit

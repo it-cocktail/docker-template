@@ -1,7 +1,5 @@
 $PROJECTNAME = $envHash.PROJECTNAME
-$JSONPATH = "{range .items[?(@.metadata.name=='$PROJECTNAME-app')]}{range .status.containerStatuses[?(@.name=='php')]}{.containerID}{end}"
-$CONTAINER = (Invoke-Expression "kubectl get pods -o jsonpath=`"$JSONPATH`"") -replace 'docker://', ''
 
-Invoke-Expression "& { docker exec -it -u www-data:www-data $CONTAINER crontab /tmp/crontab }"
+kubectl exec -it "$PROJECTNAME-app" --container php -- sudo -u www-data -E HOME=/var/www crontab /tmp/crontab
 
 exit

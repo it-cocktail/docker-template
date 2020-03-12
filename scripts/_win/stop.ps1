@@ -1,5 +1,9 @@
 $environment = $envHash['ENVIRONMENT']
 
+if ($envHash.MYSQL_PORT) {
+    Parse-File "kubernetes/app/mysql-service.yaml" | kubectl delete -f -
+}
+
 Parse-File "kubernetes/ingress/app-ingress.yaml" | kubectl delete -f -
 Parse-File "kubernetes/ingress/db-ingress.yaml" | kubectl delete -f -
 
