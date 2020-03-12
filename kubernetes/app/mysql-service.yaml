@@ -8,5 +8,5 @@ spec:
   type: LoadBalancer
   ports:
     - name: mysql
-      port: 13306
+      port: {$MYSQL_PORT}
       targetPort: mysql
