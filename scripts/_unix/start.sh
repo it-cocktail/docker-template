@@ -21,4 +21,7 @@ fi
 echo "$(parseFile kubernetes/ingress/db-ingress.yaml)" | kubectl apply -f -
 echo "$(parseFile kubernetes/ingress/app-ingress.yaml)" | kubectl apply -f -
 
+if [ ! -z "$MYSQL_PORT" ]; then
+  echo "$(parseFile kubernetes/app/mysql-service.yaml)" | kubectl apply -f -
+fi
 exit

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ ! -z "$MYSQL_PORT" ]; then
+  echo "$(parseFile kubernetes/app/mysql-service.yaml)" | kubectl delete -f -
+fi
+
 echo "$(parseFile kubernetes/ingress/app-ingress.yaml)" | kubectl delete -f -
 echo "$(parseFile kubernetes/ingress/db-ingress.yaml)" | kubectl delete -f -
 
