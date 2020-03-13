@@ -41,8 +41,8 @@ spec:
           mountPath: /var/lib/mysql
           subPath: container/mysql/data
         - name: "{$PROJECTNAME}-pv"
-          mountPath: /docker-entrypoint-initdb.d/init.sql
-          subPath: container/mysql/init.sql
+          mountPath: /docker-entrypoint-initdb.d
+          subPath: container/mysql/init
 
     - name: phpmyadmin
       image: phpmyadmin/phpmyadmin

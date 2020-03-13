@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: "{$PROJECTNAME}-app-ingress"
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: "mail.{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: "{$PROJECTNAME}-app-service"
+              servicePort: 8025
+    - host: "{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: "{$PROJECTNAME}-app-service"
+              servicePort: 80
+    - host: "www.{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: "{$PROJECTNAME}-app-service"
+              servicePort: 80

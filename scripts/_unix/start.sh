@@ -20,8 +20,17 @@ else
   echo "$(parseFile kubernetes/app/app-service.default.yaml)" | kubectl apply -f -
 fi
 
-echo "$(parseFile kubernetes/ingress/db-ingress.yaml)" | kubectl apply -f -
-echo "$(parseFile kubernetes/ingress/app-ingress.yaml)" | kubectl apply -f -
+if [ -f "kubernetes/app/db-ingress.${ENVIRONMENT}.yaml" ]; then
+  echo "$(parseFile kubernetes/app/db-ingress.${ENVIRONMENT}.yaml)" | kubectl apply -f -
+else
+  echo "$(parseFile kubernetes/app/db-ingress.default.yaml)" | kubectl apply -f -
+fi
+
+if [ -f "kubernetes/app/app-ingress.${ENVIRONMENT}.yaml" ]; then
+  echo "$(parseFile kubernetes/app/app-ingress.${ENVIRONMENT}.yaml)" | kubectl apply -f -
+else
+  echo "$(parseFile kubernetes/app/app-ingress.default.yaml)" | kubectl apply -f -
+fi
 
 if [ ! -z "$MYSQL_PORT" ]; then
   echo "$(parseFile kubernetes/app/mysql-service.yaml)" | kubectl apply -f -

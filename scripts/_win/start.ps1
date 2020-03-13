@@ -21,8 +21,17 @@ if (Test-Path "kubernetes/app/app-service.$ENVIRONMENT.yaml") {
     Parse-File "kubernetes/app/app-service.default.yaml" | kubectl apply -f -
 }
 
-Parse-File "kubernetes/ingress/db-ingress.yaml" | kubectl apply -f -
-Parse-File "kubernetes/ingress/app-ingress.yaml" | kubectl apply -f -
+if (Test-Path "kubernetes/app/db-ingress.$ENVIRONMENT.yaml") {
+    Parse-File "kubernetes/app/db-ingress.$ENVIRONMENT.yaml" | kubectl apply -f -
+} else {
+    Parse-File "kubernetes/app/db-ingress.default.yaml" | kubectl apply -f -
+}
+
+if (Test-Path "kubernetes/app/app-ingress.$ENVIRONMENT.yaml") {
+    Parse-File "kubernetes/app/app-ingress.$ENVIRONMENT.yaml" | kubectl apply -f -
+} else {
+    Parse-File "kubernetes/app/app-ingress.default.yaml" | kubectl apply -f -
+}
 
 if ($envHash.MYSQL_PORT) {
     Parse-File "kubernetes/app/mysql-service.yaml" | kubectl apply -f -

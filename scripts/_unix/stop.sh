@@ -4,8 +4,17 @@ if [ ! -z "$MYSQL_PORT" ]; then
   echo "$(parseFile kubernetes/app/mysql-service.yaml)" | kubectl delete -f -
 fi
 
-echo "$(parseFile kubernetes/ingress/app-ingress.yaml)" | kubectl delete -f -
-echo "$(parseFile kubernetes/ingress/db-ingress.yaml)" | kubectl delete -f -
+if [ -f "kubernetes/app/app-ingress.${ENVIRONMENT}.yaml" ]; then
+  echo "$(parseFile kubernetes/app/app-ingress.${ENVIRONMENT}.yaml)" | kubectl delete -f -
+else
+  echo "$(parseFile kubernetes/app/app-ingress.default.yaml)" | kubectl delete -f -
+fi
+
+if [ -f "kubernetes/app/db-ingress.${ENVIRONMENT}.yaml" ]; then
+  echo "$(parseFile kubernetes/app/db-ingress.${ENVIRONMENT}.yaml)" | kubectl delete -f -
+else
+  echo "$(parseFile kubernetes/app/db-ingress.default.yaml)" | kubectl delete -f -
+fi
 
 if [ -f "kubernetes/app/app-service.${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/app/app-service.${ENVIRONMENT}.yaml)" | kubectl delete -f -

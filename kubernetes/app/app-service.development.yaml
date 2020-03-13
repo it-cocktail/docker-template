@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{$PROJECTNAME}-app-service"
+spec:
+  selector:
+    app: "{$PROJECTNAME}-app"
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: mailhog
+      protocol: TCP
+      port: 8025
+      targetPort: 8025
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{$PROJECTNAME}-app"
+  labels:
+    app: "{$PROJECTNAME}-app"
+spec:
+  hostAliases:
+    - ip: "127.0.0.1"
+      hostnames:
+        - "php"
+        - "mail"
+  initContainers:
+    - name: init-env
+      image: busybox
+      command: ['sh', '-c', 'printenv > /volume/environment']
+      volumeMounts:
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /volume
+          subPath: container
+      envFrom:
+        - configMapRef:
+            name: "{$PROJECTNAME}"
+  containers:
+    - name: mail
+      image: "mailhog/mailhog"
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 1025
+        - containerPort: 8025
+
+    - name: php
+      image: "fduarte42/docker-php:{$PHP_VERSION}"
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: "{$PROJECTNAME}-ssh-pv"
+          mountPath: /ssh
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /etc/environment
+          subPath: container/environment
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /etc/apache2/sites-enabled
+          subPath: container/apache2/sites-enabled
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
+          subPath: container/php/php.default.ini
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /etc/ssmtp/ssmtp.conf
+          subPath: container/php/ssmtp.development.conf
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /tmp/crontab
+          subPath: container/php/crontab.default
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /var/www/html
+          subPath: "{$HTDOCS_FOLDER}"
+        - name: "{$PROJECTNAME}-pv"
+          mountPath: /var/log/apache
+          subPath: logs/apache
+      envFrom:
+        - configMapRef:
+            name: "{$PROJECTNAME}"
+      ports:
+        - containerPort: 80
+  volumes:
+    - name: "{$PROJECTNAME}-pv"
+      hostPath:
+        path: "{$CWD}"
+    - name: "{$PROJECTNAME}-ssh-pv"
+      secret:
+        secretName: "{$PROJECTNAME}-ssh"
