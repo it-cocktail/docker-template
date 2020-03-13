@@ -1,6 +1,6 @@
 #!/bin/sh
 
 PARAMETER="$@"
-kubectl exec -it "$PROJECTNAME-db-app" --container db -- mysql $PARAMETER
+$KUBECTLCMD exec -it "$PROJECTNAME-db-app" --container db -- mysql $PARAMETER
 
 exit

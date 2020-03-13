@@ -1,5 +1,5 @@
 #!/bin/sh
 
-kubectl exec -it "$PROJECTNAME-db-app" --container db -- bash
+$KUBECTLCMD exec -it "$PROJECTNAME-db-app" --container db -- bash
 
 exit
