@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{$PROJECTNAME}-db-service"
+  namespace: "{$PROJECTNAME}"
+  name: "db"
 spec:
   selector:
-    app: "{$PROJECTNAME}-db-app"
+    app: "db"
   ports:
     - name: http
       protocol: TCP
@@ -18,9 +19,10 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{$PROJECTNAME}-db-app"
+  namespace: "{$PROJECTNAME}"
+  name: "db"
   labels:
-    app: "{$PROJECTNAME}-db-app"
+    app: "db"
 spec:
   containers:
     - name: db
@@ -37,10 +39,10 @@ spec:
       ports:
         - containerPort: 3306
       volumeMounts:
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /var/lib/mysql
           subPath: container/mysql/data
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /docker-entrypoint-initdb.d
           subPath: container/mysql/init
 
@@ -61,10 +63,10 @@ spec:
       ports:
         - containerPort: 80
       volumeMounts:
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /etc/php5/conf.d/zzz-custom.ini
           subPath: container/phpmyadmin/php.ini
   volumes:
-    - name: "{$PROJECTNAME}-pv"
+    - name: "pv"
       hostPath:
         path: "{$CWD}"

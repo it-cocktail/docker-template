@@ -1,10 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{$PROJECTNAME}-app-service"
+  namespace: "{$PROJECTNAME}"
+  name: "app"
 spec:
   selector:
-    app: "{$PROJECTNAME}-app"
+    app: "app"
   ports:
     - name: http
       protocol: TCP
@@ -14,9 +15,10 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{$PROJECTNAME}-app"
+  namespace: "{$PROJECTNAME}"
+  name: "app"
   labels:
-    app: "{$PROJECTNAME}-app"
+    app: "app"
 spec:
   hostAliases:
     - ip: "127.0.0.1"
@@ -28,7 +30,7 @@ spec:
       image: busybox
       command: ['sh', '-c', 'printenv > /volume/environment']
       volumeMounts:
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /volume
           subPath: container
       envFrom:
@@ -43,27 +45,27 @@ spec:
       image: "fduarte42/docker-php:{$PHP_VERSION}"
       imagePullPolicy: Always
       volumeMounts:
-        - name: "{$PROJECTNAME}-ssh-pv"
+        - name: "ssh-pv"
           mountPath: /ssh
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /etc/environment
           subPath: container/environment
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /etc/apache2/sites-enabled
           subPath: container/apache2/sites-enabled
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
           subPath: container/php/php.default.ini
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /etc/ssmtp/ssmtp.conf
           subPath: container/php/ssmtp.default.conf
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /tmp/crontab
           subPath: container/php/crontab.default
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /var/www/html
           subPath: "{$HTDOCS_FOLDER}"
-        - name: "{$PROJECTNAME}-pv"
+        - name: "pv"
           mountPath: /var/log/apache
           subPath: logs/apache
       envFrom:
@@ -72,9 +74,9 @@ spec:
       ports:
         - containerPort: 80
   volumes:
-    - name: "{$PROJECTNAME}-pv"
+    - name: "pv"
       hostPath:
         path: "{$CWD}"
-    - name: "{$PROJECTNAME}-ssh-pv"
+    - name: "ssh-pv"
       secret:
-        secretName: "{$PROJECTNAME}-ssh"
+        secretName: "ssh"

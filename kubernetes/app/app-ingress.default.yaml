@@ -1,7 +1,8 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: "{$PROJECTNAME}-app-ingress"
+  namespace: "{$PROJECTNAME}"
+  name: "app-ingress"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -11,12 +12,12 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: "{$PROJECTNAME}-app-service"
+              serviceName: "app"
               servicePort: 80
     - host: "www.{$BASE_DOMAIN}"
       http:
         paths:
           - path: /
             backend:
-              serviceName: "{$PROJECTNAME}-app-service"
+              serviceName: "app"
               servicePort: 80

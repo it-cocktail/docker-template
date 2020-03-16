@@ -1,12 +1,16 @@
 #!/bin/sh
 
+echo "$(parseFile kubernetes/namespace.yaml)" | $KUBECTLCMD apply -f -
+
 if [ -f "kubernetes/configmaps/${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/configmaps/${ENVIRONMENT}.yaml)" | $KUBECTLCMD apply -f -
 else
   echo "$(parseFile kubernetes/configmaps/default.yaml)" | $KUBECTLCMD apply -f -
 fi
 
-$KUBECTLCMD create secret generic "${PROJECTNAME}-ssh" --from-file=$HOME/.ssh/id_rsa.pub --from-file=$HOME/.ssh/id_rsa
+if [ -f "$HOME/.ssh/id_rsa" ]; then
+  $KUBECTLCMD create secret generic "ssh" -n "$PROJECTNAME" --from-file=$HOME/.ssh/id_rsa.pub --from-file=$HOME/.ssh/id_rsa
+fi
 
 if [ -f "kubernetes/app/db-service.${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/app/db-service.${ENVIRONMENT}.yaml)" | $KUBECTLCMD apply -f -

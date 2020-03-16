@@ -20,7 +20,7 @@ function parseFile() {
     local IFS=$'\n'
     for VAR in $(cat .env | grep -v "^#"); do
         local PLACEHOLDER=$(echo "$VAR" | sed 's/\(.*\)=.*/\1/')
-        local VALUE=$(echo "$VAR" | sed 's/.*=\(.*\)/\1/')
+        local VALUE=$(echo "$VAR" | sed 's/.*=\(.*\)/\1/' | sed 's/\//\\\//g')
         FILEDATA=$(echo "$FILEDATA" | sed "s/{\$$PLACEHOLDER}/$VALUE/g")
     done
     FILEDATA=$(echo "$FILEDATA" | sed "s/{\$CWD}/$CWD_SANATIZED/g")

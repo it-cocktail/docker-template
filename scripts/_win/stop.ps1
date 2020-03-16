@@ -29,12 +29,16 @@ if (Test-Path "kubernetes/app/db-service.$ENVIRONMENT.yaml") {
     Parse-File "kubernetes/app/db-service.default.yaml" | kubectl delete -f -
 }
 
-kubectl delete secret "$PROJECTNAME-ssh"
+if (Test-Path "$HOME/.ssh/id_rsa") {
+    kubectl delete secret generic "ssh" -n "$PROJECTNAME"
+}
 
 if (Test-Path "kubernetes/configmaps/$ENVIRONMENT.yaml") {
     Parse-File "kubernetes/configmaps/$ENVIRONMENT.yaml" | kubectl delete -f -
 } else {
     Parse-File "kubernetes/configmaps/default.yaml" | kubectl delete -f -
 }
+
+Parse-File "kubernetes/namespace.yaml" | kubectl delete -f -
 
 exit

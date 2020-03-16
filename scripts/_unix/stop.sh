@@ -28,12 +28,16 @@ else
   echo "$(parseFile kubernetes/app/db-service.default.yaml)" | $KUBECTLCMD delete -f -
 fi
 
-$KUBECTLCMD delete secret "${PROJECTNAME}-ssh"
+if [ -f "$HOME/.ssh/id_rsa" ]; then
+  $KUBECTLCMD delete secret "ssh" -n "$PROJECTNAME"
+fi
 
 if [ -f "kubernetes/configmaps/${ENVIRONMENT}.yaml" ]; then
   echo "$(parseFile kubernetes/configmaps/${ENVIRONMENT}.yaml)" | $KUBECTLCMD delete -f -
 else
   echo "$(parseFile kubernetes/configmaps/default.yaml)" | $KUBECTLCMD delete -f -
 fi
+
+echo "$(parseFile kubernetes/namespace.yaml)" | $KUBECTLCMD delete -f -
 
 exit

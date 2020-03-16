@@ -1,5 +1,5 @@
 #!/bin/sh
 
-$KUBECTLCMD exec -it "$PROJECTNAME-app" --container php -- sudo -u www-data -E HOME=/var/www crontab /tmp/crontab
+$KUBECTLCMD exec -it "app" --container php -n "$PROJECTNAME" -- sudo -u www-data -E HOME=/var/www crontab /tmp/crontab
 
 exit

@@ -1,9 +1,12 @@
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: "{$PROJECTNAME}-db-ingress"
+  namespace: "{$PROJECTNAME}"
+  name: "db-ingress"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/whitelist-source-range: "{$PHPMYADMIN_IP_RESTRICTION}"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "{$PHPMYADMIN_IP_RESTRICTION}"
 spec:
   rules:
     - host: "phpmyadmin.{$BASE_DOMAIN}"
@@ -11,5 +14,5 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: "{$PROJECTNAME}-db-service"
+              serviceName: "db"
               servicePort: 80
