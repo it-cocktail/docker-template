@@ -10,7 +10,7 @@ if (Test-Path "kubernetes/configmaps/$ENVIRONMENT.yaml") {
 }
 
 if (Test-Path "$HOME/.ssh/id_rsa") {
-    kubectl create secret generic "ssh" -n "$PROJECTNAME" --from-file = $HOME/.ssh/id_rsa.pub --from-file =$HOME/.ssh/id_rsa
+    kubectl create secret generic "ssh" -n "$PROJECTNAME" --from-file=$HOME/.ssh/id_rsa.pub --from-file=$HOME/.ssh/id_rsa
 }
 
 if (Test-Path "kubernetes/app/db-service.$ENVIRONMENT.yaml") {

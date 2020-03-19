@@ -1,4 +1,5 @@
 $global:cwdSanatized = $env:CWD -replace '\\', '/'
+$global:cwdSanatized = $global:cwdSanatized.substring(0,1).tolower() + $global:cwdSanatized.substring(1)
 $global:cwdSanatized = "/" + ($cwdSanatized -replace ':', '')
 $global:envHash = @{}
 
