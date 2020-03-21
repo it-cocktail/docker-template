@@ -10,6 +10,8 @@ fi
 
 if [ -f "$HOME/.ssh/id_rsa" ]; then
   $KUBECTLCMD create secret generic "ssh" -n "$PROJECTNAME" --from-file=$HOME/.ssh/id_rsa.pub --from-file=$HOME/.ssh/id_rsa
+else
+  $KUBECTLCMD create secret generic "ssh" -n "$PROJECTNAME"
 fi
 
 if [ -f "kubernetes/app/db-service.${ENVIRONMENT}.yaml" ]; then

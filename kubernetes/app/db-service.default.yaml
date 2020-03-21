@@ -64,7 +64,7 @@ spec:
         - containerPort: 80
       volumeMounts:
         - name: "pv"
-          mountPath: /etc/php5/conf.d/zzz-custom.ini
+          mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
           subPath: container/phpmyadmin/php.ini
   volumes:
     - name: "pv"

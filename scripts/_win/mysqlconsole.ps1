@@ -1,5 +1,5 @@
 $PROJECTNAME = $envHash.PROJECTNAME
 
-kubectl exec -it "db-app" --container db -n "$PROJECTNAME" -- bash
+kubectl exec -it "db" --container db -n "$PROJECTNAME" -- bash
 
 exit

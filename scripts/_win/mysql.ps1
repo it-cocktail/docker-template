@@ -1,5 +1,5 @@
 $PROJECTNAME = $envHash.PROJECTNAME
 
-kubectl exec -it "db-app" --container db -n "$PROJECTNAME" -- mysql $args
+kubectl exec -it "db" --container db -n "$PROJECTNAME" -- mysql $args
 
 exit

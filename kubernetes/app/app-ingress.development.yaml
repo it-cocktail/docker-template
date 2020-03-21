@@ -5,6 +5,8 @@ metadata:
   name: "app-ingress"
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
+    ingress.kubernetes.io/proxy-body-size: 512m
+    nginx.ingress.kubernetes.io/proxy-body-size: 512m
 spec:
   rules:
     - host: "mail.{$BASE_DOMAIN}"

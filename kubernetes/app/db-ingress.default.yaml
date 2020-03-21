@@ -6,7 +6,9 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     ingress.kubernetes.io/whitelist-source-range: "{$PHPMYADMIN_IP_RESTRICTION}"
+    ingress.kubernetes.io/proxy-body-size: 512m
     nginx.ingress.kubernetes.io/whitelist-source-range: "{$PHPMYADMIN_IP_RESTRICTION}"
+    nginx.ingress.kubernetes.io/proxy-body-size: 512m
 spec:
   rules:
     - host: "phpmyadmin.{$BASE_DOMAIN}"
