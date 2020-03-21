@@ -28,7 +28,7 @@ spec:
   initContainers:
     - name: init-env
       image: busybox
-      command: ['sh', '-c', 'printenv > /volume/environment']
+      command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/environment']
       volumeMounts:
         - name: "pv"
           mountPath: /volume

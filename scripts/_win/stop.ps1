@@ -30,7 +30,7 @@ if (Test-Path "kubernetes/app/db-service.$ENVIRONMENT.yaml") {
 }
 
 if (Test-Path "$HOME/.ssh/id_rsa") {
-    kubectl delete secret generic "ssh" -n "$PROJECTNAME"
+    kubectl delete secret "ssh" -n "$PROJECTNAME"
 }
 
 if (Test-Path "kubernetes/configmaps/$ENVIRONMENT.yaml") {
