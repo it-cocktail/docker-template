@@ -6,8 +6,8 @@ metadata:
 spec:
   selector:
     app: "db"
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: mysql
-      port: {$MYSQL_PORT}
-      targetPort: mysql
+      nodePort: {$MYSQL_PORT}
+      port: 3306
