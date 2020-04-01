@@ -1,5 +1,6 @@
 container/environment
-container/mysql/data
+container/mysql/data/*
+!container/mysql/data/.gitkeep
 logs/*
 !logs/.gitkeep
 .env
