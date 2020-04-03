@@ -40,6 +40,12 @@ spec:
     - name: mail
       image: "nibirrayy/docker-smtp"
       imagePullPolicy: Always
+      env:
+        - name: MAILNAME
+          valueFrom:
+            configMapKeyRef:
+              key: MAIL_DOMAIN
+              name: "{$PROJECTNAME}"
 
     - name: php
       image: "fduarte42/docker-php:{$PHP_VERSION}"
