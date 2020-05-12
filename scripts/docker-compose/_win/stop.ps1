@@ -9,6 +9,6 @@ if (Test-Path $env:CWD\docker-compose\docker-compose.$ENV_SANATIZED.yml) {
     $ADDITIONAL_CONFIGFILE = $ADDITIONAL_CONFIGFILE + " -f docker-compose\docker-compose.$ENV_SANATIZED.yml"
 }
 
-Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-compose\docker-compose.yml $ADDITIONAL_CONFIGFILE down }"
+Invoke-Expression "& { docker-compose -p `"$env:PROJECTNAME`" -f docker-compose\docker-compose.yml $ADDITIONAL_CONFIGFILE down 2>$null }"
 
 exit
