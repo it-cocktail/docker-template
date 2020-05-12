@@ -1,5 +1,22 @@
 version: '2.1'
 services:
+  init:
+    image: busybox
+    command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/php/environment; chown -R www-data:www-data /volume/htdocs; chmod -R 775 /volume/htdocs']
+    environment:
+      APACHE_HOST: www.${BASE_DOMAIN}
+      APACHE_ALIAS: ${PHP_APACHE_ALIAS:-"localhost"}
+      BASE_DOMAIN: ${BASE_DOMAIN}
+      DOCUMENT_ROOT: ${DOCUMENT_ROOT}
+      APP_ENV: ${ENVIRONMENT}
+      APPLICATION_ENVIRONMENT: ${ENVIRONMENT}
+      TYPO3_CONTEXT: ${ENVIRONMENT}
+      MAIL_DOMAIN: ${BASE_DOMAIN}
+      MYSQL_HOST: "db"
+    volumes:
+      - "../container:/volume"
+    restart: on-failure
+
   db:
     image: 'mysql:${MYSQL_VERSION}'
     entrypoint: ["docker-entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "16M"]
@@ -51,7 +68,7 @@ services:
       - "../container/php/ssmtp.default.conf:/etc/ssmtp/ssmtp.conf"
       - "~/.ssh:/ssh"
       - "../container/php/crontab.default:/tmp/crontab"
-      - "../.env:/etc/environment"
+      - "../container/php/environment:/etc/environment"
       - "../${HTDOCS_FOLDER}:/var/www/html"
       - "../logs/apache:/var/log/apache"
     environment:

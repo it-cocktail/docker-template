@@ -28,7 +28,7 @@ spec:
   initContainers:
     - name: init-env
       image: busybox
-      command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/environment']
+      command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/php/environment']
       volumeMounts:
         - name: "pv"
           mountPath: /volume
@@ -36,6 +36,13 @@ spec:
       envFrom:
         - configMapRef:
             name: "{$PROJECTNAME}"
+    - name: init-app
+      image: busybox
+      command: ['sh', '-c', 'chown -R www-data:www-data /volume/htdocs; chmod -R 775 /volume/htdocs']
+      volumeMounts:
+        - name: schufa-compliance-pv-storage
+          mountPath: /volume
+
   containers:
     - name: mail
       image: "nibirrayy/docker-smtp"

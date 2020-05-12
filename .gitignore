@@ -1,4 +1,4 @@
-container/environment
+container/php/environment
 container/mysql/data/*
 !container/mysql/data/.gitkeep
 logs/*
