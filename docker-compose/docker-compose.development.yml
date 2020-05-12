@@ -1,0 +1,17 @@
+version: '2.1'
+services:
+  db:
+    ports:
+    - "${MYSQL_PORT:-auto}:3306"
+    restart: always
+
+  phpmyadmin:
+    restart: always
+
+  mail:
+    restart: always
+
+  php:
+    volumes:
+      - "../container/php/ssmtp.development.conf:/etc/ssmtp/ssmtp.conf"
+    restart: always

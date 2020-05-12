@@ -7,25 +7,7 @@ OLDCWD=$(pwd)
 CWD="$( cd "$( echo "${BASH_SOURCE[0]%/*}" )" && pwd )"
 cd "$CWD"
 
-COMMAND=$1
-shift
-
-if [ "$COMMAND" == "" ]; then
-    COMMAND="help"
-fi
-
-if [ ! -e "$CWD/scripts/_unix/$COMMAND.sh" ]; then
-    echo "Error: Command $COMMAND not found. Use help to see available commands."
-    exit
-fi
-
-# setting permissions
-chmod 755 scripts/_unix/*.sh 2>/dev/null
-
-if [ ! $COMMAND == "short_help" ] || [ ! $COMMAND == "setup" ]; then
-    . scripts/_unix/_global.sh
-fi
-. scripts/_unix/$COMMAND.sh
+. scripts/_unix/bootstrap.sh
 
 cd "$OLDCWD"
 exit
@@ -36,26 +18,7 @@ SET CWD=%~dp0
 CD "%CWD%"
 IF %CWD:~-1%==\ SET CWD=%CWD:~0,-1%
 
-SET COMMAND=%1
-
-IF "%COMMAND%" EQU "" (
-    SET COMMAND=help
-)
-
-IF NOT EXIST "%cd%\scripts\_win\%COMMAND%.ps1" (
-    ECHO Error: Command %COMMAND% not found. Use help to see available commands.
-    EXIT /B
-)
-
-FOR /F "tokens=1,* delims= " %%a IN ("%*") DO SET ARGS=%%b
-
-IF "%COMMAND%" EQU "short_help" (
-    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
-) ELSE IF "%COMMAND%" EQU "setup" (
-    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
-) ELSE (
-    PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { . "%cd%\scripts\_win\_global.ps1"; "%cd%\scripts\_win\%COMMAND%.ps1" %ARGS% } catch { Write-Host "$_.Exception.Message" } }"
-)
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { . "%cd%\scripts\_win\_bootstrap.ps1" %* } catch { Write-Host "$_.Exception.Message" } }"
 
 CD "%OLDCWD%"
 EXIT /B
