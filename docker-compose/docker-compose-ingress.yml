@@ -1,11 +1,10 @@
 version: '2.1'
 services:
   nginx:
-    image: jwilder/nginx-proxy
+    image: fduarte42/nginx-proxy
     container_name: nginx-proxy
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "../container/nginx/docker_proxy.conf:/etc/nginx/conf.d/docker_proxy.conf:ro"
     ports:
       - "80:80"
     networks:
