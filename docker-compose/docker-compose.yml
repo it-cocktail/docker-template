@@ -1,6 +1,6 @@
 version: '3.5'
 services:
-  init:
+  init-php:
     image: busybox
     command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/php/environment; chown -R www-data:www-data /volume/htdocs; chmod -R 775 /volume/htdocs']
     environment:
@@ -16,6 +16,14 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
       - "../container:/volume"
+      - "../${HTDOCS_FOLDER}:/volume/htdocs"
+    restart: on-failure
+
+  init-mail:
+    image: busybox
+    command: ['sh', '-c', 'chown -R 104:108 /volume/logs/mail']
+    volumes:
+      - "../logs/mail:/volume/logs/mail"
     restart: on-failure
 
   db:
@@ -47,7 +55,11 @@ services:
       - "backend-tier"
 
   mail:
+    depends_on:
+      - init-mail
     image: nibirrayy/docker-smtp
+    environment:
+      MAILNAME: "${PROJECTNAME}"
     networks:
       - "backend-tier"
     volumes:
@@ -55,6 +67,7 @@ services:
 
   php:
     depends_on:
+      - init-php
       - db
       - phpmyadmin
       - mail

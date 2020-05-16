@@ -42,6 +42,12 @@ spec:
       volumeMounts:
         - name: schufa-compliance-pv-storage
           mountPath: /volume
+    - name: init-mail
+      image: busybox
+      command: ['sh', '-c', 'chown -R 104:108 /volume/logs/mail']
+      volumeMounts:
+        - name: schufa-compliance-pv-storage
+          mountPath: /volume/logs/mail
 
   containers:
     - name: mail
