@@ -18,7 +18,7 @@ SET CWD=%~dp0
 CD "%CWD%"
 IF %CWD:~-1%==\ SET CWD=%CWD:~0,-1%
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { . "%cd%\scripts\_win\_bootstrap.ps1" %* } catch { Write-Host "$_.Exception.Message" } }"
+PowerShell -NoProfile -ExecutionPolicy Bypass -Command "& { try { . "%cd%\scripts\_win\bootstrap.ps1" %* } catch { Write-Host "$_.Exception.Message" } }"
 
 CD "%OLDCWD%"
 EXIT /B
