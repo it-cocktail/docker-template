@@ -31,6 +31,7 @@ services:
     entrypoint: ["docker-entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "16M"]
     volumes:
       - "../container/mysql/data:/var/lib/mysql"
+      - "../container/mysql/init:/docker-entrypoint-initdb.d"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
