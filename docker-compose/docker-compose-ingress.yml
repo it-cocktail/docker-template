@@ -9,6 +9,7 @@ services:
       - "80:80"
     networks:
       - "frontend-tier"
+    restart: always
 
 networks:
   frontend-tier:
