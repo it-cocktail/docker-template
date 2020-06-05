@@ -62,7 +62,7 @@ spec:
           subPath: container/apache2/sites-enabled
         - name: "pv"
           mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
-          subPath: container/php/php.default.ini
+          subPath: container/php/php.development.ini
         - name: "pv"
           mountPath: /etc/ssmtp/ssmtp.conf
           subPath: container/php/ssmtp.development.conf

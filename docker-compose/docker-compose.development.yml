@@ -9,9 +9,14 @@ services:
     restart: always
 
   mail:
+    image: mailhog/mailhog
+    environment:
+      VIRTUAL_PORT: 80
+      VIRTUAL_HOST: mail.${BASE_DOMAIN:-""}
     restart: always
 
   php:
     volumes:
+      - "../container/php/php.development.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
       - "../container/php/ssmtp.development.conf:/etc/ssmtp/ssmtp.conf"
     restart: always
