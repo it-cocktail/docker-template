@@ -59,6 +59,10 @@ spec:
             configMapKeyRef:
               key: MAIL_DOMAIN
               name: "{$PROJECTNAME}"
+      volumeMounts:
+        - name: pv
+          mountPath: /var/log/exim4
+          subPath: logs/mail
 
     - name: php
       image: "fduarte42/docker-php:{$PHP_VERSION}"
