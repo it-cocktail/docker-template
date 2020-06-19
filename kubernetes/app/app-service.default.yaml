@@ -47,7 +47,7 @@ spec:
       command: ['sh', '-c', 'chown -R 104:108 /volume/logs/mail']
       volumeMounts:
         - name: pv
-          mountPath: /volume/logs/mail
+          mountPath: /volume
 
   containers:
     - name: mail
