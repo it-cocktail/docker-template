@@ -2,7 +2,7 @@
 Write-Host "`nDocker template control command`n===============================`n"
 Write-Host "Available commands:`n"
 
-Get-ChildItem "$env:CWD\scripts\docker-compose\_win\$RUNTIME" -Filter *.ps1 |
+Get-ChildItem "$env:CWD\scripts\docker-compose\$RUNTIME\_win\" -Filter *.ps1 |
 Foreach-Object {
     $command = [io.path]::GetFileNameWithoutExtension($_.FullName)
 

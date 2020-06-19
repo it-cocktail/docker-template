@@ -1,6 +1,6 @@
 #!/bin/sh
 
-(. scripts/docker-compose/_unix/$RUNTIME/stop.sh)
-(. scripts/docker-compose/_unix/$RUNTIME/start.sh)
+(. scripts/docker-compose/$RUNTIME/_unix/stop.sh)
+(. scripts/docker-compose/$RUNTIME/_unix/start.sh)
 
 exit
