@@ -32,7 +32,7 @@ spec:
   initContainers:
     - name: init-env
       image: busybox
-      command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/environment']
+      command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/php/environment']
       volumeMounts:
         - name: "pv"
           mountPath: /volume
@@ -56,7 +56,7 @@ spec:
           mountPath: /ssh
         - name: "pv"
           mountPath: /etc/environment
-          subPath: container/environment
+          subPath: container/php/environment
         - name: "pv"
           mountPath: /etc/apache2/sites-enabled
           subPath: container/apache2/sites-enabled
