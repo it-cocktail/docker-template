@@ -1,6 +1,6 @@
 #!/bin/sh
 
-(. scripts/_unix/stop.sh)
-(. scripts/_unix/start.sh)
+(. scripts/_unix/$RUNTIME/stop.sh)
+(. scripts/_unix/$RUNTIME/start.sh)
 
 exit
