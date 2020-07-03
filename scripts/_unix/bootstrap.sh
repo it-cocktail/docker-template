@@ -14,6 +14,15 @@ loadENV() {
 }
 loadENV
 
+if [ "$RUNTIME" == "docker-compose" ]; then
+  if [ "$MYSQL_PORT" != "" ]; then
+    MYSQL_PORT="$MYSQL_PORT:3306"
+  else
+    MYSQL_PORT="3306"
+  fi
+  export MYSQL_PORT
+fi
+
 COMMAND=$1
 shift
 

@@ -14,6 +14,16 @@ foreach ($line in $lines) {
     }
 }
 
+if ("$RUNTIME" -eq "docker-compose")
+{
+    if ( -Not("$($envHash.MYSQL_PORT)" -Eq "") )
+    {
+        $envHash.MYSQL_PORT = $envHash.MYSQL_PORT + ":  3306"
+    } else {
+        $envHash.MYSQL_PORT = "3306"
+    }
+}
+
 $COMMAND, $args = $args
 
 if (-Not ($COMMAND)) {
