@@ -49,7 +49,7 @@ spec:
         - containerPort: 8025
 
     - name: php
-      image: "fduarte42/docker-php:{$PHP_VERSION}"
+      image: "fduarte42/docker-php:{$PHP_VERSION}-debug"
       imagePullPolicy: Always
       volumeMounts:
         - name: "ssh-pv"

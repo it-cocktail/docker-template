@@ -16,6 +16,7 @@ services:
     restart: always
 
   php:
+    image: 'fduarte42/docker-php:${PHP_VERSION}-debug'
     volumes:
       - "../container/php/php.development.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
       - "../container/php/ssmtp.development.conf:/etc/ssmtp/ssmtp.conf"

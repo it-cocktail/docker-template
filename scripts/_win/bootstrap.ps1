@@ -14,6 +14,8 @@ foreach ($line in $lines) {
     }
 }
 
+$RUNTIME = $envHash.RUNTIME
+
 if ("$RUNTIME" -eq "docker-compose")
 {
     if ( -Not("$($envHash.MYSQL_PORT)" -Eq "") )
@@ -29,8 +31,6 @@ $COMMAND, $args = $args
 if (-Not ($COMMAND)) {
     $COMMAND = 'help'
 }
-
-$RUNTIME = $envHash.RUNTIME
 
 if (-Not (Test-Path "$env:CWD\scripts\$RUNTIME\_win\$COMMAND.ps1")) {
     throw "Error: Command $COMMAND not found. Use help to see available commands."
