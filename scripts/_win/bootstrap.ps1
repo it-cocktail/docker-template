@@ -20,7 +20,7 @@ if ("$RUNTIME" -eq "docker-compose")
 {
     if ( -Not("$($envHash.MYSQL_PORT)" -Eq "") )
     {
-        $envHash.MYSQL_PORT = $envHash.MYSQL_PORT + ":  3306"
+        $envHash.MYSQL_PORT = $envHash.MYSQL_PORT + ":3306"
     } else {
         $envHash.MYSQL_PORT = "3306"
     }
