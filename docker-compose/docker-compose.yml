@@ -47,7 +47,7 @@ services:
       - "../container/phpmyadmin/php.ini:/etc/php5/conf.d/zzz-custom.ini"
     environment:
       MYSQL_HOST: "db"
-      UPLOAD_SIZE: "500M"
+      UPLOAD_LIMIT: "500M"
       VIRTUAL_PORT: 80
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       VIRTUAL_HOST: ${PHPMYADMIN_VIRTUAL_HOST:-""}
