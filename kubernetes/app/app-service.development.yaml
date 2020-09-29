@@ -48,6 +48,28 @@ spec:
         - containerPort: 1025
         - containerPort: 8025
 
+    - name: magic-sync
+      image: mickaelperrin/docker-magic-sync:latest
+      volumeMounts:
+        - name: "htdocs"
+          mountPath: /src
+        - name: "pv"
+          mountPath: /src.magic
+          subPath: "{$HTDOCS_FOLDER}"
+        - name: "dockersock"
+          mountPath: /tmp/docker.sock
+      env:
+        - name: SYNC_USER
+          value: www-data
+        - name: SYNC_UID
+          value: "33"
+        - name: SYNC_IGNORE_NAMES
+          value: ".idea:.git"
+        - name: MAXIMUM_INOTIFY_WATCHES
+          value: "524288"
+      securityContext:
+        privileged: true
+
     - name: php
       image: "fduarte42/docker-php:{$PHP_VERSION}-debug"
       imagePullPolicy: Always
@@ -87,3 +109,8 @@ spec:
     - name: "ssh-pv"
       secret:
         secretName: "ssh"
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock
+    - name: "htdocs"
+      emptyDir: {}

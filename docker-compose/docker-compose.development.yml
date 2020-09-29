@@ -20,4 +20,22 @@ services:
     volumes:
       - "../container/php/php.development.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
       - "../container/php/ssmtp.development.conf:/etc/ssmtp/ssmtp.conf"
+      - htdocs-volume:/var/www/html
     restart: always
+
+  magic-sync:
+    image: mickaelperrin/docker-magic-sync:latest
+    environment:
+      - SYNC_USER=www-data
+      - SYNC_UID=33
+      - SYNC_IGNORE_NAMES=.idea:.git
+      - MAXIMUM_INOTIFY_WATCHES=524288
+    volumes:
+      - htdocs-volume:/src
+      - "../${HTDOCS_FOLDER}:/src.magic:cached"
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    privileged: true
+    restart: always
+
+volumes:
+  htdocs-volume:
