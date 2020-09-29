@@ -91,9 +91,8 @@ spec:
         - name: "pv"
           mountPath: /tmp/crontab
           subPath: container/php/crontab.default
-        - name: "pv"
+        - name: "htdocs"
           mountPath: /var/www/html
-          subPath: "{$HTDOCS_FOLDER}"
         - name: "pv"
           mountPath: /var/log/apache
           subPath: logs/apache
