@@ -12,6 +12,6 @@ if [ -f "$(pwd)/docker-compose/docker-compose.$ENV_SANATIZED.yml" ]; then
 fi
 
 echo "\nstopping ...\n"
-docker-compose  -p "$PROJECTNAME" -f docker-compose/docker-compose.yml $ADDITIONAL_CONFIGFILE down 2>/dev/null
+docker-compose --project-directory "$(pwd)" -p "$PROJECTNAME" -f docker-compose/docker-compose.yml $ADDITIONAL_CONFIGFILE down 2>/dev/null
 
 exit

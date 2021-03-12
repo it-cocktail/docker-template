@@ -40,6 +40,12 @@ spec:
       envFrom:
         - configMapRef:
             name: "{$PROJECTNAME}"
+    - name: init-app
+      image: busybox
+      command: ['sh', '-c', 'chown -R www-data:www-data /volume/htdocs; chmod -R 775 /volume/htdocs']
+      volumeMounts:
+        - name: pv
+          mountPath: /volume
   containers:
     - name: mail
       image: "mailhog/mailhog"
@@ -47,28 +53,6 @@ spec:
       ports:
         - containerPort: 1025
         - containerPort: 8025
-
-    - name: magic-sync
-      image: mickaelperrin/docker-magic-sync:latest
-      volumeMounts:
-        - name: "htdocs"
-          mountPath: /src
-        - name: "pv"
-          mountPath: /src.magic
-          subPath: "{$HTDOCS_FOLDER}"
-        - name: "dockersock"
-          mountPath: /tmp/docker.sock
-      env:
-        - name: SYNC_USER
-          value: www-data
-        - name: SYNC_UID
-          value: "33"
-        - name: SYNC_IGNORE_NAMES
-          value: ".idea:.git"
-        - name: MAXIMUM_INOTIFY_WATCHES
-          value: "524288"
-      securityContext:
-        privileged: true
 
     - name: php
       image: "fduarte42/docker-php:{$PHP_VERSION}-debug"
@@ -91,8 +75,9 @@ spec:
         - name: "pv"
           mountPath: /tmp/crontab
           subPath: container/php/crontab.default
-        - name: "htdocs"
+        - name: "pv"
           mountPath: /var/www/html
+          subPath: "{$HTDOCS_FOLDER}"
         - name: "pv"
           mountPath: /var/log/apache
           subPath: logs/apache
@@ -108,8 +93,3 @@ spec:
     - name: "ssh-pv"
       secret:
         secretName: "ssh"
-    - name: dockersock
-      hostPath:
-        path: /var/run/docker.sock
-    - name: "htdocs"
-      emptyDir: {}

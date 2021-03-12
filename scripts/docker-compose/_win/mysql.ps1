@@ -1,3 +1,3 @@
-docker-compose -p "$env:PROJECTNAME" -f docker-compose\docker-compose.yml exec db mysql $args
+docker-compose --project-directory "$env:CWD" -p "$env:PROJECTNAME" -f docker-compose\docker-compose.yml exec db mysql $args
 
 exit

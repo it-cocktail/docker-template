@@ -15,23 +15,23 @@ services:
       MYSQL_HOST: "db"
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     volumes:
-      - "../container:/volume"
-      - "../${HTDOCS_FOLDER}:/volume/htdocs"
+      - "./container:/volume"
+      - "./${HTDOCS_FOLDER}:/volume/htdocs"
     restart: on-failure
 
   init-mail:
     image: busybox
     command: ['sh', '-c', 'chown -R 104:108 /volume/logs/mail']
     volumes:
-      - "../logs/mail:/volume/logs/mail"
+      - "./logs/mail:/volume/logs/mail"
     restart: on-failure
 
   db:
     image: 'mysql:${MYSQL_VERSION}'
     entrypoint: ["docker-entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "16M"]
     volumes:
-      - "../container/mysql/data:/var/lib/mysql"
-      - "../container/mysql/init:/docker-entrypoint-initdb.d"
+      - "./container/mysql/data:/var/lib/mysql"
+      - "./container/mysql/init:/docker-entrypoint-initdb.d"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks:
@@ -44,7 +44,7 @@ services:
     links:
       - db:db
     volumes:
-      - "../container/phpmyadmin/php.ini:/etc/php5/conf.d/zzz-custom.ini"
+      - "./container/phpmyadmin/php.ini:/etc/php5/conf.d/zzz-custom.ini"
     environment:
       MYSQL_HOST: "db"
       UPLOAD_LIMIT: "500M"
@@ -64,7 +64,7 @@ services:
     networks:
       - "backend-tier"
     volumes:
-      - "../logs/mail:/var/log/exim4"
+      - "./logs/mail:/var/log/exim4"
 
   php:
     depends_on:
@@ -78,14 +78,14 @@ services:
       - mail:mail
       - mail:mailhog
     volumes:
-      - "../container/php/php.default.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
-      - "../container/apache2/sites-enabled:/etc/apache2/sites-enabled"
-      - "../container/php/ssmtp.default.conf:/etc/ssmtp/ssmtp.conf"
+      - "./container/php/php.default.ini:/usr/local/etc/php/conf.d/zzz-custom.ini"
+      - "./container/apache2/sites-enabled:/etc/apache2/sites-enabled"
+      - "./container/php/ssmtp.default.conf:/etc/ssmtp/ssmtp.conf"
       - "~/.ssh:/ssh"
-      - "../container/php/crontab.default:/tmp/crontab"
-      - "../container/php/environment:/etc/environment"
-      - "../${HTDOCS_FOLDER}:/var/www/html"
-      - "../logs/apache:/var/log/apache"
+      - "./container/php/crontab.default:/tmp/crontab"
+      - "./container/php/environment:/etc/environment"
+      - "./${HTDOCS_FOLDER}:/var/www/html"
+      - "./logs/apache:/var/log/apache"
     environment:
       VIRTUAL_PORT: 80
       VIRTUAL_HOST: ${PHP_VIRTUAL_HOST:-""}
