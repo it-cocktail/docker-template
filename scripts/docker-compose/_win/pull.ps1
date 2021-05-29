@@ -11,6 +11,6 @@ if (Test-Path $env:CWD\docker-compose\docker-compose.$ENV_SANATIZED.yml) {
 
 
 Write-Host "`nupdating container images if needed ..."
-Invoke-Expression "& { docker-compose --project-directory `"$env:CWD`" -p `"$env:PROJECTNAME`" -f docker-compose\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
+Invoke-Expression "& { docker compose --project-directory `"$env:CWD`" --env-file `"$env:CWD\.env`" -p `"$env:PROJECTNAME`" -f docker-compose\docker-compose.yml $ADDITIONAL_CONFIGFILE pull }"
 
 exit
