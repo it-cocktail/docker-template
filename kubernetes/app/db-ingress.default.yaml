@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   namespace: "{$PROJECTNAME}"
@@ -15,6 +15,9 @@ spec:
       http:
         paths:
           - path: /
+            pathType: "Prefix"
             backend:
-              serviceName: "db"
-              servicePort: 80
+              service:
+                name: "db"
+                port:
+                  number: 80

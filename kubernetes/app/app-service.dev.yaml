@@ -68,10 +68,10 @@ spec:
           subPath: container/apache2/sites-enabled
         - name: "pv"
           mountPath: /usr/local/etc/php/conf.d/zzz-custom.ini
-          subPath: container/php/php.development.ini
+          subPath: container/php/php.dev.ini
         - name: "pv"
           mountPath: /etc/ssmtp/ssmtp.conf
-          subPath: container/php/ssmtp.development.conf
+          subPath: container/php/ssmtp.dev.conf
         - name: "pv"
           mountPath: /tmp/crontab
           subPath: container/php/crontab.default
