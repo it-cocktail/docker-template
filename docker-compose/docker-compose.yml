@@ -99,6 +99,7 @@ services:
       MAIL_DOMAIN: ${BASE_DOMAIN}
       MYSQL_HOST: "db"
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      COMPOSER_MEMORY_LIMIT: ${COMPOSER_MEMORY_LIMIT}
     networks:
       - "frontend-tier"
       - "backend-tier"
