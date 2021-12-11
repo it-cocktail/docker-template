@@ -27,8 +27,8 @@ services:
     restart: on-failure
 
   db:
-    image: 'mysql:${MYSQL_VERSION}'
-    entrypoint: ["docker-entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "16M"]
+    image: 'mysql/mysql-server:${MYSQL_VERSION}'
+    entrypoint: ["/entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "16M"]
     volumes:
       - "./container/mysql/data:/var/lib/mysql"
       - "./container/mysql/init:/docker-entrypoint-initdb.d"
@@ -38,7 +38,7 @@ services:
       - "backend-tier"
 
   phpmyadmin:
-    image: 'phpmyadmin/phpmyadmin:${PHPMYADMIN_VERSION}'
+    image: 'phpmyadmin:${PHPMYADMIN_VERSION}'
     depends_on:
       - db
     links:
