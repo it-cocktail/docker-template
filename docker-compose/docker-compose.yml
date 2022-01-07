@@ -2,7 +2,7 @@ version: '3.5'
 services:
   init-php:
     image: busybox
-    command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/php/environment; chown -R www-data:www-data /volume/htdocs; chmod -R 775 /volume/htdocs']
+    command: ['sh', '-c', 'printenv | egrep -v ^HOME= > /volume/php/environment; chown -R www-data:www-data /volume/htdocs; chmod -R 775 /volume/htdocs; sleep infinity']
     environment:
       APACHE_HOST: www.${BASE_DOMAIN}
       APACHE_ALIAS: ${PHP_APACHE_ALIAS:-"localhost"}
@@ -21,7 +21,7 @@ services:
 
   init-mail:
     image: busybox
-    command: ['sh', '-c', 'chown -R 104:108 /volume/logs/mail']
+    command: ['sh', '-c', 'chown -R 104:108 /volume/logs/mail; sleep infinity']
     volumes:
       - "./logs/mail:/volume/logs/mail"
     restart: on-failure
