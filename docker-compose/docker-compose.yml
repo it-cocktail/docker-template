@@ -27,8 +27,8 @@ services:
     restart: on-failure
 
   db:
-    image: 'mysql/mysql-server:${MYSQL_VERSION}'
-    entrypoint: ["/entrypoint.sh", "--default-authentication-plugin", "mysql_native_password", "--max-allowed-packet", "16M"]
+    image: 'mariadb:${MYSQL_VERSION}'
+    entrypoint: ["docker-entrypoint.sh", "--max-allowed-packet", "16M"]
     volumes:
       - "./container/mysql/data:/var/lib/mysql"
       - "./container/mysql/init:/docker-entrypoint-initdb.d"
