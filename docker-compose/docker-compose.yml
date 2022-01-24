@@ -87,6 +87,7 @@ services:
       - "./container/php/environment:/etc/environment"
       - "./${HTDOCS_FOLDER}:/var/www/html"
       - "./logs/apache:/var/log/apache"
+      - "./container/php/sessions:/var/lib/php/sessions"
     environment:
       VIRTUAL_PORT: 80
       VIRTUAL_HOST: ${PHP_VIRTUAL_HOST:-""}
