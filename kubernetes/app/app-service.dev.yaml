@@ -81,6 +81,9 @@ spec:
         - name: "pv"
           mountPath: /var/log/apache
           subPath: logs/apache
+        - name: "pv"
+          mountPath: /var/lib/php/sessions
+          subPath: container/php/sessions
       envFrom:
         - configMapRef:
             name: "{$PROJECTNAME}"
