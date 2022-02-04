@@ -1,3 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-cert-db
+  namespace: "{$PROJECTNAME}"
+spec:
+  dnsNames:
+    - "phpmyadmin.{$BASE_DOMAIN}"
+  secretName: tls-secret-db
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -10,6 +23,10 @@ metadata:
     nginx.ingress.kubernetes.io/whitelist-source-range: "{$PHPMYADMIN_IP_RESTRICTION}"
     nginx.ingress.kubernetes.io/proxy-body-size: 512m
 spec:
+  tls:
+    - hosts:
+        - "phpmyadmin.{$BASE_DOMAIN}"
+      secretName: tls-secret-db
   rules:
     - host: "phpmyadmin.{$BASE_DOMAIN}"
       http:

@@ -1,3 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-cert
+  namespace: "{$PROJECTNAME}"
+spec:
+  dnsNames:
+#    - "{$BASE_DOMAIN}"
+#    - "www.{$BASE_DOMAIN}"
+    - "neu.{$BASE_DOMAIN}"
+    - "www.neu.{$BASE_DOMAIN}"
+  secretName: tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8,6 +24,13 @@ metadata:
     ingress.kubernetes.io/proxy-body-size: 512m
     nginx.ingress.kubernetes.io/proxy-body-size: 512m
 spec:
+  tls:
+    - hosts:
+#        - "{$BASE_DOMAIN}"
+#        - "www.{$BASE_DOMAIN}"
+        - "neu.{$BASE_DOMAIN}"
+        - "www.neu.{$BASE_DOMAIN}"
+      secretName: tls-secret
   rules:
     - host: "{$BASE_DOMAIN}"
       http:
@@ -20,6 +43,26 @@ spec:
                 port:
                   number: 80
     - host: "www.{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: "Prefix"
+            backend:
+              service:
+                name: "app"
+                port:
+                  number: 80
+    - host: "neu.{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: "Prefix"
+            backend:
+              service:
+                name: "app"
+                port:
+                  number: 80
+    - host: "www.neu.{$BASE_DOMAIN}"
       http:
         paths:
           - path: /
