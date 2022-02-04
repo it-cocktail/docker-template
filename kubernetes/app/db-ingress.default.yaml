@@ -5,7 +5,8 @@ metadata:
   namespace: "{$PROJECTNAME}"
 spec:
   dnsNames:
-    - "phpmyadmin.{$BASE_DOMAIN}"
+#    - "phpmyadmin.{$BASE_DOMAIN}"
+    - "phpmyadmin.neu.{$BASE_DOMAIN}"
   secretName: tls-secret-db
   issuerRef:
     name: letsencrypt-prod
@@ -25,10 +26,21 @@ metadata:
 spec:
   tls:
     - hosts:
-        - "phpmyadmin.{$BASE_DOMAIN}"
+#        - "phpmyadmin.{$BASE_DOMAIN}"
+        - "phpmyadmin.neu.{$BASE_DOMAIN}"
       secretName: tls-secret-db
   rules:
-    - host: "phpmyadmin.{$BASE_DOMAIN}"
+#    - host: "phpmyadmin.{$BASE_DOMAIN}"
+#      http:
+#        paths:
+#          - path: /
+#            pathType: "Prefix"
+#            backend:
+#              service:
+#                name: "db"
+#                port:
+#                  number: 80
+    - host: "phpmyadmin.neu.{$BASE_DOMAIN}"
       http:
         paths:
           - path: /
