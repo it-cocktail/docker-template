@@ -5,8 +5,8 @@ metadata:
   namespace: "{$PROJECTNAME}"
 spec:
   dnsNames:
-#    - "{$BASE_DOMAIN}"
-#    - "www.{$BASE_DOMAIN}"
+    - "{$BASE_DOMAIN}"
+    - "www.{$BASE_DOMAIN}"
     - "neu.{$BASE_DOMAIN}"
     - "www.neu.{$BASE_DOMAIN}"
   secretName: tls-secret
@@ -26,32 +26,32 @@ metadata:
 spec:
   tls:
     - hosts:
-#        - "{$BASE_DOMAIN}"
-#        - "www.{$BASE_DOMAIN}"
+        - "{$BASE_DOMAIN}"
+        - "www.{$BASE_DOMAIN}"
         - "neu.{$BASE_DOMAIN}"
         - "www.neu.{$BASE_DOMAIN}"
       secretName: tls-secret
   rules:
-#    - host: "{$BASE_DOMAIN}"
-#      http:
-#        paths:
-#          - path: /
-#            pathType: "Prefix"
-#            backend:
-#              service:
-#                name: "app"
-#                port:
-#                  number: 80
-#    - host: "www.{$BASE_DOMAIN}"
-#      http:
-#        paths:
-#          - path: /
-#            pathType: "Prefix"
-#            backend:
-#              service:
-#                name: "app"
-#                port:
-#                  number: 80
+    - host: "{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: "Prefix"
+            backend:
+              service:
+                name: "app"
+                port:
+                  number: 80
+    - host: "www.{$BASE_DOMAIN}"
+      http:
+        paths:
+          - path: /
+            pathType: "Prefix"
+            backend:
+              service:
+                name: "app"
+                port:
+                  number: 80
     - host: "neu.{$BASE_DOMAIN}"
       http:
         paths:
