@@ -1,5 +1,6 @@
 .idea
 container/php/environment
+container/php/sessions
 container/mysql/data/*
 !container/mysql/data/.gitkeep
 logs/*
