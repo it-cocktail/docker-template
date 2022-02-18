@@ -7,8 +7,6 @@ spec:
   dnsNames:
     - "{$BASE_DOMAIN}"
     - "www.{$BASE_DOMAIN}"
-    - "neu.{$BASE_DOMAIN}"
-    - "www.neu.{$BASE_DOMAIN}"
   secretName: tls-secret
   issuerRef:
     name: letsencrypt-prod
@@ -28,8 +26,6 @@ spec:
     - hosts:
         - "{$BASE_DOMAIN}"
         - "www.{$BASE_DOMAIN}"
-        - "neu.{$BASE_DOMAIN}"
-        - "www.neu.{$BASE_DOMAIN}"
       secretName: tls-secret
   rules:
     - host: "{$BASE_DOMAIN}"
@@ -43,26 +39,6 @@ spec:
                 port:
                   number: 80
     - host: "www.{$BASE_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: "Prefix"
-            backend:
-              service:
-                name: "app"
-                port:
-                  number: 80
-    - host: "neu.{$BASE_DOMAIN}"
-      http:
-        paths:
-          - path: /
-            pathType: "Prefix"
-            backend:
-              service:
-                name: "app"
-                port:
-                  number: 80
-    - host: "www.neu.{$BASE_DOMAIN}"
       http:
         paths:
           - path: /

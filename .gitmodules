@@ -1,3 +1,3 @@
-[submodule "htdocs"]
-	path = htdocs
-	url = git@gitlab.com:it-cocktail/hki/website-2021.git
+#[submodule "htdocs"]
+#	path = htdocs
+#	url = git@gitlab.com:it-cocktail/hki/website-2021.git
